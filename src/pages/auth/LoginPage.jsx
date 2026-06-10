@@ -36,7 +36,7 @@ export function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await dispatch(loginUser({ email, password }));
-    if (result.payload) {
+    if (!result.error) {
       navigate('/dashboard');
     }
   };

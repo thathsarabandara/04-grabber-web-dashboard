@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../store/slices/authSlice';
 import gsap from 'gsap';
 import { 
   User, 
@@ -38,6 +40,8 @@ export function RegisterPage() {
     }
   }, []);
 
+  const dispatch = useDispatch();
+  
   const validateForm = () => {
     const newErrors = {};
     if (!formData.firstName.trim()) newErrors.firstName = 'Required';
@@ -49,17 +53,29 @@ export function RegisterPage() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true);
-      setTimeout(() => {
+      
+      const result = await dispatch(registerUser({
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName
+      }));
+      
+      setIsSubmitting(false);
+
+      if (result.payload && !result.error) {
         setSubmitted(true);
         setTimeout(() => {
-          navigate('/auth/otp');
+          navigate('/auth/otp', { state: { email: formData.email } });
         }, 1500);
-      }, 1000);
+      } else {
+        setErrors({ general: result.payload || 'Registration failed' });
+      }
     } else {
       setErrors(newErrors);
     }
