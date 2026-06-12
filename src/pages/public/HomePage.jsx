@@ -53,7 +53,7 @@ export function HomePage() {
   return (
     <div className="space-y-40 pb-40 overflow-hidden font-sans selection:bg-brand-accent/30 relative">
       {/* Global Background Patterns */}
-      <div className="absolute inset-0 pattern-dots opacity-[0.2] pointer-events-none"></div>
+      <div className="absolute inset-0 pattern-grid opacity-[0.25] pointer-events-none"></div>
       
       {/* Hero Section */}
       <section 
@@ -112,26 +112,20 @@ export function HomePage() {
         {/* Hero Visual Placeholder */}
         <div data-hero-animate className="mt-28 w-full max-w-6xl relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-brand-accent to-brand-secondary rounded-[3rem] blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-          <div className="glass-card aspect-video w-full rounded-[3rem] border-8 border-white overflow-hidden relative shadow-2xl">
-            <div className="absolute inset-0 bg-slate-950 flex items-center justify-center overflow-hidden">
-               {/* Decorative Grid Effect */}
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-               {/* HUD Overlays */}
-               <div className="absolute top-10 left-10 w-20 h-20 border-l-2 border-t-2 border-white/20 rounded-tl-3xl"></div>
-               <div className="absolute bottom-10 right-10 w-20 h-20 border-r-2 border-b-2 border-white/20 rounded-br-3xl"></div>
-               
-              <div className="flex flex-col items-center gap-8 z-10">
-                <div className="w-24 h-24 bg-white/5 backdrop-blur-2xl rounded-[32px] flex items-center justify-center border border-white/10 shadow-2xl group-hover:scale-110 transition-transform duration-700">
-                   <Activity size={40} className="text-brand-accent animate-pulse" />
-                </div>
-                <div className="text-center space-y-2">
-                   <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Kinematic Engine Initializing</p>
-                   <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
-                      <div className="w-1/3 h-full bg-brand-accent animate-[loading_2s_infinite_ease-in-out]"></div>
-                   </div>
-                </div>
-              </div>
+          <div className="glass-card aspect-video w-full rounded-[3rem] border-8 border-white overflow-hidden relative shadow-2xl bg-slate-950 flex items-center justify-center">
+            
+            <img src="/dashboard.png" alt="Kinematics Dashboard" className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+
+            <div className="absolute bottom-10 flex flex-col items-center gap-4 z-10 w-full px-10">
+               <div className="text-center space-y-3 bg-slate-950/50 backdrop-blur-md px-8 py-5 rounded-3xl border border-white/10 shadow-2xl mx-auto">
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Kinematic Engine Initializing</p>
+                  <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden mx-auto">
+                     <div className="w-1/3 h-full bg-brand-accent animate-[loading_2s_infinite_ease-in-out]"></div>
+                  </div>
+               </div>
             </div>
+
           </div>
         </div>
       </section>
