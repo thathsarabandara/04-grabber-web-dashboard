@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import api from '../../api/axiosInstance';
 import gsap from 'gsap';
 import { 
   Lock, 
@@ -13,6 +14,10 @@ import {
 } from 'lucide-react';
 
 export function ResetPasswordPage() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const urlToken = searchParams.get('token');
+
   const [passwords, setPasswords] = useState({
     newPassword: '',
     confirmPassword: '',
@@ -49,17 +54,27 @@ export function ResetPasswordPage() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
     if (Object.keys(newErrors).length === 0) {
       setIsResetting(true);
-      setTimeout(() => {
+      try {
+        await api.post('/auth/reset-password', {
+          token: urlToken,
+          new_password: passwords.newPassword,
+        });
         setSubmitted(true);
         setTimeout(() => {
           navigate('/auth/login');
         }, 2500);
-      }, 1500);
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.detail || 'Failed to reset password');
+        setErrors({ form: error.response?.data?.detail || 'Reset failed' });
+      } finally {
+        setIsResetting(false);
+      }
     } else {
       setErrors(newErrors);
     }
@@ -77,6 +92,23 @@ export function ResetPasswordPage() {
       }));
     }
   };
+
+  if (!urlToken) {
+    return (
+      <div className="text-center py-10 space-y-6">
+        <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-red-500/20">
+          <ShieldAlert size={40} />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-black tracking-tight">Invalid Request</h2>
+          <p className="text-slate-500 font-medium">Missing or invalid security token. Please request a new recovery link.</p>
+        </div>
+        <div className="pt-4">
+          <Link to="/auth/forgot-password" className="text-brand-accent hover:underline font-bold">Back to Recovery</Link>
+        </div>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
