@@ -11,7 +11,7 @@ import {
   ArrowRight, 
   Loader2,
 } from 'lucide-react';
-import { RiShieldKeyholeFill } from 'react-icons/ri';
+
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -44,10 +44,7 @@ export function LoginPage() {
   return (
     <div className="space-y-10">
       <div className="text-center sm:text-left relative">
-        <div className="logo-icon w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-slate-900/20 relative group overflow-hidden">
-           <div className="absolute inset-0 bg-gradient-to-tr from-brand-accent to-brand-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-           <RiShieldKeyholeFill className="text-brand-accent group-hover:text-white transition-colors relative z-10" size={28} />
-        </div>
+        <img src="/logo.png" alt="Grabber Logo" className="logo-icon w-14 h-14 object-contain mb-6 mx-auto sm:mx-0" />
         <h2 className="text-3xl font-black tracking-tight text-slate-900">
           Operator Access
         </h2>

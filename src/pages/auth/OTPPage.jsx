@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import api from '../../api/axiosInstance';
 import gsap from 'gsap';
 import { 
   CheckCircle2, 
@@ -17,6 +18,8 @@ export function OTPPage() {
   const [canResend, setCanResend] = useState(false);
   const inputsRef = useRef([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || '';
 
   useEffect(() => {
     gsap.fromTo(
@@ -52,22 +55,37 @@ export function OTPPage() {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const otpString = otp.join('');
     if (otpString.length === 6) {
       setIsVerifying(true);
-      setTimeout(() => {
+      try {
+        await api.post('/auth/verify-otp', { email, otp: otpString });
         setVerified(true);
         setTimeout(() => navigate('/auth/login'), 2000);
-      }, 1500);
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.detail || 'Verification failed');
+        setOtp(['', '', '', '', '', '']);
+        inputsRef.current[0]?.focus();
+      } finally {
+        setIsVerifying(false);
+      }
     }
   };
 
-  const handleResend = () => {
-    setOtp(['', '', '', '', '', '']);
-    setResendTimer(30);
-    setCanResend(false);
-    inputsRef.current[0]?.focus();
+  const handleResend = async () => {
+    try {
+      await api.post('/auth/resend-otp', { email });
+      setOtp(['', '', '', '', '', '']);
+      setResendTimer(30);
+      setCanResend(false);
+      inputsRef.current[0]?.focus();
+      alert('A new OTP has been sent to your email.');
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.detail || 'Failed to resend OTP');
+    }
   };
 
   if (verified) {
