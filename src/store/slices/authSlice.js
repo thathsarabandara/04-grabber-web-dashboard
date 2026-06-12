@@ -6,11 +6,9 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { access_token } = response.data;
-      
-      localStorage.setItem('authToken', access_token);
-      
-      return { token: access_token };
+      const token = response.data.access_token;
+      localStorage.setItem('authToken', token);
+      return { token };
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || error.message || 'Login failed');
     }
@@ -40,6 +38,18 @@ export const logoutUser = createAsyncThunk(
       // Even if API logout fails, we'll clear local state
       localStorage.removeItem('authToken');
       return rejectWithValue(error.response?.data?.detail || error.message || 'Logout failed');
+    }
+  }
+);
+
+export const fetchUserProfile = createAsyncThunk(
+  'auth/fetchUserProfile',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/auth/me');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.detail || error.message || 'Failed to fetch profile');
     }
   }
 );
@@ -109,6 +119,18 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+      })
+      // Fetch Profile
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

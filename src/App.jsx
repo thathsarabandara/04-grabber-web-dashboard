@@ -30,9 +30,12 @@ import { TaskSchedulerPage } from './pages/dashboard/TaskSchedulerPage';
 import { ProfilePage } from './pages/dashboard/ProfilePage';
 import { DeviceRegistrationPage } from './pages/dashboard/DeviceRegistrationPage';
 
+import { ScrollToTop } from './components/ScrollToTop';
+
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public Pages */}
         <Route element={<PublicLayout />}>

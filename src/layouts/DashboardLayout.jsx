@@ -11,7 +11,6 @@ import {
   LogOut, 
   Menu, 
   X, 
-  Cpu,
   ChevronLeft,
   ChevronRight,
   Bell
@@ -77,9 +76,7 @@ export function DashboardLayout() {
         {/* Logo */}
         <div className="flex items-center justify-between mb-10 px-2">
           <div className={`flex items-center gap-3 ${!sidebarOpen && 'lg:justify-center'}`}>
-            <div className="bg-brand-accent p-2 rounded-xl shadow-lg shadow-brand-accent/20">
-              <Cpu className="w-6 h-6 text-white" />
-            </div>
+            <img src="/logo.png" alt="Grabber Logo" className="w-10 h-10 object-contain" />
             {sidebarOpen && (
               <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-brand-secondary">
                 Grabber
