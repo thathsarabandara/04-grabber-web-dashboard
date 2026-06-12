@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Menu, 
   X, 
-  Cpu, 
   LogIn,
   ChevronRight,
   ShieldCheck,
@@ -41,9 +40,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-4 group">
-          <div className="w-12 h-12 bg-slate-900 text-white rounded-[14px] flex items-center justify-center shadow-2xl shadow-slate-900/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-            <Cpu size={26} className="group-hover:text-brand-accent transition-colors" />
-          </div>
+          <img src="/logo.png" alt="Grabber Logo" className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-500" />
           <div className="flex flex-col">
             <span className="font-black text-2xl tracking-tighter leading-none text-slate-900">GRABBER</span>
             <span className="text-[9px] font-black text-brand-accent tracking-[0.3em] uppercase opacity-70 group-hover:opacity-100 transition-opacity">Operator Terminal</span>
