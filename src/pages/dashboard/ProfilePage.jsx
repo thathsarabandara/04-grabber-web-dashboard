@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserProfile, logoutUser } from '../../store/slices/authSlice';
+import api from '../../api/axiosInstance';
 import gsap from 'gsap';
 import { 
   User, 
@@ -14,22 +17,68 @@ import {
   Clock,
   ShieldCheck,
   Cpu,
-  Settings
+  Settings,
+  MonitorSmartphone
 } from 'lucide-react';
 
 export function ProfilePage() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    firstName: 'Thathsara',
-    lastName: 'Bandara',
-    email: 'thathsara@grabber-x.io',
-    phone: '+94 77 123 4567',
-    image: null,
-    role: 'Senior System Operator',
-    joinedDate: 'Jan 2026'
-  });
-  const [editData, setEditData] = useState(profile);
+  const [profile, setProfile] = useState({});
+  const [editData, setEditData] = useState({});
+  const [sessions, setSessions] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
   const contentRef = useRef(null);
+
+  useEffect(() => {
+    dispatch(fetchUserProfile());
+    fetchSessions();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      const mappedUser = {
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        image: user.profile_image ? `http://localhost:8000${user.profile_image}` : null,
+        role: 'Senior System Operator',
+        joinedDate: user.created_at ? new Date(user.created_at).toLocaleDateString() : ''
+      };
+      setProfile(mappedUser);
+      setEditData(mappedUser);
+    }
+  }, [user]);
+
+  const fetchSessions = async () => {
+    try {
+      const response = await api.get('/auth/sessions');
+      setSessions(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRevokeSession = async (sessionId) => {
+    try {
+      await api.delete(`/auth/sessions/${sessionId}`);
+      fetchSessions();
+    } catch (error) {
+      alert('Failed to revoke session');
+    }
+  };
+
+  const handleRevokeAllSessions = async () => {
+    try {
+      await api.post('/auth/sessions/revoke-all');
+      fetchSessions();
+    } catch (error) {
+      alert('Failed to revoke sessions');
+    }
+  };
 
   useEffect(() => {
     const elements = contentRef.current?.querySelectorAll('[data-animate]');
@@ -42,14 +91,47 @@ export function ProfilePage() {
     }
   }, []);
 
-  const handleSave = () => {
-    setProfile(editData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await api.patch('/auth/me', {
+        first_name: editData.firstName,
+        last_name: editData.lastName,
+        phone: editData.phone
+      });
+      await dispatch(fetchUserProfile());
+      setIsEditing(false);
+    } catch (error) {
+      alert(error.response?.data?.detail || 'Failed to update profile');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
     setEditData(profile);
     setIsEditing(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      await api.post('/auth/me/image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      dispatch(fetchUserProfile());
+    } catch (error) {
+      alert('Failed to upload image');
+    }
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
   };
 
   return (
@@ -65,7 +147,7 @@ export function ProfilePage() {
             Configure system access protocols and personal credentials.
           </p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white border border-red-100 text-red-500 hover:bg-red-50 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-sm">
+        <button onClick={handleLogout} className="flex items-center gap-2 px-6 py-3 bg-white border border-red-100 text-red-500 hover:bg-red-50 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-sm">
           <LogOut size={16} /> Terminate Session
         </button>
       </div>
@@ -87,7 +169,7 @@ export function ProfilePage() {
               </div>
               <label className="absolute -bottom-2 -right-2 p-3 bg-slate-900 rounded-2xl text-white shadow-2xl border-4 border-white cursor-pointer hover:scale-110 transition-all duration-300">
                 <Camera size={20} />
-                <input type="file" hidden accept="image/*" />
+                <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
               </label>
             </div>
             
@@ -215,6 +297,52 @@ export function ProfilePage() {
                 </div>
               </div>
               <button className="text-[10px] font-black uppercase tracking-widest text-brand-accent hover:underline decoration-2 underline-offset-4">Manage Access</button>
+            </div>
+          </div>
+
+          <div className="glass-card p-10">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-black tracking-tight flex items-center gap-4">
+                 <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl">
+                    <Cpu size={24} />
+                 </div>
+                 Active Sessions
+              </h3>
+              {sessions.length > 0 && (
+                <button
+                  onClick={handleRevokeAllSessions}
+                  className="flex items-center gap-2 px-6 py-3 bg-red-50 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-all font-bold"
+                >
+                  <ShieldAlert size={14} /> Revoke Other Sessions
+                </button>
+              )}
+            </div>
+            
+            <div className="space-y-4">
+              {sessions.length === 0 ? (
+                <p className="text-sm text-slate-500 font-medium">No active sessions found.</p>
+              ) : (
+                sessions.map((session) => (
+                  <div key={session.id} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-2xl border border-slate-100">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand-accent shadow-sm">
+                        <MonitorSmartphone size={18} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-slate-900">{session.device_info || 'Unknown Device'}</p>
+                        <p className="text-xs font-medium text-slate-500">IP: {session.ip_address || 'Unknown'} • Since: {new Date(session.created_at).toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRevokeSession(session.id)}
+                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Revoke Session"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
