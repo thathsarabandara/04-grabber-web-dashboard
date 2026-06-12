@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import api from '../../api/axiosInstance';
 import gsap from 'gsap';
 import { 
   Mail, 
@@ -28,16 +29,19 @@ export function ForgotPasswordPage() {
     }
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (email.includes('@')) {
       setIsSending(true);
-      setTimeout(() => {
+      try {
+        await api.post('/auth/forgot-password', { email });
         setSubmitted(true);
-        setTimeout(() => {
-          navigate('/auth/reset-password');
-        }, 2500);
-      }, 1500);
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.detail || 'Failed to send recovery email');
+      } finally {
+        setIsSending(false);
+      }
     }
   };
 
