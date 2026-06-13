@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import api from '../../api/axiosInstance';
 import { 
   Maximize2, 
   Minimize2, 
@@ -11,7 +12,8 @@ import {
   Zap,
   Gamepad2,
   Sliders,
-  Terminal
+  Terminal,
+  ChevronDown
 } from 'lucide-react';
 
 export function ControlPanelPage() {
@@ -19,11 +21,28 @@ export function ControlPanelPage() {
   const [speed, setSpeed] = useState(50);
   const [isRecording, setIsRecording] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [robots, setRobots] = useState([]);
+  const [selectedRobotId, setSelectedRobotId] = useState('');
   const contentRef = useRef(null);
-  const joystickRef = useRef(null);
-  const joystickContainerRef = useRef(null);
+  const joystick1Ref = useRef(null);
+  const joystick1ContainerRef = useRef(null);
+  const joystick2Ref = useRef(null);
+  const joystick2ContainerRef = useRef(null);
 
   useEffect(() => {
+    const fetchRobots = async () => {
+      try {
+        const response = await api.get('/robots');
+        setRobots(response.data);
+        if (response.data.length > 0) {
+          setSelectedRobotId(response.data[0].id);
+        }
+      } catch (err) {
+        console.error('Failed to fetch robots', err);
+      }
+    };
+    fetchRobots();
+
     const elements = contentRef.current?.querySelectorAll('[data-animate]');
     if (elements) {
       gsap.fromTo(
@@ -34,9 +53,11 @@ export function ControlPanelPage() {
     }
   }, []);
 
-  const handleJoystickMove = (e) => {
-    if (!joystickContainerRef.current || !joystickRef.current) return;
-    const rect = joystickContainerRef.current.getBoundingClientRect();
+  const selectedRobot = robots.find(r => r.id === selectedRobotId);
+
+  const handleJoystickMove = (e, containerRef, stickRef) => {
+    if (!containerRef.current || !stickRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
@@ -49,14 +70,14 @@ export function ControlPanelPage() {
       const angle = Math.atan2(y, x);
       const newX = Math.cos(angle) * maxDistance;
       const newY = Math.sin(angle) * maxDistance;
-      gsap.to(joystickRef.current, { x: newX, y: newY, duration: 0.1 });
+      gsap.to(stickRef.current, { x: newX, y: newY, duration: 0.1 });
     } else {
-      gsap.to(joystickRef.current, { x, y, duration: 0.1 });
+      gsap.to(stickRef.current, { x, y, duration: 0.1 });
     }
   };
 
-  const resetJoystick = () => {
-    gsap.to(joystickRef.current, { x: 0, y: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' });
+  const resetJoystick = (stickRef) => {
+    gsap.to(stickRef.current, { x: 0, y: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' });
   };
 
   const handleJointChange = (joint, value) => {
@@ -72,9 +93,27 @@ export function ControlPanelPage() {
              <Terminal size={12} /> Real-time Control
           </div>
           <h1 className="text-4xl font-black tracking-tight text-slate-900">Manual Interface</h1>
-          <p className="text-lg text-slate-500 mt-2 font-medium max-w-xl">
+          <p className="text-lg text-slate-500 mt-2 font-medium max-w-xl mb-4">
             Precise robotic arm manipulation and low-latency visual feedback.
           </p>
+          <div className="relative inline-block mt-2">
+            <select
+              value={selectedRobotId}
+              onChange={(e) => setSelectedRobotId(e.target.value)}
+              className="appearance-none bg-white border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-xl font-bold text-sm outline-none focus:ring-4 focus:ring-brand-accent/10 focus:border-brand-accent transition-all shadow-sm"
+            >
+              {robots.length === 0 ? (
+                <option value="">No robots available</option>
+              ) : (
+                robots.map(robot => (
+                  <option key={robot.id} value={robot.id}>
+                    {robot.name || `Robot ${robot.robot_id}`}
+                  </option>
+                ))
+              )}
+            </select>
+            <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex -space-x-2">
@@ -101,7 +140,7 @@ export function ControlPanelPage() {
                   <div className="absolute inset-0 bg-brand-accent/30 blur-[60px] rounded-full"></div>
                 </div>
                 <div className="space-y-2 text-center">
-                   <p className="font-black tracking-[0.3em] uppercase text-[10px] text-white/40">Feed: Grabber_X1_Primary</p>
+                   <p className="font-black tracking-[0.3em] uppercase text-[10px] text-white/40">Feed: {selectedRobot ? (selectedRobot.name || selectedRobot.robot_id) : 'NO_SIGNAL'}</p>
                    <p className="text-[10px] font-bold text-brand-accent uppercase">Handshake Protocol Active</p>
                 </div>
               </div>
@@ -150,58 +189,100 @@ export function ControlPanelPage() {
             </div>
           </div>
 
-          {/* Joystick Control Card */}
-          <div data-animate className="glass-card p-10 relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-10 opacity-5">
-                <Gamepad2 size={120} />
-             </div>
-            <div className="flex items-center justify-between mb-10 relative z-10">
-              <h3 className="text-2xl font-black tracking-tight flex items-center gap-4">
-                <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl">
-                   <Gamepad2 size={24} />
-                </div>
-                Vector Positioning
-              </h3>
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                 <span className="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
-                 Calibration Required
+          {/* Joystick Control Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div data-animate className="glass-card p-6 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-6 opacity-5">
+                  <Gamepad2 size={80} />
+               </div>
+              <div className="flex items-center justify-between mb-6 relative z-10">
+                <h3 className="text-lg font-black tracking-tight flex items-center gap-3">
+                  <div className="p-2 bg-brand-accent/10 text-brand-accent rounded-lg">
+                     <Gamepad2 size={18} />
+                  </div>
+                  Base & Shoulder
+                </h3>
               </div>
-            </div>
-            
-            <div className="flex justify-center py-8 relative z-10">
-              <div
-                ref={joystickContainerRef}
-                className="relative w-80 h-80 rounded-full bg-slate-100/50 border-[6px] border-white shadow-2xl flex items-center justify-center cursor-crosshair group"
-                onMouseMove={handleJoystickMove}
-                onMouseLeave={resetJoystick}
-              >
-                {/* Decorative Grid */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <div className="w-[1px] h-[80%] bg-slate-400"></div>
-                  <div className="absolute w-[80%] h-[1px] bg-slate-400"></div>
-                  <div className="absolute w-[75%] h-[75%] rounded-full border border-slate-300"></div>
-                  <div className="absolute w-[50%] h-[50%] rounded-full border border-slate-300"></div>
-                  <div className="absolute w-[25%] h-[25%] rounded-full border border-slate-300"></div>
-                </div>
-
-                {/* Joystick Knob */}
+              
+              <div className="flex justify-center py-4 relative z-10">
                 <div
-                  ref={joystickRef}
-                  className="w-20 h-20 bg-slate-900 rounded-3xl shadow-2xl shadow-slate-950/20 flex items-center justify-center transform-gpu hover:scale-105 transition-transform duration-300 cursor-grab active:cursor-grabbing"
+                  ref={joystick1ContainerRef}
+                  className="relative w-48 h-48 rounded-full bg-slate-100/50 border-[4px] border-white shadow-xl flex items-center justify-center cursor-crosshair group"
+                  onMouseMove={(e) => handleJoystickMove(e, joystick1ContainerRef, joystick1Ref)}
+                  onMouseLeave={() => resetJoystick(joystick1Ref)}
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-accent shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
+                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                    <div className="w-[1px] h-[80%] bg-slate-400"></div>
+                    <div className="absolute w-[80%] h-[1px] bg-slate-400"></div>
+                    <div className="absolute w-[75%] h-[75%] rounded-full border border-slate-300"></div>
+                    <div className="absolute w-[25%] h-[25%] rounded-full border border-slate-300"></div>
+                  </div>
+
+                  <div
+                    ref={joystick1Ref}
+                    className="w-12 h-12 bg-slate-900 rounded-2xl shadow-xl shadow-slate-950/20 flex items-center justify-center transform-gpu hover:scale-105 transition-transform duration-300 cursor-grab active:cursor-grabbing"
+                  >
+                    <div className="w-1 h-1 rounded-full bg-brand-accent shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+                  </div>
                 </div>
               </div>
+              <div className="flex justify-center gap-6 mt-6">
+                 <div className="text-center">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base</p>
+                    <p className="text-sm font-black text-slate-800">42.5°</p>
+                 </div>
+                 <div className="text-center">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Shoulder</p>
+                    <p className="text-sm font-black text-slate-800">-12.8°</p>
+                 </div>
+              </div>
             </div>
-            <div className="flex justify-center gap-10 mt-10">
-               <div className="text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">X-Offset</p>
-                  <p className="text-lg font-black text-slate-800">42.5mm</p>
+
+            <div data-animate className="glass-card p-6 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-6 opacity-5">
+                  <Gamepad2 size={80} />
                </div>
-               <div className="text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Y-Offset</p>
-                  <p className="text-lg font-black text-slate-800">-12.8mm</p>
-               </div>
+              <div className="flex items-center justify-between mb-6 relative z-10">
+                <h3 className="text-lg font-black tracking-tight flex items-center gap-3">
+                  <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg">
+                     <Gamepad2 size={18} />
+                  </div>
+                  Grip & Elbow
+                </h3>
+              </div>
+              
+              <div className="flex justify-center py-4 relative z-10">
+                <div
+                  ref={joystick2ContainerRef}
+                  className="relative w-48 h-48 rounded-full bg-slate-100/50 border-[4px] border-white shadow-xl flex items-center justify-center cursor-crosshair group"
+                  onMouseMove={(e) => handleJoystickMove(e, joystick2ContainerRef, joystick2Ref)}
+                  onMouseLeave={() => resetJoystick(joystick2Ref)}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                    <div className="w-[1px] h-[80%] bg-slate-400"></div>
+                    <div className="absolute w-[80%] h-[1px] bg-slate-400"></div>
+                    <div className="absolute w-[75%] h-[75%] rounded-full border border-slate-300"></div>
+                    <div className="absolute w-[25%] h-[25%] rounded-full border border-slate-300"></div>
+                  </div>
+
+                  <div
+                    ref={joystick2Ref}
+                    className="w-12 h-12 bg-slate-900 rounded-2xl shadow-xl shadow-slate-950/20 flex items-center justify-center transform-gpu hover:scale-105 transition-transform duration-300 cursor-grab active:cursor-grabbing"
+                  >
+                    <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center gap-6 mt-6">
+                 <div className="text-center">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Grip</p>
+                    <p className="text-sm font-black text-slate-800">12.0mm</p>
+                 </div>
+                 <div className="text-center">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Elbow</p>
+                    <p className="text-sm font-black text-slate-800">45.0°</p>
+                 </div>
+              </div>
             </div>
           </div>
         </div>
