@@ -1,6 +1,6 @@
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser } from '../store/slices/authSlice';
+import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import { 
   LayoutDashboard, 
   Gamepad2, 
@@ -13,7 +13,8 @@ import {
   X, 
   ChevronLeft,
   ChevronRight,
-  Bell
+  Bell,
+  Bot
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
@@ -36,6 +37,12 @@ export function DashboardLayout() {
     );
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (isAuthenticated && !user) {
+      dispatch(fetchUserProfile());
+    }
+  }, [isAuthenticated, user, dispatch]);
+
   if (!isAuthenticated) {
     return <Navigate to="/auth/login" replace />;
   }
@@ -46,6 +53,7 @@ export function DashboardLayout() {
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { icon: Bot, label: 'Robot Management', path: '/dashboard/registration' },
     { icon: Gamepad2, label: 'Control Panel', path: '/dashboard/control' },
     { icon: Video, label: 'Telemetry & Camera', path: '/dashboard/telemetry' },
     { icon: Map, label: 'Path Drawing', path: '/dashboard/path-draw' },
