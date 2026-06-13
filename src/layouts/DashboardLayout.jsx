@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import api from '../api/axiosInstance';
 
 export function DashboardLayout() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -156,11 +157,15 @@ export function DashboardLayout() {
             <div className="h-8 w-px bg-slate-200 mx-1"></div>
             <div className="flex items-center gap-3 pl-1">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold leading-none">{user?.name || 'User'}</p>
+                <p className="text-sm font-bold leading-none">{user?.first_name ? `${user.first_name} ${user.last_name || ''}` : 'User'}</p>
                 <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider mt-1">Administrator</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-accent to-brand-secondary flex items-center justify-center text-white font-bold shadow-lg shadow-brand-accent/20">
-                {(user?.name || 'U')[0]}
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-accent to-brand-secondary flex items-center justify-center text-white font-bold shadow-lg shadow-brand-accent/20 overflow-hidden">
+                {user?.profile_image ? (
+                  <img src={`${(import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1').replace('/api/v1', '')}${user.profile_image}`} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  (user?.first_name || 'U')[0]
+                )}
               </div>
             </div>
           </div>

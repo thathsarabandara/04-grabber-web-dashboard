@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserProfile, logoutUser } from '../../store/slices/authSlice';
 import api from '../../api/axiosInstance';
 import gsap from 'gsap';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Camera, 
-  Edit3, 
-  Save, 
-  X, 
-  ShieldAlert, 
+import {
+  User,
+  Mail,
+  Phone,
+  Camera,
+  Edit3,
+  Save,
+  X,
+  ShieldAlert,
   LogOut,
   ChevronRight,
   Clock,
@@ -30,6 +30,8 @@ export function ProfilePage() {
   const [editData, setEditData] = useState({});
   const [sessions, setSessions] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '' });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function ProfilePage() {
         lastName: user.last_name || '',
         email: user.email || '',
         phone: user.phone || '',
-        image: user.profile_image ? `http://localhost:8000${user.profile_image}` : null,
+        image: user.profile_image ? `${(import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1').replace('/api/v1', '')}${user.profile_image}` : null,
         role: 'Senior System Operator',
         joinedDate: user.created_at ? new Date(user.created_at).toLocaleDateString() : ''
       };
@@ -113,6 +115,27 @@ export function ProfilePage() {
     setIsEditing(false);
   };
 
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (passwordData.newPassword.length < 8) {
+      alert("New password must be at least 8 characters");
+      return;
+    }
+    setIsChangingPassword(true);
+    try {
+      await api.post('/auth/me/change-password', {
+        old_password: passwordData.oldPassword,
+        new_password: passwordData.newPassword
+      });
+      alert("Password changed successfully");
+      setPasswordData({ oldPassword: '', newPassword: '' });
+    } catch (error) {
+      alert(error.response?.data?.detail || "Failed to change password");
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -139,9 +162,9 @@ export function ProfilePage() {
       {/* Header */}
       <div data-animate className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-10">
         <div>
-           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-100 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">
-              <User size={12} /> Account Management
-           </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-100 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4">
+            <User size={12} /> Account Management
+          </div>
           <h1 className="text-4xl font-black tracking-tight text-slate-900">Operator Identity</h1>
           <p className="text-lg text-slate-500 mt-2 font-medium max-w-xl">
             Configure system access protocols and personal credentials.
@@ -156,14 +179,14 @@ export function ProfilePage() {
         {/* Profile Sidebar */}
         <div data-animate className="lg:col-span-4 space-y-8">
           <div className="glass-card p-10 flex flex-col items-center text-center relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-accent to-brand-secondary"></div>
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-accent to-brand-secondary"></div>
             <div className="relative group mb-8">
               <div className="w-40 h-40 rounded-[40px] bg-slate-50 flex items-center justify-center text-slate-300 shadow-inner overflow-hidden border-4 border-white">
                 {profile.image ? (
                   <img src={profile.image} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center gap-2">
-                     <User size={80} className="opacity-20" />
+                    <User size={80} className="opacity-20" />
                   </div>
                 )}
               </div>
@@ -172,12 +195,12 @@ export function ProfilePage() {
                 <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
               </label>
             </div>
-            
+
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">{profile.firstName} {profile.lastName}</h2>
             <div className="mt-2 px-4 py-1 bg-brand-accent/5 rounded-full inline-block">
-               <p className="text-[10px] font-black uppercase tracking-widest text-brand-accent">{profile.role}</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-brand-accent">{profile.role}</p>
             </div>
-            
+
             <div className="w-full mt-10 pt-10 border-t border-slate-50 space-y-5">
               <div className="flex items-center justify-between text-xs p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
                 <span className="text-slate-400 font-black uppercase tracking-widest text-[9px]">Operator ID</span>
@@ -186,8 +209,8 @@ export function ProfilePage() {
               <div className="flex items-center justify-between text-xs p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
                 <span className="text-slate-400 font-black uppercase tracking-widest text-[9px]">Clearance</span>
                 <div className="flex items-center gap-2 text-emerald-600">
-                   <ShieldCheck size={14} />
-                   <span className="font-black">LEVEL 4</span>
+                  <ShieldCheck size={14} />
+                  <span className="font-black">LEVEL 4</span>
                 </div>
               </div>
             </div>
@@ -209,10 +232,10 @@ export function ProfilePage() {
           <div className="glass-card p-10">
             <div className="flex items-center justify-between mb-12">
               <h3 className="text-2xl font-black tracking-tight flex items-center gap-4">
-                 <div className="p-3 bg-slate-50 text-slate-400 rounded-xl">
-                    <Settings size={24} />
-                 </div>
-                 Core Identity
+                <div className="p-3 bg-slate-50 text-slate-400 rounded-xl">
+                  <Settings size={24} />
+                </div>
+                Core Identity
               </h3>
               {!isEditing ? (
                 <button
@@ -286,27 +309,54 @@ export function ProfilePage() {
               </div>
             </div>
 
-            <div className="mt-12 pt-10 border-t border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-slate-100 rounded-2xl text-slate-400">
-                  <ShieldCheck size={18} />
+            <div className="mt-12 pt-10 border-t border-slate-100">
+              <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-2">
+                <ShieldCheck size={14} className="text-emerald-500" /> Security Credentials
+              </h4>
+              <form onSubmit={handlePasswordChange} className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                <div className="flex flex-col">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Current Password</label>
+                    <input
+                      type="password"
+                      value={passwordData.oldPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+                      required
+                      className="w-full px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-brand-accent/10 focus:border-brand-accent transition-all text-sm font-black text-slate-800"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">New Password</label>
+                    <div className="flex gap-4">
+                      <input
+                        type="password"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                        required
+                        minLength={8}
+                        className="flex-1 px-6 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-brand-accent/10 focus:border-brand-accent transition-all text-sm font-black text-slate-800"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                   <p className="text-[11px] font-black uppercase tracking-widest text-slate-900">Security Keys</p>
-                   <p className="text-xs font-medium text-slate-500">MFA & Hardware authentication</p>
-                </div>
-              </div>
-              <button className="text-[10px] font-black uppercase tracking-widest text-brand-accent hover:underline decoration-2 underline-offset-4">Manage Access</button>
+                <button
+                  type="submit"
+                  disabled={isChangingPassword || !passwordData.oldPassword || !passwordData.newPassword}
+                  className="px-6 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg shadow-slate-900/20 disabled:opacity-50 disabled:hover:scale-100"
+                >
+                  {isChangingPassword ? 'Updating...' : 'Update Password'}
+                </button>
+              </form>
             </div>
           </div>
 
           <div className="glass-card p-10">
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-2xl font-black tracking-tight flex items-center gap-4">
-                 <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl">
-                    <Cpu size={24} />
-                 </div>
-                 Active Sessions
+                <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl">
+                  <Cpu size={24} />
+                </div>
+                Active Sessions
               </h3>
               {sessions.length > 0 && (
                 <button
@@ -317,7 +367,7 @@ export function ProfilePage() {
                 </button>
               )}
             </div>
-            
+
             <div className="space-y-4">
               {sessions.length === 0 ? (
                 <p className="text-sm text-slate-500 font-medium">No active sessions found.</p>
@@ -349,7 +399,7 @@ export function ProfilePage() {
           <div className="glass-card p-10 bg-red-50 border-red-100">
             <h3 className="text-2xl font-black tracking-tight text-red-600 flex items-center gap-4 mb-6">
               <div className="p-3 bg-red-100 text-red-600 rounded-xl">
-                 <ShieldAlert size={24} />
+                <ShieldAlert size={24} />
               </div>
               System Purge
             </h3>
