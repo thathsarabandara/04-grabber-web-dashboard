@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import api from '../../api/axiosInstance';
+import { useRobotWebSocket } from '../../hooks/useRobotWebSocket';
 import { 
   Maximize2, 
   Minimize2, 
@@ -17,17 +18,56 @@ import {
 } from 'lucide-react';
 
 export function ControlPanelPage() {
-  const [joints, setJoints] = useState({ j1: 0, j2: 45, j3: 90, j4: 0 });
+  const [joints, setJoints] = useState({ j1: 90, j2: 90, j3: 50, j4: 90 });
   const [speed, setSpeed] = useState(50);
   const [isRecording, setIsRecording] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [robots, setRobots] = useState([]);
   const [selectedRobotId, setSelectedRobotId] = useState('');
+  const [safetyError, setSafetyError] = useState(null);
   const contentRef = useRef(null);
   const joystick1Ref = useRef(null);
   const joystick1ContainerRef = useRef(null);
   const joystick2Ref = useRef(null);
   const joystick2ContainerRef = useRef(null);
+
+  useRobotWebSocket((message) => {
+    console.log('[WS Update] ControlPanelPage:', message);
+    setRobots((prevRobots) => 
+      prevRobots.map((robot) => {
+        if (robot.robot_id === message.robotId) {
+          return {
+            ...robot,
+            status: message.status,
+            firmware_version: message.firmware || robot.firmware_version
+          };
+        }
+        return robot;
+      })
+    );
+  });
+
+  const handleEmergencyStop = async () => {
+    if (!selectedRobotId) return;
+    setSafetyError(null);
+    try {
+      await api.post(`/robots/${selectedRobotId}/commands/emergency-stop`);
+    } catch (err) {
+      console.error('Failed to trigger Emergency Stop', err);
+      setSafetyError(err.response?.data?.message || 'Failed to trigger Emergency Stop');
+    }
+  };
+
+  const handleClearEstop = async () => {
+    if (!selectedRobotId) return;
+    setSafetyError(null);
+    try {
+      await api.post(`/robots/${selectedRobotId}/commands/clear-emergency-stop`);
+    } catch (err) {
+      console.error('Failed to clear Emergency Stop', err);
+      setSafetyError(err.response?.data?.message || 'Failed to clear Emergency Stop');
+    }
+  };
 
   useEffect(() => {
     const fetchRobots = async () => {
@@ -55,33 +95,190 @@ export function ControlPanelPage() {
 
   const selectedRobot = robots.find(r => r.id === selectedRobotId);
 
-  const handleJoystickMove = (e, containerRef, stickRef) => {
-    if (!containerRef.current || !stickRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
+  const joy1Deflection = useRef({ x: 0, y: 0 });
+  const joy2Deflection = useRef({ x: 0, y: 0 });
+  const joystickInterval = useRef(null);
+
+  const jointsRef = useRef(joints);
+  useEffect(() => {
+    jointsRef.current = joints;
+  }, [joints]);
+
+  const speedRef = useRef(speed);
+  useEffect(() => {
+    speedRef.current = speed;
+  }, [speed]);
+
+  const startJoystickLoop = () => {
+    if (joystickInterval.current) return;
+    
+    joystickInterval.current = setInterval(() => {
+      const j1D = joy1Deflection.current;
+      const j2D = joy2Deflection.current;
+      const currentSpeed = speedRef.current;
+      
+      let changed = false;
+      const newJoints = { ...jointsRef.current };
+      
+      // Speed factor determines max degrees changed per 150ms
+      const maxChange = (currentSpeed / 100) * 10; // up to 10 degrees at 100% speed
+
+      // Joystick 1: X -> j1 (Base), Y -> j2 (Shoulder)
+      if (Math.abs(j1D.x) > 0.15) {
+        newJoints.j1 = Math.max(1, Math.min(180, Math.round(newJoints.j1 + j1D.x * maxChange)));
+        changed = true;
+      }
+      if (Math.abs(j1D.y) > 0.15) {
+        newJoints.j2 = Math.max(40, Math.min(120, Math.round(newJoints.j2 + j1D.y * maxChange)));
+        changed = true;
+      }
+
+      // Joystick 2: X -> j3 (Elbow), Y -> j4 (Gripper)
+      if (Math.abs(j2D.x) > 0.15) {
+        newJoints.j3 = Math.max(20, Math.min(80, Math.round(newJoints.j3 + j2D.x * maxChange)));
+        changed = true;
+      }
+      if (Math.abs(j2D.y) > 0.15) {
+        newJoints.j4 = Math.max(70, Math.min(100, Math.round(newJoints.j4 + j2D.y * maxChange)));
+        changed = true;
+      }
+
+      if (changed) {
+        setJoints(newJoints);
+        // Send updates to the robot
+        if (Math.abs(j1D.x) > 0.15) sendJointCommand('j1', newJoints.j1);
+        if (Math.abs(j1D.y) > 0.15) sendJointCommand('j2', newJoints.j2);
+        if (Math.abs(j2D.x) > 0.15) sendJointCommand('j3', newJoints.j3);
+        if (Math.abs(j2D.y) > 0.15) sendJointCommand('j4', newJoints.j4);
+      }
+    }, 150);
+  };
+
+  const checkStopJoystickLoop = () => {
+    if (
+      joy1Deflection.current.x === 0 &&
+      joy1Deflection.current.y === 0 &&
+      joy2Deflection.current.x === 0 &&
+      joy2Deflection.current.y === 0
+    ) {
+      if (joystickInterval.current) {
+        clearInterval(joystickInterval.current);
+        joystickInterval.current = null;
+      }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (joystickInterval.current) {
+        clearInterval(joystickInterval.current);
+      }
+    };
+  }, []);
+
+  const handleJoystick1Move = (e) => {
+    if (!joystick1ContainerRef.current || !joystick1Ref.current) return;
+    const rect = joystick1ContainerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    const x = e.clientX - centerX;
-    const y = e.clientY - centerY;
+    let x = e.clientX - centerX;
+    let y = e.clientY - centerY;
     const distance = Math.sqrt(x * x + y * y);
     const maxDistance = rect.width / 2 - 30;
 
     if (distance > maxDistance) {
       const angle = Math.atan2(y, x);
-      const newX = Math.cos(angle) * maxDistance;
-      const newY = Math.sin(angle) * maxDistance;
-      gsap.to(stickRef.current, { x: newX, y: newY, duration: 0.1 });
-    } else {
-      gsap.to(stickRef.current, { x, y, duration: 0.1 });
+      x = Math.cos(angle) * maxDistance;
+      y = Math.sin(angle) * maxDistance;
     }
+    gsap.to(joystick1Ref.current, { x, y, duration: 0.1 });
+
+    joy1Deflection.current = {
+      x: x / maxDistance,
+      y: -y / maxDistance
+    };
+
+    startJoystickLoop();
   };
 
-  const resetJoystick = (stickRef) => {
-    gsap.to(stickRef.current, { x: 0, y: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' });
+  const resetJoystick1 = () => {
+    gsap.to(joystick1Ref.current, { x: 0, y: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' });
+    joy1Deflection.current = { x: 0, y: 0 };
+    checkStopJoystickLoop();
+  };
+
+  const handleJoystick2Move = (e) => {
+    if (!joystick2ContainerRef.current || !joystick2Ref.current) return;
+    const rect = joystick2ContainerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    let x = e.clientX - centerX;
+    let y = e.clientY - centerY;
+    const distance = Math.sqrt(x * x + y * y);
+    const maxDistance = rect.width / 2 - 30;
+
+    if (distance > maxDistance) {
+      const angle = Math.atan2(y, x);
+      x = Math.cos(angle) * maxDistance;
+      y = Math.sin(angle) * maxDistance;
+    }
+    gsap.to(joystick2Ref.current, { x, y, duration: 0.1 });
+
+    joy2Deflection.current = {
+      x: x / maxDistance,
+      y: -y / maxDistance
+    };
+
+    startJoystickLoop();
+  };
+
+  const resetJoystick2 = () => {
+    gsap.to(joystick2Ref.current, { x: 0, y: 0, duration: 0.3, ease: 'elastic.out(1, 0.5)' });
+    joy2Deflection.current = { x: 0, y: 0 };
+    checkStopJoystickLoop();
   };
 
   const handleJointChange = (joint, value) => {
     setJoints((prev) => ({ ...prev, [joint]: value }));
+  };
+
+  const sendJointCommand = async (joint, angle) => {
+    if (!selectedRobotId) return;
+    try {
+      await api.post(`/robots/${selectedRobotId}/commands/move-joint`, {
+        joint,
+        angle: parseFloat(angle)
+      });
+    } catch (err) {
+      console.error(`Failed to move joint ${joint}`, err);
+    }
+  };
+
+  const handleCommitSync = async () => {
+    if (!selectedRobotId) return;
+    try {
+      // Loop over all joints and send a command for each
+      for (const [joint, angle] of Object.entries(joints)) {
+        await api.post(`/robots/${selectedRobotId}/commands/move-joint`, {
+          joint,
+          angle: parseFloat(angle)
+        });
+      }
+    } catch (err) {
+      console.error('Failed to commit sync pose', err);
+    }
+  };
+
+  const handleResetPose = async () => {
+    if (!selectedRobotId) return;
+    try {
+      await api.post(`/robots/${selectedRobotId}/commands/home`);
+      setJoints({ j1: 90, j2: 90, j3: 50, j4: 90 });
+    } catch (err) {
+      console.error('Failed to reset pose', err);
+    }
   };
 
   return (
@@ -107,7 +304,7 @@ export function ControlPanelPage() {
               ) : (
                 robots.map(robot => (
                   <option key={robot.id} value={robot.id}>
-                    {robot.name || `Robot ${robot.robot_id}`}
+                    {robot.name || `Robot ${robot.robot_id}`} ({robot.status || 'OFFLINE'})
                   </option>
                 ))
               )}
@@ -150,8 +347,15 @@ export function ControlPanelPage() {
                 <div className="flex justify-between items-start">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                       <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
-                       <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Signal Stable</p>
+                       <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${
+                         selectedRobot?.status?.toLowerCase() === 'emergency_stop' ? 'bg-red-500' :
+                         selectedRobot?.status?.toLowerCase() === 'error_state' || selectedRobot?.status?.toLowerCase() === 'error' ? 'bg-orange-500' :
+                         selectedRobot?.status?.toLowerCase() === 'moving' ? 'bg-blue-500' :
+                         selectedRobot?.status?.toLowerCase() === 'idle' || selectedRobot?.status?.toLowerCase() === 'executing' ? 'bg-emerald-500' : 'bg-slate-500'
+                       }`}></span>
+                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                         Status: {selectedRobot?.status || 'OFFLINE'}
+                       </p>
                     </div>
                     <p className="text-white/60 font-mono text-[10px] bg-white/5 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">60 FPS | 12ms PING | 4.2 MB/S</p>
                   </div>
@@ -208,8 +412,8 @@ export function ControlPanelPage() {
                 <div
                   ref={joystick1ContainerRef}
                   className="relative w-48 h-48 rounded-full bg-slate-100/50 border-[4px] border-white shadow-xl flex items-center justify-center cursor-crosshair group"
-                  onMouseMove={(e) => handleJoystickMove(e, joystick1ContainerRef, joystick1Ref)}
-                  onMouseLeave={() => resetJoystick(joystick1Ref)}
+                  onMouseMove={handleJoystick1Move}
+                  onMouseLeave={resetJoystick1}
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-20">
                     <div className="w-[1px] h-[80%] bg-slate-400"></div>
@@ -229,11 +433,11 @@ export function ControlPanelPage() {
               <div className="flex justify-center gap-6 mt-6">
                  <div className="text-center">
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Base</p>
-                    <p className="text-sm font-black text-slate-800">42.5°</p>
+                    <p className="text-sm font-black text-slate-800">{joints.j1}°</p>
                  </div>
                  <div className="text-center">
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Shoulder</p>
-                    <p className="text-sm font-black text-slate-800">-12.8°</p>
+                    <p className="text-sm font-black text-slate-800">{joints.j2}°</p>
                  </div>
               </div>
             </div>
@@ -255,8 +459,8 @@ export function ControlPanelPage() {
                 <div
                   ref={joystick2ContainerRef}
                   className="relative w-48 h-48 rounded-full bg-slate-100/50 border-[4px] border-white shadow-xl flex items-center justify-center cursor-crosshair group"
-                  onMouseMove={(e) => handleJoystickMove(e, joystick2ContainerRef, joystick2Ref)}
-                  onMouseLeave={() => resetJoystick(joystick2Ref)}
+                  onMouseMove={handleJoystick2Move}
+                  onMouseLeave={resetJoystick2}
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-20">
                     <div className="w-[1px] h-[80%] bg-slate-400"></div>
@@ -275,12 +479,12 @@ export function ControlPanelPage() {
               </div>
               <div className="flex justify-center gap-6 mt-6">
                  <div className="text-center">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Grip</p>
-                    <p className="text-sm font-black text-slate-800">12.0mm</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Elbow</p>
+                    <p className="text-sm font-black text-slate-800">{joints.j3}°</p>
                  </div>
                  <div className="text-center">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Elbow</p>
-                    <p className="text-sm font-black text-slate-800">45.0°</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Grip</p>
+                    <p className="text-sm font-black text-slate-800">{joints.j4}°</p>
                  </div>
               </div>
             </div>
@@ -322,10 +526,10 @@ export function ControlPanelPage() {
             {/* Individual Joints */}
             <div className="space-y-10">
               {[
-                { id: 'j1', label: 'Base Rotation', min: -180, max: 180, color: '#3b82f6' },
-                { id: 'j2', label: 'Shoulder Pitch', min: -45, max: 135, color: '#8b5cf6' },
-                { id: 'j3', label: 'Elbow Position', min: 0, max: 180, color: '#10b981' },
-                { id: 'j4', label: 'Wrist Rotation', min: -180, max: 180, color: '#f59e0b' },
+                { id: 'j1', label: 'Base Rotation', min: 1, max: 180, color: '#3b82f6' },
+                { id: 'j2', label: 'Shoulder Pitch', min: 40, max: 120, color: '#8b5cf6' },
+                { id: 'j3', label: 'Elbow Position', min: 20, max: 80, color: '#10b981' },
+                { id: 'j4', label: 'Gripper Claw', min: 70, max: 100, color: '#f59e0b' },
               ].map((joint) => (
                 <div key={joint.id} className="group">
                   <div className="flex justify-between items-center mb-4">
@@ -343,6 +547,8 @@ export function ControlPanelPage() {
                       max={joint.max}
                       value={joints[joint.id]}
                       onChange={(e) => handleJointChange(joint.id, parseInt(e.target.value))}
+                      onMouseUp={(e) => sendJointCommand(joint.id, parseInt(e.target.value))}
+                      onTouchEnd={(e) => sendJointCommand(joint.id, parseInt(e.target.value))}
                       className="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-brand-secondary transition-all"
                       style={{ accentColor: joint.color }}
                     />
@@ -353,11 +559,43 @@ export function ControlPanelPage() {
 
             {/* Action Matrix */}
             <div className="grid grid-cols-2 gap-4 mt-12 pt-10 border-t border-slate-100">
-              <button className="flex items-center justify-center gap-3 px-6 py-4 bg-brand-accent text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-xl shadow-brand-accent/20">
+              <button 
+                onClick={handleCommitSync}
+                className="flex items-center justify-center gap-3 px-6 py-4 bg-brand-accent text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-xl shadow-brand-accent/20"
+              >
                 <Zap size={14} /> Commit Sync
               </button>
-              <button className="flex items-center justify-center gap-3 px-6 py-4 bg-white border border-slate-200 text-slate-600 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all hover:bg-slate-50 active:scale-95 shadow-sm">
+              <button 
+                onClick={handleResetPose}
+                className="flex items-center justify-center gap-3 px-6 py-4 bg-white border border-slate-200 text-slate-600 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all hover:bg-slate-50 active:scale-95 shadow-sm"
+              >
                 <RefreshCcw size={14} /> Reset Pose
+              </button>
+            </div>
+          </div>
+
+          {/* Safety Controls Card */}
+          <div className="glass-card p-10 border-red-200/50 bg-red-50/10">
+            <h3 className="text-2xl font-black tracking-tight text-red-900 mb-6 flex items-center gap-3">
+              Safety Controls
+            </h3>
+            {safetyError && (
+              <div className="mb-4 p-3 bg-red-100 text-red-700 text-xs font-bold rounded-xl">
+                {safetyError}
+              </div>
+            )}
+            <div className="space-y-4">
+              <button
+                onClick={handleEmergencyStop}
+                className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-600/20"
+              >
+                🚨 Emergency Stop
+              </button>
+              <button
+                onClick={handleClearEstop}
+                className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm"
+              >
+                🔓 Clear E-Stop / Reset
               </button>
             </div>
           </div>

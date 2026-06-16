@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import api from '../../api/axiosInstance';
+import { useRobotWebSocket } from '../../hooks/useRobotWebSocket';
 import { 
   Plus, 
   Trash2, 
@@ -33,6 +34,35 @@ export function DeviceRegistrationPage() {
   const [deviceToRemove, setDeviceToRemove] = useState(null);
 
   const contentRef = useRef(null);
+
+  useRobotWebSocket((message) => {
+    console.log('[WS Update] DeviceRegistrationPage:', message);
+    setDevices((prevDevices) => 
+      prevDevices.map((device) => {
+        if (device.robot_id === message.robotId) {
+          return {
+            ...device,
+            status: message.status,
+            firmware_version: message.firmware || device.firmware_version,
+            last_seen: new Date().toISOString()
+          };
+        }
+        return device;
+      })
+    );
+    
+    setSelectedDevice((prevSelected) => {
+      if (prevSelected && prevSelected.robot_id === message.robotId) {
+        return {
+          ...prevSelected,
+          status: message.status,
+          firmware_version: message.firmware || prevSelected.firmware_version,
+          last_seen: new Date().toISOString()
+        };
+      }
+      return prevSelected;
+    });
+  });
 
   const fetchDevices = async () => {
     try {
