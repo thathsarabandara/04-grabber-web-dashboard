@@ -25,6 +25,10 @@ export function ControlPanelPage() {
   const [robots, setRobots] = useState([]);
   const [selectedRobotId, setSelectedRobotId] = useState('');
   const [safetyError, setSafetyError] = useState(null);
+  const [cameraUrl, setCameraUrl] = useState(() => {
+    return localStorage.getItem('grabber_camera_url') || 'http://192.168.1.105:81/stream';
+  });
+  const [streamError, setStreamError] = useState(false);
   const contentRef = useRef(null);
   const joystick1Ref = useRef(null);
   const joystick1ContainerRef = useRef(null);
@@ -330,17 +334,28 @@ export function ControlPanelPage() {
           {/* Camera Feed Container */}
           <div className={`glass-card overflow-hidden group relative shadow-2xl ${isFullScreen ? 'fixed inset-0 z-[100] !rounded-none' : 'h-[500px]'}`}>
             <div className="absolute inset-0 bg-slate-950 flex items-center justify-center">
-              {/* Simulated Camera Feed */}
-              <div className="flex flex-col items-center justify-center text-slate-700 gap-6">
-                <div className="relative">
-                  <Video size={80} className="opacity-20 animate-pulse" />
-                  <div className="absolute inset-0 bg-brand-accent/30 blur-[60px] rounded-full"></div>
+              {/* Actual Camera Feed */}
+              {cameraUrl && !streamError && (
+                <img 
+                  src={cameraUrl} 
+                  alt="ESP32-CAM Stream" 
+                  className="w-full h-full object-cover"
+                  onError={() => setStreamError(true)}
+                />
+              )}
+              {/* Simulated Camera Feed / Fallback */}
+              {(!cameraUrl || streamError) && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-700 gap-6 bg-slate-950 z-0">
+                  <div className="relative">
+                    <Video size={80} className="opacity-20 animate-pulse" />
+                    <div className="absolute inset-0 bg-brand-accent/30 blur-[60px] rounded-full"></div>
+                  </div>
+                  <div className="space-y-2 text-center">
+                    <p className="font-black tracking-[0.3em] uppercase text-[10px] text-white/40">Feed: {selectedRobot ? (selectedRobot.name || selectedRobot.robot_id) : 'NO_SIGNAL'}</p>
+                    <p className="text-[10px] font-bold text-red-500 uppercase">{streamError ? 'Stream Connection Failed' : 'No Stream URL Provided'}</p>
+                  </div>
                 </div>
-                <div className="space-y-2 text-center">
-                   <p className="font-black tracking-[0.3em] uppercase text-[10px] text-white/40">Feed: {selectedRobot ? (selectedRobot.name || selectedRobot.robot_id) : 'NO_SIGNAL'}</p>
-                   <p className="text-[10px] font-bold text-brand-accent uppercase">Handshake Protocol Active</p>
-                </div>
-              </div>
+              )}
 
               {/* HUD Elements */}
               <div className="absolute inset-0 pointer-events-none p-8 flex flex-col justify-between">
@@ -359,7 +374,19 @@ export function ControlPanelPage() {
                     </div>
                     <p className="text-white/60 font-mono text-[10px] bg-white/5 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10">60 FPS | 12ms PING | 4.2 MB/S</p>
                   </div>
-                  <div className="flex gap-3 pointer-events-auto">
+                  <div className="flex gap-3 pointer-events-auto items-center">
+                    <input 
+                      type="text" 
+                      placeholder="Stream URL..."
+                      value={cameraUrl}
+                      onChange={(e) => { 
+                        const val = e.target.value;
+                        setCameraUrl(val); 
+                        setStreamError(false); 
+                        localStorage.setItem('grabber_camera_url', val);
+                      }}
+                      className="w-48 lg:w-64 bg-black/40 hover:bg-black/60 focus:bg-black/80 backdrop-blur-md rounded-xl text-white text-xs px-4 py-3 border border-white/10 outline-none transition-all placeholder:text-white/30 shadow-lg"
+                    />
                     <button
                       onClick={() => setIsFullScreen(!isFullScreen)}
                       className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-white transition-all border border-white/10"
