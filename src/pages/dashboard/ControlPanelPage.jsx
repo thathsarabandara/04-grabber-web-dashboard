@@ -14,7 +14,13 @@ import {
   Gamepad2,
   Sliders,
   Terminal,
-  ChevronDown
+  ChevronDown,
+  Bookmark,
+  Play,
+  Pause,
+  Trash2,
+  Save,
+  Clock
 } from 'lucide-react';
 
 export function ControlPanelPage() {
@@ -34,6 +40,15 @@ export function ControlPanelPage() {
   const joystick1ContainerRef = useRef(null);
   const joystick2Ref = useRef(null);
   const joystick2ContainerRef = useRef(null);
+
+  const [poses, setPoses] = useState([]);
+  const [newPoseName, setNewPoseName] = useState('');
+  const [sequences, setSequences] = useState([]);
+  const [newSequenceName, setNewSequenceName] = useState('');
+  const [recordedFrames, setRecordedFrames] = useState([]);
+  const [isSequencePlaying, setIsSequencePlaying] = useState(false);
+  const sequenceInterval = useRef(null);
+  const recordingInterval = useRef(null);
 
   useRobotWebSocket((message) => {
     console.log('[WS Update] ControlPanelPage:', message);
@@ -112,6 +127,155 @@ export function ControlPanelPage() {
   useEffect(() => {
     speedRef.current = speed;
   }, [speed]);
+
+  const fetchPoses = async () => {
+    if (!selectedRobotId) return;
+    try {
+      const res = await api.get(`/robots/${selectedRobotId}/poses`);
+      setPoses(res.data);
+    } catch (err) {
+      console.error('Failed to fetch poses', err);
+    }
+  };
+
+  const fetchSequences = async () => {
+    if (!selectedRobotId) return;
+    try {
+      const res = await api.get(`/robots/${selectedRobotId}/sequences`);
+      setSequences(res.data);
+    } catch (err) {
+      console.error('Failed to fetch sequences', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPoses();
+    fetchSequences();
+  }, [selectedRobotId]);
+
+  const handleSavePose = async () => {
+    if (!selectedRobotId || !newPoseName) return;
+    try {
+      await api.post(`/robots/${selectedRobotId}/poses`, {
+        name: newPoseName,
+        pose: joints
+      });
+      setNewPoseName('');
+      fetchPoses();
+    } catch (err) {
+      console.error('Failed to save pose', err);
+    }
+  };
+
+  const handleExecutePose = async (poseId) => {
+    if (!selectedRobotId) return;
+    try {
+      await api.post(`/robots/${selectedRobotId}/poses/${poseId}/execute`);
+      const executedPose = poses.find((p) => p.id === poseId);
+      if (executedPose && executedPose.pose) {
+        setJoints(executedPose.pose);
+      }
+    } catch (err) {
+      console.error('Failed to execute pose', err);
+    }
+  };
+
+  const handleDeletePose = async (poseId) => {
+    if (!selectedRobotId) return;
+    try {
+      await api.delete(`/robots/${selectedRobotId}/poses/${poseId}`);
+      fetchPoses();
+    } catch (err) {
+      console.error('Failed to delete pose', err);
+    }
+  };
+
+  const handleSaveSequence = async () => {
+    if (!selectedRobotId || !newSequenceName || recordedFrames.length === 0) return;
+    try {
+      await api.post(`/robots/${selectedRobotId}/sequences`, {
+        name: newSequenceName,
+        frames: recordedFrames
+      });
+      setNewSequenceName('');
+      fetchSequences();
+    } catch (err) {
+      console.error('Failed to save sequence', err);
+    }
+  };
+
+  const handleDeleteSequence = async (sequenceId) => {
+    if (!selectedRobotId) return;
+    try {
+      await api.delete(`/robots/${selectedRobotId}/sequences/${sequenceId}`);
+      fetchSequences();
+    } catch (err) {
+      console.error('Failed to delete sequence', err);
+    }
+  };
+
+  const handleLoadSequence = (sequence) => {
+    handleStopSequence();
+    setRecordedFrames(sequence.frames);
+  };
+
+  useEffect(() => {
+    if (isRecording) {
+      recordingInterval.current = setInterval(() => {
+        setRecordedFrames((prev) => {
+          const lastFrame = prev[prev.length - 1];
+          if (!lastFrame || 
+              lastFrame.j1 !== jointsRef.current.j1 || 
+              lastFrame.j2 !== jointsRef.current.j2 || 
+              lastFrame.j3 !== jointsRef.current.j3 || 
+              lastFrame.j4 !== jointsRef.current.j4) {
+            return [...prev, { ...jointsRef.current, time: Date.now() }];
+          }
+          return prev;
+        });
+      }, 200);
+    } else {
+      if (recordingInterval.current) clearInterval(recordingInterval.current);
+    }
+    return () => {
+      if (recordingInterval.current) clearInterval(recordingInterval.current);
+    };
+  }, [isRecording]);
+
+  const handlePlaySequence = () => {
+    if (recordedFrames.length === 0 || isSequencePlaying) return;
+    setIsSequencePlaying(true);
+    let index = 0;
+    
+    sequenceInterval.current = setInterval(() => {
+      if (index >= recordedFrames.length) {
+        clearInterval(sequenceInterval.current);
+        setIsSequencePlaying(false);
+        return;
+      }
+      
+      const frame = recordedFrames[index];
+      setJoints({ j1: frame.j1, j2: frame.j2, j3: frame.j3, j4: frame.j4 });
+      
+      api.post(`/robots/${selectedRobotId}/commands/move-joint`, { joint: 'j1', angle: parseFloat(frame.j1) });
+      api.post(`/robots/${selectedRobotId}/commands/move-joint`, { joint: 'j2', angle: parseFloat(frame.j2) });
+      api.post(`/robots/${selectedRobotId}/commands/move-joint`, { joint: 'j3', angle: parseFloat(frame.j3) });
+      api.post(`/robots/${selectedRobotId}/commands/move-joint`, { joint: 'j4', angle: parseFloat(frame.j4) });
+      
+      index++;
+    }, 200);
+  };
+
+  const handleStopSequence = () => {
+    if (sequenceInterval.current) clearInterval(sequenceInterval.current);
+    setIsSequencePlaying(false);
+  };
+
+  const handleClearSequence = () => {
+    setRecordedFrames([]);
+    handleStopSequence();
+    setIsRecording(false);
+  };
 
   const startJoystickLoop = () => {
     if (joystickInterval.current) return;
@@ -513,6 +677,183 @@ export function ControlPanelPage() {
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Grip</p>
                     <p className="text-sm font-black text-slate-800">{joints.j4}°</p>
                  </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Automation & Sequences */}
+          <div data-animate className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Poses Library */}
+            <div className="glass-card p-6">
+              <h3 className="text-lg font-black tracking-tight flex items-center gap-3 mb-6">
+                <div className="p-2 bg-indigo-500/10 text-indigo-500 rounded-lg">
+                   <Bookmark size={18} />
+                </div>
+                Poses Library
+              </h3>
+              
+              <div className="flex gap-2 mb-6">
+                <input 
+                  type="text" 
+                  placeholder="New Pose Name..." 
+                  value={newPoseName}
+                  onChange={(e) => setNewPoseName(e.target.value)}
+                  className="flex-1 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-inner"
+                />
+                <button 
+                  onClick={handleSavePose}
+                  disabled={!newPoseName}
+                  className="p-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-all shadow-md active:scale-95"
+                >
+                  <Save size={18} />
+                </button>
+              </div>
+
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                {poses.length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-4 font-bold bg-slate-50/50 rounded-xl border border-dashed border-slate-200">No saved poses</p>
+                ) : (
+                  poses.map(pose => (
+                    <div key={pose.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 shadow-sm group hover:border-indigo-200 hover:shadow-md transition-all">
+                      <span className="text-xs font-black text-slate-700 truncate pr-4 uppercase tracking-wider">{pose.name}</span>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => handleExecutePose(pose.id)}
+                          className="p-1.5 bg-white text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg shadow-sm border border-slate-200 transition-all active:scale-95"
+                          title="Execute Pose"
+                        >
+                          <Play size={14} className="fill-current" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeletePose(pose.id)}
+                          className="p-1.5 bg-white text-red-400 hover:bg-red-50 hover:text-red-500 rounded-lg shadow-sm border border-slate-200 transition-all active:scale-95"
+                          title="Delete Pose"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Motion Sequencer */}
+            <div className="glass-card p-6">
+              <h3 className="text-lg font-black tracking-tight flex items-center gap-3 mb-6">
+                <div className="p-2 bg-amber-500/10 text-amber-500 rounded-lg">
+                   <Clock size={18} />
+                </div>
+                Motion Sequencer
+              </h3>
+
+              <div className="flex flex-col items-center justify-center h-full pb-4">
+                <div className="flex gap-3 mb-6 w-full justify-center">
+                  <button
+                    onClick={() => setIsRecording(!isRecording)}
+                    disabled={isSequencePlaying}
+                    className={`flex items-center justify-center gap-2 flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isRecording 
+                        ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 animate-pulse' 
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm'
+                    }`}
+                  >
+                    {isRecording ? <Square size={14} className="fill-current" /> : <Circle size={14} className="text-red-500 fill-current" />}
+                    {isRecording ? 'Stop Rec' : 'Record'}
+                  </button>
+                  
+                  <button
+                    onClick={isSequencePlaying ? handleStopSequence : handlePlaySequence}
+                    disabled={recordedFrames.length === 0 || isRecording}
+                    className={`flex items-center justify-center gap-2 flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      isSequencePlaying
+                        ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/30'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm'
+                    }`}
+                  >
+                    {isSequencePlaying ? <Pause size={14} className="fill-current" /> : <Play size={14} className="text-emerald-500 fill-current" />}
+                    {isSequencePlaying ? 'Pause' : 'Play'}
+                  </button>
+
+                  <button
+                    onClick={handleClearSequence}
+                    disabled={recordedFrames.length === 0 || isSequencePlaying}
+                    className="px-4 bg-white border border-slate-200 hover:bg-red-50 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    title="Clear Sequence"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden shadow-inner p-0.5">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-200 relative overflow-hidden ${isSequencePlaying ? 'bg-amber-500' : isRecording ? 'bg-red-500' : 'bg-brand-accent'}`}
+                    style={{ width: `${Math.min(100, (recordedFrames.length / 50) * 100)}%` }}
+                  >
+                    {(isRecording || isSequencePlaying) && (
+                       <div className="absolute inset-0 bg-white/20 -skew-x-12 translate-x-[-100%] animate-[shimmer_1s_infinite]"></div>
+                    )}
+                  </div>
+                </div>
+                <div className="w-full flex justify-between mt-3 mb-6">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md">Frames: {recordedFrames.length}</span>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md flex items-center gap-1">
+                     <span className={`w-1.5 h-1.5 rounded-full ${isSequencePlaying ? 'bg-amber-500 animate-pulse' : isRecording ? 'bg-red-500 animate-pulse' : 'bg-slate-300'}`}></span>
+                     {isSequencePlaying ? 'Playing' : isRecording ? 'Recording' : 'Ready'}
+                  </span>
+                </div>
+
+                <div className="w-full border-t border-slate-100 pt-6">
+                  <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 mb-4">Saved Sequences</h4>
+                  
+                  <div className="flex gap-2 mb-4">
+                    <input 
+                      type="text" 
+                      placeholder="New Sequence Name..." 
+                      value={newSequenceName}
+                      onChange={(e) => setNewSequenceName(e.target.value)}
+                      className="flex-1 bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-inner"
+                    />
+                    <button 
+                      onClick={handleSaveSequence}
+                      disabled={!newSequenceName || recordedFrames.length === 0}
+                      className="p-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-all shadow-md active:scale-95"
+                    >
+                      <Save size={18} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                    {sequences.length === 0 ? (
+                      <p className="text-xs text-slate-400 text-center py-4 font-bold bg-slate-50/50 rounded-xl border border-dashed border-slate-200">No saved sequences</p>
+                    ) : (
+                      sequences.map(seq => (
+                        <div key={seq.id} className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 shadow-sm group hover:border-amber-200 hover:shadow-md transition-all">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-slate-700 truncate pr-4 uppercase tracking-wider">{seq.name}</span>
+                            <span className="text-[9px] text-slate-400 font-bold">{seq.frames?.length || 0} Frames</span>
+                          </div>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={() => handleLoadSequence(seq)}
+                              className="p-1.5 bg-white text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg shadow-sm border border-slate-200 transition-all active:scale-95"
+                              title="Load Sequence"
+                            >
+                              <Bookmark size={14} className="fill-current" />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteSequence(seq.id)}
+                              className="p-1.5 bg-white text-red-400 hover:bg-red-50 hover:text-red-500 rounded-lg shadow-sm border border-slate-200 transition-all active:scale-95"
+                              title="Delete Sequence"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
