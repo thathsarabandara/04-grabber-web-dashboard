@@ -14,7 +14,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
-  Bot
+  Bot,
+  Image as ImageIcon,
+  Brain
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
@@ -58,6 +60,8 @@ export function DashboardLayout() {
     { icon: Video, label: 'Telemetry & Camera', path: '/dashboard/telemetry' },
     { icon: Map, label: 'Path Drawing', path: '/dashboard/path-draw' },
     { icon: Calendar, label: 'Task Scheduler', path: '/dashboard/tasks' },
+    { icon: ImageIcon, label: 'Media Gallery', path: '/dashboard/media' },
+    { icon: Brain, label: 'AI Training', path: '/dashboard/ai-training' },
     { icon: User, label: 'Profile', path: '/dashboard/profile' },
   ];
 
