@@ -23,10 +23,22 @@ import {
   Clock,
   Camera
 } from 'lucide-react';
+import { PopupDialog } from '../../components/ui/PopupDialog';
+import { NoRobotsLock } from '../../components/ui/NoRobotsLock';
 
 export function ControlPanelPage() {
-  const [joints, setJoints] = useState({ j1: 90, j2: 90, j3: 50, j4: 90 });
+  const [joints, setJoints] = useState({ j1: 90, j2: 100, j3: 60, j4: 90 });
   const [speed, setSpeed] = useState(50);
+  const [dialog, setDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null,
+    onCancel: null,
+    confirmText: 'OK',
+    cancelText: 'Cancel'
+  });
   const [isRecording, setIsRecording] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [liveTelemetry, setLiveTelemetry] = useState({ fps: 60, ping: 12 });
@@ -41,6 +53,7 @@ export function ControlPanelPage() {
     return () => clearInterval(interval);
   }, []);
   const [robots, setRobots] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedRobotId, setSelectedRobotId] = useState('');
   const [safetyError, setSafetyError] = useState(null);
   const [cameraUrl, setCameraUrl] = useState(() => {
@@ -50,9 +63,9 @@ export function ControlPanelPage() {
 
   const getStreamUrl = (url) => {
     if (!url) return '';
-    if (url.includes('/telemetry/media/stream')) return url;
+    if (url.includes('/telemetry/media/stream') || url.includes('/ai/stream')) return url;
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
-    return `${apiBase}/telemetry/media/stream?camera_url=${encodeURIComponent(url)}`;
+    return `${apiBase}/ai/stream?camera_url=${encodeURIComponent(url)}`;
   };
 
   const contentRef = useRef(null);
@@ -132,6 +145,8 @@ export function ControlPanelPage() {
         }
       } catch (err) {
         console.error('Failed to fetch robots', err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchRobots();
@@ -376,13 +391,13 @@ export function ControlPanelPage() {
         changed = true;
       }
       if (Math.abs(j1D.y) > 0.15) {
-        newJoints.j2 = Math.max(40, Math.min(120, Math.round(newJoints.j2 + j1D.y * maxChange)));
+        newJoints.j2 = Math.max(50, Math.min(150, Math.round(newJoints.j2 + j1D.y * maxChange)));
         changed = true;
       }
 
       // Joystick 2: X -> j3 (Elbow), Y -> j4 (Gripper)
       if (Math.abs(j2D.x) > 0.15) {
-        newJoints.j3 = Math.max(20, Math.min(80, Math.round(newJoints.j3 + j2D.x * maxChange)));
+        newJoints.j3 = Math.max(20, Math.min(100, Math.round(newJoints.j3 + j2D.x * maxChange)));
         changed = true;
       }
       if (Math.abs(j2D.y) > 0.15) {
@@ -522,7 +537,7 @@ export function ControlPanelPage() {
     if (!selectedRobotId) return;
     try {
       await api.post(`/robots/${selectedRobotId}/commands/home`);
-      setJoints({ j1: 90, j2: 90, j3: 50, j4: 90 });
+      setJoints({ j1: 90, j2: 100, j3: 60, j4: 90 });
     } catch (err) {
       console.error('Failed to reset pose', err);
     }
@@ -537,23 +552,71 @@ export function ControlPanelPage() {
   }, []);
 
   const handleTakeSnapshot = async () => {
-    if (!cameraUrl) return;
+    if (!imageRef.current) {
+      setDialog({
+        isOpen: true,
+        title: 'Capture Failed',
+        message: 'Camera stream is not active. Unable to take snapshot.',
+        type: 'warning',
+        confirmText: 'OK',
+        onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+      });
+      return;
+    }
     setIsCapturingSnapshot(true);
     try {
+      const img = imageRef.current;
+      
+      // Create canvas locally to grab current frame from imageRef
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 640;
+      canvas.height = img.naturalHeight || 480;
+      
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Could not initialize canvas context');
+      
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      // Get the image blob
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob((b) => {
+          if (b) resolve(b);
+          else reject(new Error('Failed to encode image frame'));
+        }, 'image/jpeg', 0.90);
+      });
+      
+      const file = new File([blob], `snapshot-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      
       const formData = new FormData();
-      formData.append('camera_url', cameraUrl);
+      formData.append('file', file);
       formData.append('title', `Snapshot ${new Date().toLocaleString()}`);
       
-      const res = await api.post('/telemetry/media/capture', formData, {
+      const res = await api.post('/telemetry/media/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        timeout: 10000
       });
-      console.log('Snapshot captured successfully:', res.data);
-      alert('Snapshot captured successfully and saved to gallery!');
+      
+      console.log('Snapshot captured and uploaded successfully:', res.data);
+      setDialog({
+        isOpen: true,
+        title: 'Snapshot Saved',
+        message: 'Snapshot captured successfully and saved to gallery!',
+        type: 'success',
+        confirmText: 'OK',
+        onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+      });
     } catch (err) {
       console.error('Failed to capture snapshot', err);
-      alert(`Failed to capture snapshot: ${err.response?.data?.detail || err.message}`);
+      setDialog({
+        isOpen: true,
+        title: 'Snapshot Failed',
+        message: `Failed to capture snapshot: ${err.message}`,
+        type: 'warning',
+        confirmText: 'OK',
+        onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+      });
     } finally {
       setIsCapturingSnapshot(false);
     }
@@ -620,7 +683,14 @@ export function ControlPanelPage() {
 
     } catch (err) {
       console.error('Failed to start camera recording:', err);
-      alert(`Recording error: ${err.message}`);
+      setDialog({
+        isOpen: true,
+        title: 'Recording Error',
+        message: `Recording error: ${err.message}`,
+        type: 'warning',
+        confirmText: 'OK',
+        onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+      });
       setIsRecordingCameraVideo(false);
       if (animationFrameIdRef.current) {
         cancelAnimationFrame(animationFrameIdRef.current);
@@ -659,10 +729,24 @@ export function ControlPanelPage() {
         }
       });
       console.log('Video uploaded successfully:', res.data);
-      alert('Video recording saved to gallery successfully!');
+      setDialog({
+        isOpen: true,
+        title: 'Video Saved',
+        message: 'Video recording saved to gallery successfully!',
+        type: 'success',
+        confirmText: 'OK',
+        onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+      });
     } catch (err) {
       console.error('Failed to upload video recording:', err);
-      alert(`Failed to save video: ${err.response?.data?.detail || err.message}`);
+      setDialog({
+        isOpen: true,
+        title: 'Error',
+        message: `Failed to save video: ${err.response?.data?.detail || err.message}`,
+        type: 'warning',
+        confirmText: 'OK',
+        onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+      });
     }
   };
 
@@ -979,8 +1063,8 @@ export function ControlPanelPage() {
           <div className="space-y-6">
             {[
               { id: 'j1', label: 'Base Rotation', min: 1, max: 180, color: '#3b82f6' },
-              { id: 'j2', label: 'Shoulder Pitch', min: 40, max: 120, color: '#8b5cf6' },
-              { id: 'j3', label: 'Elbow Position', min: 20, max: 80, color: '#10b981' },
+              { id: 'j2', label: 'Shoulder Pitch', min: 50, max: 150, color: '#8b5cf6' },
+              { id: 'j3', label: 'Elbow Position', min: 20, max: 100, color: '#10b981' },
               { id: 'j4', label: 'Gripper Claw', min: 70, max: 100, color: '#f59e0b' },
             ].map((joint) => (
               <div key={joint.id} className="group">
@@ -1062,8 +1146,8 @@ export function ControlPanelPage() {
         <div className="space-y-10">
           {[
             { id: 'j1', label: 'Base Rotation', min: 1, max: 180, color: '#3b82f6' },
-            { id: 'j2', label: 'Shoulder Pitch', min: 40, max: 120, color: '#8b5cf6' },
-            { id: 'j3', label: 'Elbow Position', min: 20, max: 80, color: '#10b981' },
+            { id: 'j2', label: 'Shoulder Pitch', min: 50, max: 150, color: '#8b5cf6' },
+            { id: 'j3', label: 'Elbow Position', min: 20, max: 100, color: '#10b981' },
             { id: 'j4', label: 'Gripper Claw', min: 70, max: 100, color: '#f59e0b' },
           ].map((joint) => (
             <div key={joint.id} className="group">
@@ -1465,6 +1549,23 @@ export function ControlPanelPage() {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-brand-accent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (robots.length === 0) {
+    return (
+      <NoRobotsLock 
+        title="Control Panel Restricted"
+        message="You must pair a physical Grabber robotic device with your profile to access the manual control interface, live stream feeds, and safety triggers."
+      />
+    );
+  }
+
   const coords = calculateCoordinates();
 
   return (
@@ -1680,6 +1781,17 @@ export function ControlPanelPage() {
           </div>
         )}
       </div>
+      
+      <PopupDialog 
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        type={dialog.type}
+        onConfirm={dialog.onConfirm}
+        onCancel={dialog.onCancel}
+        confirmText={dialog.confirmText}
+        cancelText={dialog.cancelText}
+      />
     </div>
   );
 }
