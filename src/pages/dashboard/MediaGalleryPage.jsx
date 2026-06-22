@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Image as ImageIcon, Video, Download, Trash2, Maximize2, PlayCircle, Search, Filter, X } from 'lucide-react';
 import gsap from 'gsap';
 import api from '../../api/axiosInstance';
+import { PopupDialog } from '../../components/ui/PopupDialog';
+import { NoRobotsLock } from '../../components/ui/NoRobotsLock';
 
 export function MediaGalleryPage() {
   const [filter, setFilter] = useState('all'); // 'all', 'image', 'video'
@@ -10,7 +12,19 @@ export function MediaGalleryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeMedia, setActiveMedia] = useState(null);
+  const [robots, setRobots] = useState([]);
+  const [isLoadingRobots, setIsLoadingRobots] = useState(true);
   const galleryRef = useRef(null);
+  const [dialog, setDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null,
+    onCancel: null,
+    confirmText: 'OK',
+    cancelText: 'Cancel'
+  });
 
   const getMediaUrl = (path) => {
     const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1').replace('/api/v1', '');
@@ -32,23 +46,51 @@ export function MediaGalleryPage() {
   };
 
   useEffect(() => {
+    const fetchRobots = async () => {
+      try {
+        const response = await api.get('/robots');
+        setRobots(response.data);
+      } catch (err) {
+        console.error('Failed to fetch robots', err);
+      } finally {
+        setIsLoadingRobots(false);
+      }
+    };
+    fetchRobots();
     fetchMedia();
   }, []);
 
-  const handleDelete = async (id, e) => {
+  const handleDelete = (id, e) => {
     if (e) e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this media item?")) {
-      try {
-        await api.delete(`/telemetry/media/${id}`);
-        setMediaItems((prev) => prev.filter((item) => item.id !== id));
-        if (activeMedia && activeMedia.id === id) {
-          setActiveMedia(null);
+    setDialog({
+      isOpen: true,
+      title: 'Delete Media Item',
+      message: 'Are you sure you want to delete this media item?',
+      type: 'confirm',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onCancel: () => setDialog(prev => ({ ...prev, isOpen: false })),
+      onConfirm: async () => {
+        setDialog(prev => ({ ...prev, isOpen: false }));
+        try {
+          await api.delete(`/telemetry/media/${id}`);
+          setMediaItems((prev) => prev.filter((item) => item.id !== id));
+          if (activeMedia && activeMedia.id === id) {
+            setActiveMedia(null);
+          }
+        } catch (err) {
+          console.error('Failed to delete media item:', err);
+          setDialog({
+            isOpen: true,
+            title: 'Error',
+            message: 'Failed to delete media item.',
+            type: 'warning',
+            confirmText: 'OK',
+            onConfirm: () => setDialog(prev => ({ ...prev, isOpen: false }))
+          });
         }
-      } catch (err) {
-        console.error('Failed to delete media item:', err);
-        alert('Failed to delete media item.');
       }
-    }
+    });
   };
 
   const handleDownload = (item, e) => {
@@ -78,6 +120,23 @@ export function MediaGalleryPage() {
       );
     }
   }, [filter, loading, mediaItems]);
+
+  if (isLoadingRobots) {
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-brand-accent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (robots.length === 0) {
+    return (
+      <NoRobotsLock 
+        title="Media Gallery Restricted"
+        message="You must pair a physical Grabber robotic device with your profile to access snapshots, live recordings, and computer vision capture logs."
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -291,6 +350,17 @@ export function MediaGalleryPage() {
           </div>
         </div>
       )}
+      
+      <PopupDialog 
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        type={dialog.type}
+        onConfirm={dialog.onConfirm}
+        onCancel={dialog.onCancel}
+        confirmText={dialog.confirmText}
+        cancelText={dialog.cancelText}
+      />
     </div>
   );
 }
