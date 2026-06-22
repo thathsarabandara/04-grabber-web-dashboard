@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
+import api from '../../api/axiosInstance';
+import { NoRobotsLock } from '../../components/ui/NoRobotsLock';
 import { 
   Trash2, 
   Play, 
@@ -15,7 +17,23 @@ export function PathDrawPage() {
   const canvasRef = useRef(null);
   const [points, setPoints] = useState([]);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [robots, setRobots] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const contentRef = useRef(null);
+
+  useEffect(() => {
+    const fetchRobots = async () => {
+      try {
+        const response = await api.get('/robots');
+        setRobots(response.data);
+      } catch (err) {
+        console.error('Failed to fetch robots', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchRobots();
+  }, []);
 
   useEffect(() => {
     const elements = contentRef.current?.querySelectorAll('[data-animate]');
@@ -106,6 +124,23 @@ export function PathDrawPage() {
     setPoints([]);
     drawGrid();
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-brand-accent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (robots.length === 0) {
+    return (
+      <NoRobotsLock 
+        title="Path Planning Restricted"
+        message="You must pair a physical Grabber robotic device with your profile to define kinematic spatial waypoints and trace motion trajectories."
+      />
+    );
+  }
 
   return (
     <div ref={contentRef} className="space-y-10 pb-10">

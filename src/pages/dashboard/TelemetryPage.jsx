@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import api from '../../api/axiosInstance';
 import { useTelemetryWebSocket } from '../../hooks/useTelemetryWebSocket';
+import { NoRobotsLock } from '../../components/ui/NoRobotsLock';
 import { 
   Radio, 
   Zap, 
@@ -30,6 +31,7 @@ export function TelemetryPage() {
   const contentRef = useRef(null);
   
   const [robots, setRobots] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedRobotId, setSelectedRobotId] = useState('');
   const [telemetryHistory, setTelemetryHistory] = useState([]);
   const [currentTelemetry, setCurrentTelemetry] = useState(null);
@@ -52,7 +54,6 @@ export function TelemetryPage() {
     }
   }, []);
 
-  // Fetch robots
   useEffect(() => {
     const fetchRobots = async () => {
       try {
@@ -63,6 +64,8 @@ export function TelemetryPage() {
         }
       } catch (err) {
         console.error('Failed to fetch robots', err);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchRobots();
@@ -180,6 +183,23 @@ export function TelemetryPage() {
   const motorStress = currentTelemetry?.peak_current > 0 
     ? (currentTelemetry.current / currentTelemetry.peak_current) * 100 
     : 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-brand-accent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (robots.length === 0) {
+    return (
+      <NoRobotsLock 
+        title="Telemetry Data Restricted"
+        message="You must pair a physical Grabber robotic device with your profile to view live battery, voltage, current, and joint kinematic telemetry logs."
+      />
+    );
+  }
 
   return (
     <div ref={contentRef} className="space-y-12 pb-20">
