@@ -123,7 +123,7 @@ export function BlogPostPage() {
           <img
             src={post.coverImage}
             alt={post.title}
-            className="w-full h-[300px] md:h-[450px] object-cover rounded-[3rem] border-8 border-white shadow-2xl"
+            className="w-full max-h-[600px] h-auto object-contain rounded-[3rem] border-8 border-white shadow-2xl bg-white"
           />
         </div>
 
@@ -188,11 +188,11 @@ export function BlogPostPage() {
               }
               if (block.type === 'image') {
                 return (
-                  <figure key={idx} className="my-16">
+                  <figure key={idx} className="my-16 flex flex-col items-center">
                     <img
                       src={block.url}
                       alt={block.caption}
-                      className="w-full h-[250px] sm:h-[500px] object-cover rounded-[2.5rem] border-8 border-white shadow-2xl"
+                      className="w-full h-auto max-h-[800px] object-contain rounded-[2.5rem] border-8 border-white shadow-2xl bg-white"
                     />
                     {block.caption && <figcaption className="text-center text-xs font-bold text-slate-400 mt-6 uppercase tracking-widest">{block.caption}</figcaption>}
                   </figure>
