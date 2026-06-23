@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Sliders
 } from 'lucide-react';
+import api from '../../../api/axiosInstance';
 
 export function VoiceCommandsTab({
   voiceCommands,
@@ -37,47 +38,101 @@ export function VoiceCommandsTab({
   setActiveTab
 }) {
 
-  const triggerVoiceListenSim = () => {
+  React.useEffect(() => {
+    const fetchVoiceSettings = async () => {
+      try {
+        const res = await api.get('/ai/voice/settings');
+        setVoiceCommands(res.data.commands);
+        setWakeWord(res.data.wake_word);
+        setVoiceLanguage(res.data.language);
+      } catch (err) {
+        console.error("Failed to load voice settings", err);
+      }
+    };
+    fetchVoiceSettings();
+  }, []);
+
+  const triggerVoiceListenSim = async () => {
     if (isListening) return;
     setIsListening(true);
     setVoiceTranscript("Simulating voice input stream...");
     setVoiceIntent("None");
     setVoiceAction("None");
     
-    // Step 1: Speak phrase
-    setTimeout(() => {
-      setVoiceTranscript(`"${wakeWord}, grab the purple cube and place it inside the red bin"`);
-    }, 1500);
+    try {
+      const res = await api.post('/ai/voice/test');
+      
+      // Step 1: Speak phrase
+      setTimeout(() => {
+        setVoiceTranscript(`"${wakeWord}, ${res.data.phrase.toLowerCase()}"`);
+      }, 1500);
 
-    // Step 2: Extract Intent
-    setTimeout(() => {
-      setVoiceIntent("PICK_AND_PLACE_OBJECT");
-    }, 3000);
+      // Step 2: Extract Intent
+      setTimeout(() => {
+        setVoiceIntent(res.data.intent);
+      }, 3000);
 
-    // Step 3: Trigger Action
-    setTimeout(() => {
-      setVoiceAction("Executing: Grab(Cube) -> Drop(Bin)");
+      // Step 3: Trigger Action
+      setTimeout(() => {
+        setVoiceAction(res.data.action);
+        setIsListening(false);
+      }, 4500);
+    } catch (err) {
+      console.error("Failed to trigger voice simulator", err);
       setIsListening(false);
-    }, 4500);
+      setVoiceTranscript("Simulation failed. Make sure voice command mappings are configured.");
+    }
   };
 
-  const removeVoiceCommand = (id) => {
-    setVoiceCommands(voiceCommands.filter(cmd => cmd.id !== id));
+  const removeVoiceCommand = async (id) => {
+    try {
+      const res = await api.delete(`/ai/voice/commands/${id}`);
+      setVoiceCommands(res.data.commands);
+    } catch (err) {
+      console.error("Failed to remove voice command rule", err);
+    }
   };
 
-  const addVoiceCommand = (e) => {
+  const addVoiceCommand = async (e) => {
     e.preventDefault();
     if (!newVoicePhrase.trim() || newVoiceAction === 'UNASSIGNED') return;
-    const newCmd = {
-      id: Date.now(),
-      phrase: newVoicePhrase,
-      action: newVoiceAction,
-      target: newVoiceTarget || 'any'
-    };
-    setVoiceCommands([...voiceCommands, newCmd]);
-    setNewVoicePhrase('');
-    setNewVoiceAction('UNASSIGNED');
-    setNewVoiceTarget('');
+    try {
+      const res = await api.post('/ai/voice/commands', {
+        phrase: newVoicePhrase,
+        action: newVoiceAction,
+        target: newVoiceTarget || 'any'
+      });
+      setVoiceCommands(res.data.commands);
+      setNewVoicePhrase('');
+      setNewVoiceAction('UNASSIGNED');
+      setNewVoiceTarget('');
+    } catch (err) {
+      console.error("Failed to add voice command rule", err);
+    }
+  };
+
+  const updateWakeWord = async (word) => {
+    try {
+      const res = await api.post('/ai/voice/settings', {
+        wake_word: word,
+        language: voiceLanguage
+      });
+      setWakeWord(res.data.wake_word);
+    } catch (err) {
+      console.error("Failed to update wake word", err);
+    }
+  };
+
+  const updateLanguage = async (lang) => {
+    try {
+      const res = await api.post('/ai/voice/settings', {
+        wake_word: wakeWord,
+        language: lang
+      });
+      setVoiceLanguage(res.data.language);
+    } catch (err) {
+      console.error("Failed to update language setting", err);
+    }
   };
 
   return (
@@ -252,7 +307,7 @@ export function VoiceCommandsTab({
                     type="radio"
                     name="wakewordRadio"
                     checked={wakeWord === word}
-                    onChange={() => setWakeWord(word)}
+                    onChange={() => updateWakeWord(word)}
                     className="text-amber-600 focus:ring-amber-500"
                   />
                   <span className="text-xs font-bold text-slate-700">"{word}"</span>
@@ -275,7 +330,7 @@ export function VoiceCommandsTab({
                     type="radio"
                     name="voiceLangRadio"
                     checked={voiceLanguage === lang}
-                    onChange={() => setVoiceLanguage(lang)}
+                    onChange={() => updateLanguage(lang)}
                     className="text-amber-600 focus:ring-amber-500"
                   />
                   <span className="text-xs font-bold text-slate-700">{lang}</span>

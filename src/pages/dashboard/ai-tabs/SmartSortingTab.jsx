@@ -9,6 +9,7 @@ import {
   Trash2,
   Plus
 } from 'lucide-react';
+import api from '../../../api/axiosInstance';
 
 export function SmartSortingTab({
   sortingCategories,
@@ -30,49 +31,102 @@ export function SmartSortingTab({
   setActiveTab
 }) {
 
-  const triggerSortingSim = () => {
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/ai/sorting/settings');
+        setSortingCategories(res.data.categories);
+        setSortingRules(res.data.rules);
+      } catch (err) {
+        console.error("Failed to fetch sorting settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const addSortingCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    try {
+      const res = await api.post('/ai/sorting/categories', {
+        name: newCategoryName
+      });
+      setSortingCategories(res.data.categories);
+      setNewCategoryName('');
+    } catch (err) {
+      console.error("Failed to add sorting category", err);
+    }
+  };
+
+  const removeSortingCategory = async (cat) => {
+    try {
+      const res = await api.delete(`/ai/sorting/categories/${encodeURIComponent(cat)}`);
+      setSortingCategories(res.data.categories);
+      setSortingRules(res.data.rules);
+    } catch (err) {
+      console.error("Failed to remove sorting category", err);
+    }
+  };
+
+  const addSortingRule = async (e) => {
+    e.preventDefault();
+    if (!newRuleObject.trim() || !newRuleBin.trim()) return;
+    try {
+      const res = await api.post('/ai/sorting/rules', {
+        object_name: newRuleObject,
+        bin_name: newRuleBin
+      });
+      setSortingRules(res.data.rules);
+      setNewRuleObject('');
+      setNewRuleBin('');
+    } catch (err) {
+      console.error("Failed to add sorting rule", err);
+    }
+  };
+
+  const removeSortingRule = async (id) => {
+    try {
+      const res = await api.delete(`/ai/sorting/rules/${id}`);
+      setSortingRules(res.data.rules);
+    } catch (err) {
+      console.error("Failed to remove sorting rule", err);
+    }
+  };
+
+  const acceptRecommendationRule = async () => {
+    try {
+      const res = await api.post('/ai/sorting/rules', {
+        object_name: 'Mouse',
+        bin_name: 'Electronics Bin'
+      });
+      setSortingRules(res.data.rules);
+      setShowSortingSuggestion(false);
+    } catch (err) {
+      console.error("Failed to accept recommendation rule", err);
+    }
+  };
+
+  const triggerSortingSim = async () => {
     if (sortingSimulating) return;
     setSortingSimulating(true);
     setSortingSimResult("Loading camera frame snapshot...");
     
-    setTimeout(() => {
-      setSortingSimResult("Running YOLOv8 class identification...");
-    }, 1200);
+    try {
+      const res = await api.post('/ai/sorting/simulate');
+      
+      setTimeout(() => {
+        setSortingSimResult("Running YOLOv8 class identification...");
+      }, 1200);
 
-    setTimeout(() => {
-      setSortingSimResult("Detected Class: 'Bottle' (Plastic). Executing rule: IF Bottle THEN route to 'Plastic Bin'.");
+      setTimeout(() => {
+        setSortingSimResult(res.data.result_message);
+        setSortingSimulating(false);
+      }, 2800);
+    } catch (err) {
+      console.error("Failed to run sorting simulation", err);
       setSortingSimulating(false);
-    }, 2800);
-  };
-
-  const removeSortingCategory = (cat) => {
-    setSortingCategories(sortingCategories.filter(c => c !== cat));
-  };
-
-  const addSortingCategory = (e) => {
-    e.preventDefault();
-    if (!newCategoryName.trim()) return;
-    if (!sortingCategories.includes(newCategoryName)) {
-      setSortingCategories([...sortingCategories, newCategoryName]);
+      setSortingSimResult("Simulation failed. Make sure sorting rules are configured.");
     }
-    setNewCategoryName('');
-  };
-
-  const removeSortingRule = (id) => {
-    setSortingRules(sortingRules.filter(r => r.id !== id));
-  };
-
-  const addSortingRule = (e) => {
-    e.preventDefault();
-    if (!newRuleObject.trim() || !newRuleBin.trim()) return;
-    const newRule = {
-      id: Date.now(),
-      object: newRuleObject,
-      bin: newRuleBin
-    };
-    setSortingRules([...sortingRules, newRule]);
-    setNewRuleObject('');
-    setNewRuleBin('');
   };
 
   return (
@@ -103,10 +157,7 @@ export function SmartSortingTab({
             </p>
             <div className="flex gap-2.5 mt-3">
               <button 
-                onClick={() => {
-                  setSortingRules([...sortingRules, { id: Date.now(), object: 'Mouse', bin: 'Electronics Bin' }]);
-                  setShowSortingSuggestion(false);
-                }}
+                onClick={acceptRecommendationRule}
                 className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-black shadow"
               >
                 Accept Rule

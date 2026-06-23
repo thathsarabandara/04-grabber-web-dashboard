@@ -7,6 +7,7 @@ import {
   PlayCircle,
   Settings
 } from 'lucide-react';
+import api from '../../../api/axiosInstance';
 
 export function PickPlaceTab({
   selectionRule,
@@ -23,8 +24,85 @@ export function PickPlaceTab({
   setActiveTab
 }) {
 
-  // 2D Pick Animation Simulation
-  const handlePickSimulation = () => {
+  const [simulationLogs, setSimulationLogs] = React.useState([
+    "[10:15:32] CMD: PICK target_id=Cube_01",
+    "[10:15:33] IK_SOLVER: theta=[45, 90, -12, 0]",
+    "[10:15:35] GRIP: pressure_sensor=Medium",
+    "[10:15:36] CMD: DROP target_id=Bin_Red",
+    "[10:15:38] IK_SOLVER: theta=[0, 30, 10, 0]",
+    "[10:15:39] Pick success. Cycle time 7.2s"
+  ]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/ai/pick-place/settings');
+        setSelectionRule(res.data.settings.selection_rule);
+        setPickStrategy(res.data.settings.pick_strategy);
+        setWorkspaceCoords({
+          pickMinX: res.data.settings.pick_min_x,
+          pickMaxX: res.data.settings.pick_max_x,
+          dropMinX: res.data.settings.drop_min_x,
+          dropMaxX: res.data.settings.drop_max_x
+        });
+        setGraspForces(res.data.grasp_forces);
+      } catch (err) {
+        console.error("Failed to load pick & place settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const saveSettings = async (updates) => {
+    try {
+      const payload = {
+        selection_rule: updates.selectionRule !== undefined ? updates.selectionRule : selectionRule,
+        pick_strategy: updates.pickStrategy !== undefined ? updates.pickStrategy : pickStrategy,
+        pick_min_x: updates.workspaceCoords !== undefined ? updates.workspaceCoords.pickMinX : workspaceCoords.pickMinX,
+        pick_max_x: updates.workspaceCoords !== undefined ? updates.workspaceCoords.pickMaxX : workspaceCoords.pickMaxX,
+        drop_min_x: updates.workspaceCoords !== undefined ? updates.workspaceCoords.dropMinX : workspaceCoords.dropMinX,
+        drop_max_x: updates.workspaceCoords !== undefined ? updates.workspaceCoords.dropMaxX : workspaceCoords.dropMaxX,
+        grasp_forces: updates.graspForces !== undefined ? updates.graspForces : graspForces
+      };
+      const res = await api.post('/ai/pick-place/settings', payload);
+      setSelectionRule(res.data.settings.selection_rule);
+      setPickStrategy(res.data.settings.pick_strategy);
+      setWorkspaceCoords({
+        pickMinX: res.data.settings.pick_min_x,
+        pickMaxX: res.data.settings.pick_max_x,
+        dropMinX: res.data.settings.drop_min_x,
+        dropMaxX: res.data.settings.drop_max_x
+      });
+      setGraspForces(res.data.grasp_forces);
+    } catch (err) {
+      console.error("Failed to save pick & place settings", err);
+    }
+  };
+
+  const updateSelectionRule = (rule) => {
+    setSelectionRule(rule);
+    saveSettings({ selectionRule: rule });
+  };
+
+  const updatePickStrategy = (strat) => {
+    setPickStrategy(strat);
+    saveSettings({ pickStrategy: strat });
+  };
+
+  const updateWorkspaceCoord = (coord, val) => {
+    const updated = { ...workspaceCoords, [coord]: val };
+    setWorkspaceCoords(updated);
+    saveSettings({ workspaceCoords: updated });
+  };
+
+  const updateGraspForce = (obj, force) => {
+    const updated = { ...graspForces, [obj]: force };
+    setGraspForces(updated);
+    saveSettings({ graspForces: updated });
+  };
+
+  // 2D Pick Animation Simulation using kinematic coordinate steps from backend
+  const handlePickSimulation = async () => {
     if (isSimulatingPick) return;
     setIsSimulatingPick(true);
     const canvas = pickCanvasRef.current;
@@ -32,104 +110,82 @@ export function PickPlaceTab({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let frame = 0;
-    const animate = () => {
-      if (frame > 120) {
-        setIsSimulatingPick(false);
-        return;
-      }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    try {
+      const res = await api.post('/ai/pick-place/simulate');
+      const pathCoords = res.data.path_coords;
+      setSimulationLogs(res.data.log_entries);
+
+      let frame = 0;
+      const animate = () => {
+        if (frame >= pathCoords.length) {
+          setIsSimulatingPick(false);
+          return;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw workbench floor
+        ctx.fillStyle = '#f1f5f9';
+        ctx.fillRect(0, 200, canvas.width, 20);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.strokeRect(0, 200, canvas.width, 1);
+
+        // Draw Pick zone
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+        ctx.fillRect(60, 140, 80, 60);
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(60, 140, 80, 60);
+
+        // Draw Drop zone
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';
+        ctx.fillRect(320, 140, 80, 60);
+        ctx.strokeStyle = '#10b981';
+        ctx.strokeRect(320, 140, 80, 60);
+
+        const currentFrameData = pathCoords[frame];
+        const armX = currentFrameData.armX;
+        const armY = currentFrameData.armY;
+        const objX = currentFrameData.objX;
+        const objY = currentFrameData.objY;
+
+        // Draw object
+        if (frame < 100) {
+          ctx.fillStyle = '#8b5cf6';
+          ctx.fillRect(objX - 10, objY - 10, 20, 20);
+        } else {
+          ctx.fillStyle = '#8b5cf6';
+          ctx.fillRect(330, 180, 20, 20);
+        }
+
+        // Draw robot arm links
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(220, 30); // base shoulder
+        ctx.lineTo(armX, armY - 30); // elbow joint
+        ctx.lineTo(armX, armY); // gripper endpoint
+        ctx.stroke();
+
+        // Draw gripper claws
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(armX - 10, armY);
+        ctx.lineTo(armX - 5, armY + 8);
+        ctx.moveTo(armX + 10, armY);
+        ctx.lineTo(armX + 5, armY + 8);
+        ctx.stroke();
+
+        frame++;
+        requestAnimationFrame(animate);
+      };
       
-      // Draw workbench floor
-      ctx.fillStyle = '#f1f5f9';
-      ctx.fillRect(0, 200, canvas.width, 20);
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.strokeRect(0, 200, canvas.width, 1);
-
-      // Draw Pick zone
-      ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
-      ctx.fillRect(60, 140, 80, 60);
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(60, 140, 80, 60);
-
-      // Draw Drop zone
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';
-      ctx.fillRect(320, 140, 80, 60);
-      ctx.strokeStyle = '#10b981';
-      ctx.strokeRect(320, 140, 80, 60);
-
-      // Draw targeted object (e.g. Cube)
-      let objX = 100;
-      let objY = 190;
-      let armX = 100;
-      let armY = 100;
-
-      if (frame < 30) {
-        // Descending arm
-        armY = 100 + (frame / 30) * 80;
-      } else if (frame < 50) {
-        // Grabbing object
-        armY = 180;
-        ctx.fillStyle = '#8b5cf6';
-        ctx.fillRect(90, 180, 20, 20);
-      } else if (frame < 80) {
-        // Lifting object
-        const diff = (frame - 50) / 30;
-        armY = 180 - diff * 100;
-        objY = 190 - diff * 100;
-        armX = 100 + diff * 240;
-        objX = 100 + diff * 240;
-      } else if (frame < 100) {
-        // Dropping object
-        const diff = (frame - 80) / 20;
-        armY = 80 + diff * 100;
-        objY = 90 + diff * 100;
-        armX = 340;
-        objX = 340;
-      } else {
-        // Arm returns home
-        const diff = (frame - 100) / 20;
-        armY = 180 - diff * 80;
-        armX = 340 - diff * 240;
-        objX = 340;
-        objY = 190;
-      }
-
-      // Draw object
-      if (frame < 100) {
-        ctx.fillStyle = '#8b5cf6';
-        ctx.fillRect(objX - 10, objY - 10, 20, 20);
-      } else {
-        ctx.fillStyle = '#8b5cf6';
-        ctx.fillRect(330, 180, 20, 20);
-      }
-
-      // Draw robot arm links
-      ctx.strokeStyle = '#334155';
-      ctx.lineWidth = 6;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(220, 30); // base shoulder
-      ctx.lineTo(armX, armY - 30); // elbow joint
-      ctx.lineTo(armX, armY); // gripper endpoint
-      ctx.stroke();
-
-      // Draw gripper claws
-      ctx.strokeStyle = '#ef4444';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(armX - 10, armY);
-      ctx.lineTo(armX - 5, armY + 8);
-      ctx.moveTo(armX + 10, armY);
-      ctx.lineTo(armX + 5, armY + 8);
-      ctx.stroke();
-
-      frame++;
       requestAnimationFrame(animate);
-    };
-    
-    requestAnimationFrame(animate);
+    } catch (err) {
+      console.error("Failed to run pick & place animation simulation", err);
+      setIsSimulatingPick(false);
+    }
   };
 
   // Draw initial state of simulation
@@ -205,7 +261,7 @@ export function PickPlaceTab({
                     type="radio"
                     name="selRule"
                     checked={selectionRule === rule}
-                    onChange={() => setSelectionRule(rule)}
+                    onChange={() => updateSelectionRule(rule)}
                     className="text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-xs font-bold text-slate-700">{rule}</span>
@@ -229,7 +285,7 @@ export function PickPlaceTab({
                     {['Low', 'Medium', 'High'].map(opt => (
                       <button
                         key={opt}
-                        onClick={() => setGraspForces({ ...graspForces, [obj]: opt })}
+                        onClick={() => updateGraspForce(obj, opt)}
                         className={`px-3 py-1 rounded-lg text-[10px] font-black border transition ${force === opt ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-100'}`}
                       >
                         {opt}
@@ -286,7 +342,7 @@ export function PickPlaceTab({
                     <input 
                       type="number"
                       value={val}
-                      onChange={(e) => setWorkspaceCoords({ ...workspaceCoords, [coord]: parseFloat(e.target.value) || 0 })}
+                      onChange={(e) => updateWorkspaceCoord(coord, parseFloat(e.target.value) || 0)}
                       className="w-20 px-2 py-1 bg-white border border-slate-200 rounded text-right text-xs font-bold outline-none focus:ring-1 focus:ring-blue-500"
                     />
                     <span className="text-xs text-slate-400 font-bold">mm</span>
@@ -310,7 +366,7 @@ export function PickPlaceTab({
                     type="radio"
                     name="approachStrategyRadio"
                     checked={pickStrategy === str}
-                    onChange={() => setPickStrategy(str)}
+                    onChange={() => updatePickStrategy(str)}
                     className="text-blue-600 focus:ring-blue-500"
                   />
                   <span className="text-xs font-bold text-slate-700">{str}</span>
@@ -326,12 +382,11 @@ export function PickPlaceTab({
             </h3>
             
             <div className="font-mono text-[10px] text-slate-500 space-y-2 max-h-[140px] overflow-y-auto pr-1">
-              <div>[10:15:32] CMD: PICK target_id=Cube_01</div>
-              <div>[10:15:33] IK_SOLVER: theta=[45, 90, -12, 0]</div>
-              <div>[10:15:35] GRIP: pressure_sensor=Medium</div>
-              <div>[10:15:36] CMD: DROP target_id=Bin_Red</div>
-              <div>[10:15:38] IK_SOLVER: theta=[0, 30, 10, 0]</div>
-              <div className="text-emerald-600 font-bold">[10:15:39] Pick success. Cycle time 7.2s</div>
+              {simulationLogs.map((log, idx) => (
+                <div key={idx} className={log.includes('success') ? "text-emerald-600 font-bold" : ""}>
+                  {log}
+                </div>
+              ))}
             </div>
           </div>
 

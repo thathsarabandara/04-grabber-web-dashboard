@@ -8,6 +8,7 @@ import {
   Lock,
   PlayCircle
 } from 'lucide-react';
+import api from '../../../api/axiosInstance';
 
 export function GestureControlTab({
   gestureMappings,
@@ -25,43 +26,90 @@ export function GestureControlTab({
   setActiveTab
 }) {
 
-  const startGestureTraining = () => {
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/ai/gesture/settings');
+        setGestureMappings(res.data.mappings);
+        setGestureControlEnabled(res.data.control_enabled);
+        setGestureSafetyEnabled(res.data.safety_enabled);
+      } catch (err) {
+        console.error("Failed to fetch gesture settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const startGestureTraining = async () => {
     setGestureWizardStep(1);
+    try {
+      await api.post('/ai/gesture/train');
+    } catch (err) {
+      console.error("Failed to trigger gesture training wizard", err);
+    }
     setTimeout(() => setGestureWizardStep(2), 1500);
     setTimeout(() => setGestureWizardStep(3), 3000);
     setTimeout(() => setGestureWizardStep(4), 4500);
   };
 
-  const handleGestureControlToggle = (enable) => {
-    if (enable && gestureSafetyEnabled) {
-      setPendingGestureAction(true);
-      setGestureSafetyConfirmOpen(true);
-    } else {
-      setGestureControlEnabled(enable);
+  const handleGestureControlToggle = async (enable) => {
+    try {
+      const res = await api.post('/ai/gesture/settings', {
+        control_enabled: enable,
+        safety_enabled: gestureSafetyEnabled
+      });
+      setGestureControlEnabled(res.data.control_enabled);
+    } catch (err) {
+      console.error("Failed to update gesture control setting", err);
     }
   };
 
-  const removeGesture = (gesture) => {
-    const updated = { ...gestureMappings };
-    delete updated[gesture];
-    setGestureMappings(updated);
+  const handleSafetyToggle = async (enable) => {
+    try {
+      const res = await api.post('/ai/gesture/settings', {
+        control_enabled: gestureControlEnabled,
+        safety_enabled: enable
+      });
+      setGestureSafetyEnabled(res.data.safety_enabled);
+    } catch (err) {
+      console.error("Failed to update gesture safety setting", err);
+    }
   };
 
-  const addCustomGesture = (e) => {
+  const removeGesture = async (gesture) => {
+    try {
+      const res = await api.delete(`/ai/gesture/mappings/${encodeURIComponent(gesture)}`);
+      setGestureMappings(res.data.mappings);
+    } catch (err) {
+      console.error("Failed to delete gesture mapping", err);
+    }
+  };
+
+  const addCustomGesture = async (e) => {
     e.preventDefault();
     if (!newGestureName.trim()) return;
-    setGestureMappings({
-      ...gestureMappings,
-      [newGestureName]: 'UNASSIGNED'
-    });
-    setNewGestureName('');
+    try {
+      const res = await api.post('/ai/gesture/mappings', {
+        gesture_name: newGestureName,
+        action: 'UNASSIGNED'
+      });
+      setGestureMappings(res.data.mappings);
+      setNewGestureName('');
+    } catch (err) {
+      console.error("Failed to add gesture mapping", err);
+    }
   };
 
-  const updateGestureAction = (gesture, action) => {
-    setGestureMappings({
-      ...gestureMappings,
-      [gesture]: action
-    });
+  const updateGestureAction = async (gesture, action) => {
+    try {
+      const res = await api.post('/ai/gesture/mappings', {
+        gesture_name: gesture,
+        action: action
+      });
+      setGestureMappings(res.data.mappings);
+    } catch (err) {
+      console.error("Failed to update gesture action mapping", err);
+    }
   };
 
   return (
@@ -261,7 +309,7 @@ export function GestureControlTab({
                   <span className="text-[10px] text-slate-400 block mt-0.5">Confirm teleoperation switches</span>
                 </div>
                 <button 
-                  onClick={() => setGestureSafetyEnabled(!gestureSafetyEnabled)}
+                  onClick={() => handleSafetyToggle(!gestureSafetyEnabled)}
                   className={`w-11 h-6 rounded-full transition-all duration-300 relative ${gestureSafetyEnabled ? 'bg-purple-600' : 'bg-slate-300'}`}
                 >
                   <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-all shadow ${gestureSafetyEnabled ? 'translate-x-5' : ''}`} />
