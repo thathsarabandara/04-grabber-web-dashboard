@@ -10,7 +10,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A deep dive into the KY-023 Analog 2-Axis Joystick. Learn about its electrical structure, ADC mapping constraints on the ESP32, dead zones, and how to filter signal noise for stable robot arm control.",
-    "coverImage": "/blog/joystick/joystick.png",
+    "coverImage": "/blog/01-joystick/joystick.png",
     "content": [
       {
         "type": "heading",
@@ -19,7 +19,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/joystick/joystick.png",
+        "url": "/blog/01-joystick/joystick.png",
         "caption": "KY-023 Analog Joystick Module"
       },
       {
@@ -42,7 +42,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/joystick/joystickpin.png",
+        "url": "/blog/01-joystick/joystickpin.png",
         "caption": "KY-023 Analog Joystick Module Pin Diagrma"
       },
       {
@@ -313,7 +313,7 @@ export const blogPosts =
     "readTime": "3 min",
     "featured": true,
     "excerpt": "The ESP32 is not just a microcontroller—it is a full wireless SoC (System on a Chip) system....",
-    "coverImage": "/blog/esp32/esp32.png",
+    "coverImage": "/blog/02-esp32/esp32.png",
     "content": [
       {
         "type": "heading",
@@ -322,7 +322,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/esp32/esp32.png",
+        "url": "/blog/02-esp32/esp32.png",
         "caption": "ESP32 Hardware Hero"
       },
       {
@@ -462,12 +462,12 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/esp32/pinMap.jpeg",
+        "url": "/blog/02-esp32/pinMap.jpeg",
         "caption": "ESP32 Pin Map"
       },
       {
         "type": "image",
-        "url": "/blog/esp32/pindiagrams.jpeg",
+        "url": "/blog/02-esp32/pindiagrams.jpeg",
         "caption": "ESP32 Pin Diagrams"
       },
       {
@@ -547,7 +547,7 @@ export const blogPosts =
     "readTime": "4 min",
     "featured": true,
     "excerpt": "ESP32-CAM is not just a microcontroller; it is a highly constrained vision + IoT system-on-module combining...",
-    "coverImage": "/blog/esp32cam/esp32cam.png",
+    "coverImage": "/blog/03-esp32cam/esp32cam.png",
     "content": [
       {
         "type": "heading",
@@ -578,7 +578,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/esp32cam/esp32pindiagram.png",
+        "url": "/blog/03-esp32cam/esp32pindiagram.png",
         "caption": "ESP32-CAM Pin Diagram"
       },
       {
@@ -955,7 +955,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A detailed analysis of the PCA9685 16-channel PWM driver. Understand how it offloads timing-critical pulse generation, correct electrical wiring, RTOS integration, and troubleshooting common failure modes.",
-    "coverImage": "/blog/pca9685/pca9685.png",
+    "coverImage": "/blog/04-pca9685/pca9685.png",
     "content": [
       {
         "type": "heading",
@@ -964,7 +964,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/pca9685/pimap.jpeg",
+        "url": "/blog/04-pca9685/pimap.jpeg",
         "caption": "PCA9685 16-Channel PWM Driver"
       },
       {
@@ -1030,7 +1030,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/pca9685/pindiagrm.jpeg",
+        "url": "/blog/04-pca9685/pindiagrm.jpeg",
         "caption": "PCA9685 I2C Pin Map"
       },
       {
@@ -1202,7 +1202,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "INA226 is a high-precision power telemetry system that measures voltage, current, and power using a shunt resistor + internal ADC + I2C reporting.",
-    "coverImage": "/blog/ina226/ina226.png",
+    "coverImage": "/blog/05-ina226/ina226.png",
     "content": [
       {
         "type": "heading",
@@ -1225,7 +1225,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/ina226/inapinmap.jpeg",
+        "url": "/blog/05-ina226/inapinmap.jpeg",
         "caption": "INA226 Pin Distribution"
       },
       {
@@ -1278,7 +1278,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/ina226/inapindiagram.jpeg",
+        "url": "/blog/05-ina226/inapindiagram.jpeg",
         "caption": "INA226 Pin Distribution"
       },
       {
@@ -1547,7 +1547,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A servo motor is a closed-loop position control system. Explore its internal feedback loop, electrical wiring limits, torque specifications, and PWM signal timing mapping.",
-    "coverImage": "/blog/servo/servo.png",
+    "coverImage": "/blog/06-servo/servo.png",
     "content": [
       {
         "type": "heading",
@@ -1556,7 +1556,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/servo/servoinner.jpeg",
+        "url": "/blog/06-servo/servoinner.jpeg",
         "caption": "Servos inner part"
       },
       {
@@ -1592,7 +1592,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/servo/servo.jpeg",
+        "url": "/blog/06-servo/servo.jpeg",
         "caption": "Servos - color wires"
       },
       {
@@ -1816,7 +1816,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/servo/servo with pca.jpeg",
+        "url": "/blog/06-servo/servo with pca.jpeg",
         "caption": "Servos with pca9685"
       },
       {
@@ -1835,7 +1835,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "LM2596 is a high-frequency switching regulator. Learn about its electrical architecture, voltage adjustment behaviors, load dynamics, failure modes, and best wiring practices for robotics.",
-    "coverImage": "/blog/lm2596/lm2596.jpeg",
+    "coverImage": "/blog/07-lm2596/lm2596.jpeg",
     "content": [
       {
         "type": "heading",
@@ -1844,7 +1844,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/lm2596/lm2596converter.jpeg",
+        "url": "/blog/07-lm2596/lm2596converter.jpeg",
         "caption": "LM2596 DC-DC Buck Converter"
       },
       {
@@ -1876,7 +1876,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/lm2596/lm2596pindiagram.jpeg",
+        "url": "/blog/07-lm2596/lm2596pindiagram.jpeg",
         "caption": "LM2596 Pin Map"
       },
       {
@@ -2080,7 +2080,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Grafana is a leading open-source platform for system monitoring and telemetry visualization. Learn about its time-series engine, dashboard design, alerting configurations, and real-time failure modes.",
-    "coverImage": "/blog/grafana/grafana2.jpeg",
+    "coverImage": "/blog/08-grafana/grafana2.jpeg",
     "content": [
       {
         "type": "heading",
@@ -2089,7 +2089,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/grafana/grafana.jpeg",
+        "url": "/blog/08-grafana/grafana.jpeg",
         "caption": "Grafana Usage"
       },
       {
@@ -2385,7 +2385,7 @@ export const blogPosts =
     ]
   },
   {
-    "id": 12,
+    "id": 9,
     "slug": "prometheus",
     "title": "Prometheus — Metrics Collection & Monitoring System",
     "date": "2026-06-20",
@@ -2394,7 +2394,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A deep dive into Prometheus metrics collection. Learn about targets, custom exporters, pull-based scraping mechanics, TSDB models, PromQL, and alerts.",
-    "coverImage": "/blog/prometheus/prometheus.jpeg",
+    "coverImage": "/blog/09-prometheus/prometheus.jpeg",
     "content": [
       {
         "type": "heading",
@@ -2403,7 +2403,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/prometheus/prometheus1.jpeg",
+        "url": "/blog/09-prometheus/prometheus1.jpeg",
         "caption": "Prometheus Metrics Engine"
       },
       {
@@ -2431,7 +2431,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/prometheus/prometheus2.jpeg",
+        "url": "/blog/09-prometheus/prometheus2.jpeg",
         "caption": "Prometheus Internel Architecture"
       },
       {
@@ -2590,7 +2590,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/prometheus/prometheus3.jpeg",
+        "url": "/blog/09-prometheus/prometheus3.jpeg",
         "caption": "Alerting System Rules"
       },
       {
@@ -2694,7 +2694,7 @@ export const blogPosts =
     ]
   },
   {
-    "id": 9,
+    "id": 10,
     "slug": "websockets",
     "title": "WebSockets — Real-Time Bidirectional Communication Protocol",
     "date": "2026-06-20",
@@ -2703,7 +2703,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A deep dive into WebSockets for real-time telemetry streaming. Understand full-duplex TCP handshakes, data frames, ESP32 architectures, latency profiles, and failure modes.",
-    "coverImage": "/blog/websockets/websockets3.jpeg",
+    "coverImage": "/blog/10-websockets/websocket3.jpeg",
     "content": [
       {
         "type": "heading",
@@ -2712,7 +2712,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/protocol_hero_1781771861014.png",
+        "url": "/blog/10-websockets/websocket1.jpeg",
         "caption": "Real-Time Telemetry Stream"
       },
       {
@@ -2728,6 +2728,11 @@ export const blogPosts =
         "type": "heading",
         "level": 2,
         "text": "2. What WebSockets Really Are"
+      },
+      {
+        "type": "image",
+        "url": "/blog/10-websockets/websocket2.jpeg",
+        "caption": "Real-Time Telemetry Stream"
       },
       {
         "type": "paragraph",
@@ -2750,6 +2755,11 @@ export const blogPosts =
       {
         "type": "paragraph",
         "text": "HTTP operates on a Half-Duplex model, meaning only one end can speak at a time. WebSockets operate on a Full-Duplex model, enabling simultaneous, bidirectional streaming. For example, a web dashboard can send a motor control command packet while the ESP32 is concurrently streaming battery diagnostic logs."
+      },
+      {
+        "type": "image",
+        "url": "/blog/10-websockets/websockets4.jpeg",
+        "caption": "Real-Time Telemetry Stream"
       },
       {
         "type": "mermaid",
@@ -2953,7 +2963,7 @@ export const blogPosts =
     ]
   },
   {
-    "id": 10,
+    "id": 11,
     "slug": "i2c_protocol",
     "title": "I²C (Inter-Integrated Circuit) Protocol",
     "date": "2026-06-20",
@@ -2962,7 +2972,7 @@ export const blogPosts =
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A deep dive into the I²C (Inter-Integrated Circuit) protocol. Learn about physical bus architectures, open-drain requirements, addressing conflicts, and pull-up resistor constraints.",
-    "coverImage": "/blog/i2c/i2c1.jpeg",
+    "coverImage": "/blog/11-i2c/i2c1.jpeg",
     "content": [
       {
         "type": "heading",
@@ -2971,7 +2981,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/i2c/i2c2.jpeg",
+        "url": "/blog/11-i2c/i2c2.jpeg",
         "caption": "I2C Bus Communication"
       },
       {
@@ -3111,7 +3121,7 @@ export const blogPosts =
       },
       {
         "type": "image",
-        "url": "/blog/i2c/i2c3.jpeg",
+        "url": "/blog/11-i2c/i2c3.jpeg",
         "caption": "I2C Communication"
       },
       {
@@ -3188,71 +3198,394 @@ export const blogPosts =
     ]
   },
   {
-    "id": 11,
+    "id": 12,
     "slug": "interrupts_isr",
-    "title": "Safety First: Interrupts & ISRs",
+    "title": "Safety First — Interrupts & ISRs (Embedded Systems / Microcontrollers)",
     "date": "2026-06-18",
     "author": "Grabber Team",
     "category": "Engineering",
-    "readTime": "1 min",
+    "readTime": "7 min",
     "featured": true,
-    "excerpt": "In robotics, certain events demand immediate attention. If a human hits the Emergency Stop button, the robot cannot wait for the main loop to finish a...",
+    "excerpt": "Hardware-triggered events that immediately pause normal program execution, execute a special function (ISR), then resume the previous state.",
     "coverImage": "/blog/hardware_hero_1781771816084.png",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "Safety First: Hardware Interrupts & ISRs in Robotics"
-      },
-      {
-        "type": "image",
-        "url": "/blog/hardware_hero_1781771816084.png",
-        "caption": "Hardware Hero"
-      },
-      {
-        "type": "paragraph",
-        "text": "In robotics, certain events demand immediate attention. If a human hits the Emergency Stop button, the robot cannot wait for the main loop to finish a blocking Wi-Fi connection attempt—it must halt instantly. This is achieved using Hardware Interrupts."
-      },
-      {
-        "type": "paragraph",
-        "text": "An interrupt is a hardware-level signal that tells the microcontroller to stop its current task, jump to a special function called an Interrupt Service Routine (ISR), execute it, and return."
+        "text": "Safety First — Interrupts & ISRs"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "The Golden Rules of ISRs"
-      },
-      {
-        "type": "paragraph",
-        "text": "ISRs disrupt the normal flow of the processor, so they have strict limitations:"
+        "text": "Core Idea"
       },
       {
         "type": "list",
         "items": [
-          "**Keep it Fast:** Do the bare minimum. Set a boolean flag to `true` and let the main loop handle the heavy lifting.",
-          "**No Blocking Code:** NEVER use `delay()`, `Serial.print()`, or I2C/WiFi transmissions inside an ISR. They will crash your system.",
-          "**The `volatile` Keyword:** Any variable modified inside an ISR and read in the main loop MUST be declared as `volatile`. This ensures the compiler fetches it directly from RAM, not a cached register.",
-          "**RAM Allocation:** On the ESP32, use the `IRAM_ATTR` attribute to load the ISR into fast internal RAM."
+          "Interrupts are NOT background threads.",
+          "Interrupts are NOT multitasking in the OS sense.",
+          "Interrupts are NOT optional optimizations."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Interrupts are:** Hardware-triggered events that immediately pause normal program execution, execute a special function (ISR), then resume the previous state."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "1. Why Interrupts Exist"
+      },
+      {
+        "type": "paragraph",
+        "text": "Without interrupts, a microcontroller CPU must continuously check if a button is pressed, a sensor has updated data, or a network packet has arrived. This technique is called polling. Polling introduces several major problems:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Wastes CPU Cycles:** The CPU runs loops endlessly checking hardware state, preventing other tasks from running.",
+          "**High Power Consumption:** The processor remains in an active state constantly rather than sleeping.",
+          "**Delayed Response:** Polling rate limits how quickly external events are processed.",
+          "**Inefficient for Real-Time Systems:** Transient electrical signals might be missed if the CPU is busy elsewhere."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "With interrupts, the event notifies the CPU instantly. CPU execution pauses, the Interrupt Service Routine (ISR) runs, and the normal program resumes execution immediately after."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "2. Interrupt Flow (Execution Model)"
+      },
+      {
+        "type": "paragraph",
+        "text": "The execution model of an interrupt follows a strict hardware sequence:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "1. Normal program runs.",
+          "2. Hardware event occurs.",
+          "3. CPU pauses execution.",
+          "4. CPU saves context (registers, Program Counter).",
+          "5. CPU jumps to ISR (Interrupt Service Routine) address.",
+          "6. ISR executes.",
+          "7. CPU restores context.",
+          "8. Program resumes normal execution."
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "Debouncing"
+        "text": "3. What is an ISR?"
       },
       {
         "type": "paragraph",
-        "text": "Mechanical switches bounce, causing the electrical signal to fluctuate rapidly upon pressing. This can trigger an ISR dozens of times for a single press. Use a hardware capacitor to smooth the noise, or implement software debouncing by ignoring interrupts that occur within milliseconds of each other. Properly implemented interrupts are the foundation of a safe robotic system."
+        "text": "An ISR (Interrupt Service Routine) is a special hardware-triggered callback function executed when its associated interrupt occurs. An example GPIO interrupt ISR:"
       },
       {
         "type": "code",
         "language": "cpp",
-        "code": "volatile unsigned long lastInterruptTime = 0;\nconst unsigned long debounceDelay = 50; // 50 milliseconds\n\nvoid IRAM_ATTR buttonISR() {\n  unsigned long interruptTime = millis();\n  \n  // If interrupts come faster than 50ms, assume it's a bounce and ignore\n  if (interruptTime - lastInterruptTime > debounceDelay) {\n    // Valid press, set flag\n    buttonPressed = true;\n  }\n  lastInterruptTime = interruptTime;\n}"
+        "code": "void IRAM_ATTR buttonISR() {\n    flag = true;\n}"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Key Rule:** An ISR must always be fast, minimal, and deterministic."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "4. Critical ISR Design Rules"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "❌ DO NOT",
+          "✅ DO"
+        ],
+        "rows": [
+          [
+            "Use delay() or blocking commands",
+            "Set simple boolean flags"
+          ],
+          [
+            "Perform heavy mathematical computation",
+            "Read minimal input data"
+          ],
+          [
+            "Allocate memory (malloc / new)",
+            "Store lightweight timestamps"
+          ],
+          [
+            "Call slow I/O (Serial.print inside many MCUs)",
+            "Signal RTOS tasks"
+          ],
+          [
+            "Block execution in critical paths",
+            "Exit as fast as possible"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "5. Interrupt vs Polling"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Feature",
+          "Interrupts",
+          "Polling"
+        ],
+        "rows": [
+          [
+            "CPU usage",
+            "Low",
+            "High"
+          ],
+          [
+            "Response time",
+            "Fast",
+            "Delayed"
+          ],
+          [
+            "Efficiency",
+            "High",
+            "Low"
+          ],
+          [
+            "Complexity",
+            "Medium",
+            "Simple"
+          ],
+          [
+            "Real-time suitability",
+            "Excellent",
+            "Poor"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "6. Types of Interrupts"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) External Interrupts:** Triggered by changing states on external GPIO pins (e.g., button press, encoder pulse, rising/falling edge).",
+          "**(B) Timer Interrupts:** Triggered periodically by hardware timers (e.g., every 1 ms, every 1 second).",
+          "**(C) Peripheral Interrupts:** Triggered by internal modules (e.g., UART receive buffer full, ADC conversion complete, SPI transfer done).",
+          "**(D) Software Interrupts:** Triggered explicitly by running program instructions (e.g., system calls, exceptions)."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "7. Interrupt Vector Table"
+      },
+      {
+        "type": "paragraph",
+        "text": "The CPU locates handler functions using a vector table mapping hardware interrupt sources to memory addresses:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Source[Interrupt Source] --> Vector[Vector Table]\n    Vector --> Addr[ISR Address]\n    Addr --> ISR[Execute ISR]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Interrupt Latency"
+      },
+      {
+        "type": "paragraph",
+        "text": "Interrupt latency is the duration between the hardware event and the execution of the first instruction in the ISR. It is influenced by CPU clock speed, context saving overhead, interrupt priority levels, and whether interrupts are currently disabled."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Nested Interrupts"
+      },
+      {
+        "type": "paragraph",
+        "text": "Nested interrupts occur when a higher-priority interrupt preempts an active, lower-priority ISR:"
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "code": "Interrupt A (Low Priority ISR) ➔ Interrupted by ➔ Interrupt B (High Priority ISR)"
+      },
+      {
+        "type": "paragraph",
+        "text": "Improperly configured nested interrupts can cause CPU stack overflows and timing instability."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Context Switching (Critical Concept)"
+      },
+      {
+        "type": "paragraph",
+        "text": "When an interrupt occurs, the hardware automatically performs a Context Save, storing registers and the Program Counter (PC). Upon ISR exit, a Context Restore retrieves the saved state so the normal execution thread resumes seamlessly."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. ISR Best Practices (Embedded Engineering)"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Use flags:** Declare a volatile boolean flag to capture the event inside the ISR.",
+          "**Keep ISR short:** Limit the ISR to flag setting; main loop processes the long logic.",
+          "**Use volatile keyword:** Mark shared global variables as volatile to prevent compiler optimizations from caching the value.",
+          "**Debouncing (buttons):** Mechanical buttons bounce, causing multiple false triggers. Filter bounces using software timestamps or hardware RC filters.",
+          "**Avoid shared memory corruption:** Protect shared resources using atomic operations or critical sections."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Interrupts in ESP32 Context"
+      },
+      {
+        "type": "paragraph",
+        "text": "On the ESP32 platform, interrupts have specific features due to its dual-core CPU, FreeRTOS scheduler, and cache architectures:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Supports hardware interrupts on any GPIO pin.",
+          "Requires the `IRAM_ATTR` attribute to locate the ISR function in fast internal Instruction RAM, avoiding flash cache access delays."
+        ]
+      },
+      {
+        "type": "code",
+        "language": "cpp",
+        "code": "void IRAM_ATTR gpioISR() {\n    buttonPressed = true;\n}"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "13. Interrupt Priority Concept"
+      },
+      {
+        "type": "paragraph",
+        "text": "Interrupt priorities determine preemption rights. For example, a low-priority sensor update interrupt will be pre-empted if a high-priority emergency stop button interrupt is raised, guaranteeing immediate response to safety-critical signals."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Common Mistakes"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**1. Long ISR execution:** Leads to watchdog resets and system lag.",
+          "**2. Using Serial.print inside ISR:** Blocks and crashes the MCU.",
+          "**3. Race conditions:** Unsafe reads/writes on shared variables.",
+          "**4. Missing volatile keyword:** Causes the main loop to miss variable state changes.",
+          "**5. Ignoring debounce:** Causes multiple false edge detections."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Embedded Systems Design Pattern"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Architecture",
+          "Workflow Pattern"
+        ],
+        "rows": [
+          [
+            "✅ Correct Architecture",
+            "ISR ➔ Set Flag ➔ Main Loop ➔ Process Event"
+          ],
+          [
+            "❌ Wrong Architecture",
+            "ISR ➔ Full Processing ➔ Blocking System"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "16. Interrupts in Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "In a robotics platform, interrupts enable fast responses to sensor triggers without latency:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Sensor[Sensor Trigger] --> ISR[ISR Handler]\n    ISR --> Flag[Set Flag / Buffer]\n    Flag --> Loop[Control Loop Processes]\n    Loop --> Move[Robot Movement / Stop]"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Limit switch hit:** The ISR immediately cuts motor power.",
+          "**Encoder pulses:** The ISR updates wheel/joint position counters in microsecond speeds.",
+          "**Emergency button:** The ISR executes safety shutdown sequences."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "17. ISR vs RTOS Tasks"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Feature",
+          "ISR",
+          "RTOS Task"
+        ],
+        "rows": [
+          [
+            "Execution time",
+            "Microseconds",
+            "Milliseconds"
+          ],
+          [
+            "Complexity",
+            "Very low",
+            "High"
+          ],
+          [
+            "Blocking allowed",
+            "No",
+            "Yes"
+          ],
+          [
+            "Scheduling",
+            "Hardware vector",
+            "OS Scheduler"
+          ],
+          [
+            "Purpose",
+            "Immediate response",
+            "Heavy processing logic"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Engineering Summary"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Summary:** Interrupts are hardware-triggered events that immediately pause normal program execution, execute a special function (ISR), then resume the previous state."
       }
     ]
   },
   {
-    "id": 12,
+    "id": 13,
     "slug": "kafka",
     "title": "Apache Kafka — Distributed Event Streaming Platform",
     "date": "2026-06-20",
@@ -3544,7 +3877,7 @@ export const blogPosts =
     ]
   },
   {
-    "id": 13,
+    "id": 14,
     "slug": "mqtt",
     "title": "📡 MQTT — Lightweight Publish/Subscribe Messaging Protocol for IoT",
     "date": "2026-06-20",
@@ -3792,88 +4125,325 @@ export const blogPosts =
   {
     "id": 14,
     "slug": "power_management",
-    "title": "Power Management & Electronics for Robotics",
-    "date": "2026-06-18",
+    "title": "🔋 Power Management & Electronics for Robotics Systems",
+    "date": "2026-06-23",
     "author": "Grabber Team",
-    "category": "Hardware",
-    "readTime": "2 min",
+    "category": "Engineering",
+    "readTime": "7 min",
     "featured": true,
-    "excerpt": "Building a functional robot requires more than just motors and code; it requires a deep understanding of power management. In our Grabber project, we ...",
+    "excerpt": "The design and control of energy flow in a robotic system to ensure stable voltage rails, safe current delivery, efficient conversion, and reliable operation.",
     "coverImage": "/blog/hardware_hero_1781771816084.png",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "Mastering Power Management & Electronics in Robotics"
-      },
-      {
-        "type": "image",
-        "url": "/blog/hardware_hero_1781771816084.png",
-        "caption": "Hardware Hero"
-      },
-      {
-        "type": "paragraph",
-        "text": "Building a functional robot requires more than just motors and code; it requires a deep understanding of power management. In our Grabber project, we frequently manage multiple power domains—like 5V/6V for our servos and 3.3V for our ESP32 microcontroller. Here is a guide on how to handle the challenges that come with complex robotic electronics."
+        "text": "Power Management & Electronics for Robotics Systems"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "The Challenge of Voltage Regulation & Decoupling"
-      },
-      {
-        "type": "paragraph",
-        "text": "One of the most common issues in robotics is the \"Brownout.\" Servos can draw massive current spikes (sometimes up to 2A each under load!). If your ESP32 shares the exact same un-isolated power rail, these spikes cause the voltage to sag. If the voltage drops below 2.8V, the ESP32 triggers a Brownout Reset and reboots your entire system."
-      },
-      {
-        "type": "paragraph",
-        "text": "**The Solution:** Capacitors are your best friend. They decouple noise and provide local energy reserves:"
+        "text": "Core Idea"
       },
       {
         "type": "list",
         "items": [
-          "**Ceramic Capacitors (0.1µF / 100nF):** Place these right next to the VCC/GND pins of ICs like the PCA9685 to filter out high-frequency noise.",
-          "**Electrolytic Capacitors (470µF - 1000µF):** Place these across the main power input to the servos to act like water towers, supplying instant current during sudden movements."
+          "Power management in robotics is NOT just \"supplying voltage\".",
+          "It is NOT just using a battery.",
+          "It is NOT just connecting a regulator."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Power management is:** The design and control of energy flow in a robotic system to ensure stable voltage rails, safe current delivery, efficient conversion, and reliable operation of sensors, controllers, and actuators under dynamic load conditions."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "1. What Problem Power Management Solves"
+      },
+      {
+        "type": "paragraph",
+        "text": "Robots are electrically noisy systems with varying power demands across components:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Microcontrollers:** Need stable, noise-free 3.3V power.",
+          "**Sensors:** Demand low-noise, highly filtered voltage rails.",
+          "**Servos:** Draw heavy current bursts when starting or stalling.",
+          "**Motors:** Create severe high-voltage inductive spikes during state transitions."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Without robust power management, common symptoms include voltage drops causing CPU resets (brownouts), motor noise leading to sensor failures, and overcurrent overheating or burning electrical components."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "2. Power Architecture in Robotics"
+      },
+      {
+        "type": "paragraph",
+        "text": "A typical robotic power distribution topology runs from the source battery down to individual voltage rails:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Battery[Battery: 7.4V / 12V] --> BMS[Protection: BMS / Fuse]\n    BMS --> Buck1[DC-DC Buck: 5V Rail]\n    BMS --> Buck2[DC-DC Buck: 3.3V Rail]\n    Buck1 --> Servos[Servos / Sensors]\n    Buck2 --> MCU[ESP32 / MCU]\n    Servos & MCU --> GND[Common GND Reference]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "3. Battery Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "Choosing the correct battery chemistry depends on weight, discharge rates, and runtime requirements:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Li-ion / LiPo:** Features high energy density, lightweight profiles, and high discharge currents (excellent for drone/robot arm power).",
+          "**Lead Acid:** Heavy and cheap, providing stable power for large-scale, heavy ground robots.",
+          "**LiFePO4:** Offers a safer chemistry with a significantly longer lifecycle than LiPo cells."
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "Star Grounding: Preventing Ground Loops"
+        "text": "4. Battery Management System (BMS)"
       },
       {
         "type": "paragraph",
-        "text": "For your ESP32 to successfully communicate with a peripheral like the PCA9685, they must share a common \"0 Volts\" reference. However, simply daisy-chaining grounds can lead to \"ground bounce\" due to high return currents from motors, corrupting your digital signals. **Best Practice:** Implement \"Star Grounding.\" Route all ground connections back to a single central point, such as the negative terminal of your main battery."
+        "text": "A Battery Management System (BMS) is essential to monitor and protect lithium-based battery packs against critical failure conditions:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Overcharge & Over-discharge:** Keeps cell voltages within safe operating limits.",
+          "**Overcurrent & Overheating:** Restricts output when load currents or temperatures spike.",
+          "**Cell Imbalance:** Balances voltage levels across series-connected cells."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!WARNING] **Why it matters:** Bypassing a BMS exposes the battery to instability, thermal runaway, fire risks, and permanent cell damage."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "5. Voltage Regulation (DC-DC Converters)"
+      },
+      {
+        "type": "paragraph",
+        "text": "Batteries are not stable voltage sources; their output drops as they discharge. Voltage regulators maintain stable operating rails:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Buck Converter (Step Down):** Highly efficient (~80-90%) switching regulators that step down voltage (e.g. 12V to 5V via LM2596) with minimal thermal waste.",
+          "**(B) LDO Regulator (Low Dropout):** Low noise but low efficiency, ideal for powering analog sensors and MCUs requiring clean, ripple-free power.",
+          "**(C) Boost Converter (Step Up):** Steps up lower battery voltages to higher operating rails (e.g., 3.7V single-cell LiPo to 5V/12V)."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "6. Power Distribution Strategy"
+      },
+      {
+        "type": "paragraph",
+        "text": "Use a Star Power ground distribution topology where all ground return paths meet at a single central point. This prevents ground loops, reduces common-impedance noise coupling, and stabilizes sensor readings."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "7. Noise in Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "Robots generate significant electrical noise from DC motors, servo movements, and high-frequency switching regulators. This noise can cause ESP32 resets, fluctuating sensor readings, and communication errors. Mitigate noise using decoupling capacitors, ferrite beads, separate power rails, and single-point grounding."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Motor Power vs Logic Power Separation"
+      },
+      {
+        "type": "paragraph",
+        "text": "Keep motor power lines electrically isolated from logic circuitry. Connect high-current, noisy motor drivers directly to the battery, while logic circuits are powered through a dedicated regulator."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Decoupling Capacitors"
+      },
+      {
+        "type": "paragraph",
+        "text": "Place decoupling capacitors close to IC power pins. Use 100nF ceramic capacitors to suppress high-frequency noise spikes and 100µF electrolytic capacitors for bulk energy storage and voltage ripple stabilization."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Servo Power Challenges"
+      },
+      {
+        "type": "paragraph",
+        "text": "Servos draw high transient currents during start-up or when stalled (e.g., SG90 draws 500mA peaks, MG996R draws over 2A peaks). These spikes can drop the voltage rail, causing microcontroller brownout resets. Solve this by separating the servo power rail, using high-current buck converters, and placing large capacitor banks near the servo distribution board."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. Robotics Power System Example"
+      },
+      {
+        "type": "paragraph",
+        "text": "An example of a balanced power system configuration powered from a 12V battery source:"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Load Category",
+          "Regulator Type",
+          "Voltage Rail",
+          "Target Components"
+        ],
+        "rows": [
+          [
+            "Logic & Sensors",
+            "LDO / Low-Noise Buck",
+            "3.3V / 5.0V",
+            "ESP32, IMU, INA226"
+          ],
+          [
+            "Actuators (Servos)",
+            "High-Current Buck",
+            "5.0V - 6.0V",
+            "MG996R, SG90 Servos"
+          ],
+          [
+            "High Power Motors",
+            "Direct Battery",
+            "12V Raw",
+            "DC Motor Driver, H-Bridge"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Common Failure Modes"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**1. Brownout Reset:** Voltage drops below the MCU minimum operating threshold.",
+          "**2. Motor Noise Reset:** Inductive kickback spikes corrupt digital logic.",
+          "**3. Overheating Regulator:** Running high current through inefficient linear/LDO regulators.",
+          "**4. Ground Loop Noise:** Circular ground wiring injecting noise into analog readings.",
+          "**5. Battery Undervoltage Damage:** Over-discharging Li-ion cells below critical thresholds."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "13. Design Rules (Engineering Best Practices)"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Rule 1: Separate Power Domains:** Keep logic, motors, and sensors isolated.",
+          "**Rule 2: Always use a BMS:** Never bypass safety-critical battery protection circuits.",
+          "**Rule 3: Oversize current capacity:** Size power supply components with 30-50% safety margins.",
+          "**Rule 4: Add capacitors everywhere:** Place decoupling capacitors near motor connections and ICs.",
+          "**Rule 5: Measure real current draw:** Don't rely solely on theoretical data sheet current metrics."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Power Budgeting"
+      },
+      {
+        "type": "paragraph",
+        "text": "Calculate your total system power budget under worst-case peak loads to size the battery and regulators correctly:"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Component",
+          "Typical Current",
+          "Peak Current",
+          "Voltage Rail"
+        ],
+        "rows": [
+          [
+            "ESP32 MCU",
+            "120 mA",
+            "300 mA",
+            "3.3V"
+          ],
+          [
+            "YOLO Camera Node",
+            "500 mA",
+            "1.2 A",
+            "5V"
+          ],
+          [
+            "Servos (MG996R x4)",
+            "800 mA",
+            "4.0 A",
+            "6V"
+          ],
+          [
+            "DC Drive Motors",
+            "1.5 A",
+            "5.0 A",
+            "12V"
+          ],
+          [
+            "Sensors (IMU, INA226)",
+            "50 mA",
+            "100 mA",
+            "3.3V"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Safety Considerations"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Integrate inline fuses to protect against short circuits.",
+          "Select appropriate wire gauge thickness to handle peak current without heating up.",
+          "Verify thermal shutdown features are active on voltage regulators.",
+          "Ensure proper wire insulation and isolation."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "16. Power System in Your Robotics Stack"
+      },
+      {
+        "type": "paragraph",
+        "text": "In the Grabber robotics stack, power distribution coordinates across multiple subsystems:"
       },
       {
         "type": "mermaid",
-        "code": "graph TD\n    Battery_Neg[Main Battery Negative]\n    \n    ESP32_GND[ESP32 Ground]\n    PCA_Logic_GND[PCA9685 Logic Ground]\n    Servo_Power_GND[High Current Servo Ground]\n    Sensors_GND[Sensors Ground]\n    \n    ESP32_GND --> Battery_Neg\n    PCA_Logic_GND --> Battery_Neg\n    Servo_Power_GND --> Battery_Neg\n    Sensors_GND --> Battery_Neg\n    \n    style Battery_Neg fill:#f96,stroke:#333,stroke-width:4px"
+        "code": "graph TD\n    Battery[12V Battery] --> PowerBoard[Power Board]\n    PowerBoard --> ESP32[ESP32 Control Logic]\n    PowerBoard --> Camera[YOLO Camera System]\n    PowerBoard --> Servos[Servo Motors - Arm]\n    PowerBoard --> DC[DC Motors - Movement]\n    PowerBoard --> Sensors[Sensors: INA226, IMU]"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "Pull-Up and Pull-Down Resistors"
+        "text": "Engineering Summary"
       },
       {
-        "type": "paragraph",
-        "text": "Digital pins left floating act like antennas, picking up electromagnetic noise. Use pull-up or pull-down resistors to ensure a stable state. For example, an Emergency Stop button can use the ESP32's internal pull-up resistor:"
-      },
-      {
-        "type": "code",
-        "language": "cpp",
-        "code": "const int buttonPin = 4; // E-Stop button\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP); \n}\n\nvoid loop() {\n  if (digitalRead(buttonPin) == LOW) {\n    executeEmergencyStop();\n  }\n}"
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "High-Side vs. Low-Side Current Sensing"
-      },
-      {
-        "type": "paragraph",
-        "text": "When using sensors like the INA226, measuring the voltage drop across a shunt resistor is key. Always prefer **High-Side** sensing (placing the shunt between the power supply and load). Low-side sensing can lift the load's ground above 0V, causing critical communication errors in digital logic."
-      },
-      {
-        "type": "paragraph",
-        "text": "Keep these principles in mind, and your robotic projects will run significantly more reliably!"
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Summary:** Power management is the design and control of energy flow in a robotic system to ensure stable voltage rails, safe current delivery, efficient conversion, and reliable operation of sensors, controllers, and actuators under dynamic load conditions."
       }
     ]
   },
@@ -6072,6 +6642,1447 @@ export const blogPosts =
       {
         "type": "mermaid",
         "code": "graph LR\n    Dev[Developer] --> Git[GitHub PR]\n    Git --> CI[GitHub Actions CI]\n    CI -->|Build Image| Hub[Docker Registry]\n    CI -->|Update YAML| Repo[GitOps Repo]\n    Repo -->|Reconcile| Argo[Argo CD]\n    Argo -->|Deploy| K8s[Kubernetes Cluster]"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "slug": "yolo",
+    "title": "YOLO (You Only Look Once) — Real-Time Object Detection System",
+    "date": "2026-06-23",
+    "author": "Grabber Team",
+    "category": "Software",
+    "readTime": "5 min",
+    "featured": true,
+    "excerpt": "YOLO (You Only Look Once) is a revolutionary real-time object detection algorithm. Learn how it combines bounding box prediction and classification into a single neural network pass.",
+    "coverImage": "/blog/24-yolo/yolo.jpeg",
+    "content": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "YOLO (You Only Look Once) — Real-Time Object Detection System"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Core Idea"
+      },
+      {
+        "type": "list",
+        "items": [
+          "YOLO is NOT image classification.",
+          "YOLO is NOT image segmentation.",
+          "YOLO is NOT face recognition."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **YOLO is:** A real-time deep learning object detection algorithm that simultaneously identifies object classes and their locations in a single neural network inference pass."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "1. What Problem YOLO Solves"
+      },
+      {
+        "type": "paragraph",
+        "text": "Traditional image classification tells you **what is in the image** (e.g. Input Image -> \"Dog\"). However, real-world robotic and vision systems require more detailed spatial information:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**What** objects exist in the scene?",
+          "**Where** are those objects located?",
+          "**How many** of them are there?"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Example: An input image of a workspace with a dog, a person, a bottle, and a laptop requires detecting each object along with its exact spatial coordinates."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "2. Object Detection vs. Classification"
+      },
+      {
+        "type": "image",
+        "url": "/blog/24-yolo/yolo1.jpeg",
+        "caption": "YOLOv8 Object Detection in Action"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Task Type",
+          "Input",
+          "Output Model"
+        ],
+        "rows": [
+          [
+            "Image Classification",
+            "Image",
+            "One label (e.g. Cat)"
+          ],
+          [
+            "Object Detection",
+            "Image",
+            "Multiple objects + positions (e.g. Cat [x,y,w,h], Bottle [x,y,w,h], Person [x,y,w,h])"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "3. What YOLO Produces"
+      },
+      {
+        "type": "paragraph",
+        "text": "YOLO outputs the following predictions for each object:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Object Class:** Category name (e.g. Person, Car, Dog, Bottle)",
+          "**Bounding Box:** x, y, width, height representing object location",
+          "**Confidence Score:** Probability score between 0.00 and 1.00 (e.g. 0.95)"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Example: `Person | Confidence: 95% | Location: (100, 120, 300, 500)`"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "4. YOLO Architecture"
+      },
+      {
+        "type": "image",
+        "url": "/blog/24-yolo/yolo2.jpeg",
+        "caption": "YOLO Architecture"
+      },
+      {
+        "type": "paragraph",
+        "text": "Modern YOLO architecture consists of three core components:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Backbone:** A feature extractor (e.g. CSPDarknet) that learns edges, shapes, textures, and patterns from the raw input image.",
+          "**(B) Neck:** Combines features from different scales to help detect small, medium, and large objects.",
+          "**(C) Head:** Makes final predictions of the object class, bounding box coordinates, and confidence score."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "5. YOLO Detection Pipeline"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Frame[Camera Frame] --> Resize[Resize Image]\n    Resize --> Net[Neural Network Inference]\n    Net --> Boxes[Bounding Box Estimation]\n    Boxes --> Classes[Class Predictions]\n    Classes --> Out[Final Detection Output]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "6. Bounding Box Prediction"
+      },
+      {
+        "type": "paragraph",
+        "text": "YOLO predicts coordinate offsets for each object's center point, width, and height:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Center X (x)**",
+          "**Center Y (y)**",
+          "**Width (w)**",
+          "**Height (h)**"
+        ]
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "code": "+--------------------+\n|                    |\n|      PERSON        |\n|                    |\n+--------------------+"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example: For a Person detection, the coordinates might be `x = 200, y = 300, w = 120, h = 400`."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "7. Confidence Score"
+      },
+      {
+        "type": "paragraph",
+        "text": "Each detection is assigned a value from 0.00 to 1.00 representing the model's confidence in its classification and bounding box placement:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Person:** 0.98",
+          "**Bottle:** 0.92",
+          "**Chair:** 0.65"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Non-Maximum Suppression (NMS)"
+      },
+      {
+        "type": "paragraph",
+        "text": "Because the network checks multiple grid cells, YOLO may detect the same physical object multiple times (e.g. generating three overlapping bounding boxes for one person)."
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **The Solution (NMS):** Non-Maximum Suppression filters out redundant boxes by keeping the highest-confidence prediction and removing overlapping candidate boxes with high Intersection over Union (IoU) values."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Why YOLO Is Fast"
+      },
+      {
+        "type": "paragraph",
+        "text": "Older object detectors use multiple stages (e.g. Region Proposal -> Classification -> Refinement). YOLO uses a single convolutional neural network that takes the image and returns all predictions in a single forward pass—hence, **You Only Look Once**."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Evolution of YOLO"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**YOLOv1:** First single-stage detector framework.",
+          "**YOLOv2:** Improved accuracy via batch normalization and anchor boxes.",
+          "**YOLOv3:** Introduced multi-scale predictions for smaller objects.",
+          "**YOLOv4:** Enhanced training tricks and hardware efficiency.",
+          "**YOLOv5:** Popular PyTorch implementation widely adopted by industry.",
+          "**YOLOv8:** Ultralytics version supporting detection, segmentation, classification, pose estimation, and tracking.",
+          "**YOLOv11:** Modern evolution with enhanced computational efficiency and precision."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. YOLO in Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "For robotic platforms (e.g. a picking robot arm), YOLO is the primary perception system that drives physical operations:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Camera[Camera Frame] --> YOLO[YOLO Inference]\n    YOLO --> Detect[Object Detection Coordinates]\n    Detect --> Decision[Robot Decision Engine]\n    Decision --> Movement[Move Robot Arm / Pick & Place]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Example Detection Classes"
+      },
+      {
+        "type": "paragraph",
+        "text": "YOLO pre-trained on the COCO dataset can detect 80 everyday object classes, including:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**People & Animals:** Person, Dog, Cat",
+          "**Kitchenware:** Bottle, Cup, Bowl",
+          "**Electronics:** Laptop, Mouse, Keyboard",
+          "**Vehicles:** Car, Bus, Motorcycle"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "13. Training a Custom YOLO Model"
+      },
+      {
+        "type": "paragraph",
+        "text": "The default model does not know specialized classes like unique robot parts or Sri Lankan food. A custom training pipeline is required:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Collect[Collect Images] --> Label[Label Objects]\n    Label --> Train[Train YOLO model]\n    Train --> Val[Validate Model]\n    Val --> Deploy[Deploy Model]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Annotation Process"
+      }, {
+        "type": "image",
+        "url": "/blog/24-yolo/yolo3.jpeg",
+        "caption": "YOLO Architecture"
+      },
+      {
+        "type": "paragraph",
+        "text": "Using tools like LabelImg, CVAT, or Roboflow, developers annotate objects by drawing bounding boxes. These coordinates are saved in the standard YOLO format: `[class_id] [x] [y] [w] [h]` relative to image size."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Performance Metrics"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Metric",
+          "Formula / Meaning",
+          "Goal"
+        ],
+        "rows": [
+          [
+            "Precision",
+            "Correct Detections / All Detections",
+            "Minimize false positives"
+          ],
+          [
+            "Recall",
+            "Detected Objects / Actual Objects",
+            "Minimize false negatives"
+          ],
+          [
+            "mAP",
+            "Mean Average Precision",
+            "Summarize global detection quality"
+          ],
+          [
+            "FPS",
+            "Frames Per Second",
+            "Maximize processing speed"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "16. Hardware Requirements"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Model Scale",
+          "Example Models",
+          "Hardware Targets"
+        ],
+        "rows": [
+          [
+            "Small Models",
+            "YOLOv8n, YOLOv11n",
+            "Edge devices (Raspberry Pi, Jetson Nano)"
+          ],
+          [
+            "Large Models",
+            "YOLOv8x, YOLOv11x",
+            "High VRAM NVIDIA GPUs"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "17. Common Failure Modes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Failure Mode",
+          "Core Cause",
+          "Mitigation"
+        ],
+        "rows": [
+          [
+            "Poor Lighting",
+            "Dark image environment",
+            "Add illumination"
+          ],
+          [
+            "Motion Blur",
+            "Fast moving object",
+            "Increase camera shutter speed"
+          ],
+          [
+            "Occlusion",
+            "Object partially hidden",
+            "Train on occluded data / multi-view"
+          ],
+          [
+            "Small Objects",
+            "Few pixels available",
+            "Increase input resolution"
+          ],
+          [
+            "Dataset Bias",
+            "Non-diverse training data",
+            "Collect diverse datasets"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "18. YOLO vs. Other Detection Models"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Model",
+          "Speed",
+          "Accuracy"
+        ],
+        "rows": [
+          [
+            "YOLO",
+            "Very High",
+            "High"
+          ],
+          [
+            "Faster R-CNN",
+            "Low",
+            "Very High"
+          ],
+          [
+            "SSD",
+            "High",
+            "Medium"
+          ],
+          [
+            "RetinaNet",
+            "Medium",
+            "High"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "19. YOLO in a Complete AI Pipeline"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    ESP[ESP32-CAM] --> Stream[Video Stream]\n    Stream --> YOLO[YOLO Model]\n    YOLO --> Coord[Object Coordinates]\n    Coord --> Control[Robot Controller]\n    Control --> Servo[Servo Movement]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "20. Typical Output Example"
+      },
+      {
+        "type": "code",
+        "language": "json",
+        "code": "[\n  {\n    \"class\": \"bottle\",\n    \"confidence\": 0.96,\n    \"x\": 220,\n    \"y\": 150,\n    \"width\": 80,\n    \"height\": 210\n  }\n]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Engineering Summary"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **YOLO is:** A single-stage convolutional neural network object detector that simultaneously predicts object classes, confidence scores, and bounding box locations in real time from a single image inference pass."
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "slug": "insightface",
+    "title": "InsightFace — High-Accuracy Face Analysis Framework",
+    "date": "2026-06-23",
+    "author": "Grabber Team",
+    "category": "Software",
+    "readTime": "5 min",
+    "featured": true,
+    "excerpt": "InsightFace is a state-of-the-art face analysis framework. Explore the face recognition pipeline, face alignment, deep embeddings, ArcFace loss, and system integration for robotics.",
+    "coverImage": "/blog/25-insightface/insightface.jpeg",
+    "content": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "InsightFace — High-Accuracy Face Analysis Framework"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Core Idea"
+      },
+      {
+        "type": "list",
+        "items": [
+          "InsightFace is NOT just a face detector.",
+          "InsightFace is NOT just a classifier.",
+          "InsightFace is NOT a simple embedding model."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **InsightFace is:** A deep learning framework for face detection, alignment, and recognition that maps faces into a discriminative embedding space where similarity is measured using angular distance."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "1. What Problem InsightFace Solves"
+      },
+      {
+        "type": "paragraph",
+        "text": "Traditional face recognition models take a face image and predict a label directly (e.g. Image → \"Person Name\"). This approach faces several critical limitations in production:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Poor Generalization:** The model cannot identify new people without being retrained on new images.",
+          "**Lighting Sensitivity:** Shift in lighting conditions causes class classification to break down.",
+          "**Pose Variation:** Face rotation, angles, and poses reduce classification accuracy.",
+          "**Identity Confusion:** In large-scale databases, class boundaries overlap."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "InsightFace shifts the paradigm by mapping faces to a high-dimensional embedding space. Instead of asking 'Classify who this is', it asks 'Compare face geometry in embedding space'."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "2. InsightFace Pipeline"
+      },
+      {
+        "type": "paragraph",
+        "text": "InsightFace recognizes faces through four sequential stages:"
+      },
+       {
+        "type": "image",
+        "url": "/blog/25-insightface/insightface1.jpeg",
+        "caption": "InsightFace Architecture"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Face Detection:** Identifies bounding boxes around faces. InsightFace commonly utilizes RetinaFace, returning bounding coordinates `[x, y, w, h]`.",
+          "**(B) Face Alignment:** Normalizes face orientation using landmarks to keep eyes level, the face centered, and scale normalized.",
+          "**(C) Feature Extraction:** Employs a deep neural network (using ArcFace backbone) to extract a 512-dimensional floating-point vector (embedding).",
+          "**(D) Matching:** Compares embeddings using cosine similarity or Euclidean distance against the database."
+        ]
+      },
+       {
+        "type": "image",
+        "url": "/blog/25-insightface/insightface2.jpeg",
+        "caption": "InsightFace Architecture"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "3. Face Embeddings (Core Concept)"
+      },
+      {
+        "type": "paragraph",
+        "text": "A face embedding is a compact mathematical representation of a human face:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Similar faces** yield close vector coordinates.",
+          "**Different faces** yield coordinates that are far apart."
+        ]
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "code": "Face Image ➔ [0.12, -0.44, 0.88, ..., 0.05] (512-Dimensional Vector)"
+      },
+      {
+        "type": "paragraph",
+        "text": "In the vector space, embeddings of the same individual cluster tightly together, while separate individuals form distant, distinct clusters."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "4. ArcFace Loss (Key Innovation)"
+      },
+      {
+        "type": "paragraph",
+        "text": "InsightFace uses Additive Angular Margin Loss (ArcFace) to maximize feature boundaries during model training:"
+      },
+       {
+        "type": "image",
+        "url": "/blog/25-insightface/insightface3.jpeg",
+        "caption": "Cosine Similarity"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Increases Inter-class Distance:** Separates different identities further in the embedding space.",
+          "**Reduces Intra-class Variance:** Groups different images of the same person closely together.",
+          "**Result:** Significantly higher accuracy and robustness in challenging recognition tasks."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "5. Similarity Measurement"
+      },
+      {
+        "type": "paragraph",
+        "text": "Similarity is measured using Cosine Similarity between the query face embedding and enrolled database embeddings:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/25-insightface/insightface4.jpeg",
+        "caption": "Vector Space"
+      },
+      {
+        "type": "code",
+        "language": "text",
+        "code": "similarity = cos(angle between vectors)"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**1.0:** Identical faces.",
+          "**0.0:** Unrelated faces."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!NOTE] **Decision Rule:**\n- If *similarity > threshold* ➔ Recognized as the same person.\n- If *similarity ≤ threshold* ➔ Classified as a different/unknown person."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "6. InsightFace Architecture"
+      },
+      {
+        "type": "image",
+        "url": "/blog/25-insightface/insightface5.jpeg",
+        "caption": "InsightFace Architecture"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Component",
+          "Description",
+          "Examples / Framework"
+        ],
+        "rows": [
+          [
+            "Backbone Network",
+            "Deep neural network for feature extraction",
+            "ResNet, IR-ResNet"
+          ],
+          [
+            "Detection Module",
+            "Identifies face position & coordinates",
+            "RetinaFace, SCRFD"
+          ],
+          [
+            "Embedding Head",
+            "Projects feature maps to 128D–512D vectors",
+            "ArcFace head"
+          ],
+          [
+            "Database",
+            "Stores and indexes known user embeddings",
+            "Vector Database (FAISS, Milvus, PostgreSQL)"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "7. Face Recognition System Flow"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Frame[Camera Frame] --> Detect[Face Detection]\n    Detect --> Align[Face Alignment]\n    Align --> Extract[Embedding Extraction]\n    Extract --> Match[Database Matching]\n    Match --> Out[Identity Output]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Face Database Matching"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Phase",
+          "Workflow Sequence",
+          "Output"
+        ],
+        "rows": [
+          [
+            "Enrollment Phase",
+            "Capture Face ➔ Generate Embedding ➔ Save to Database",
+            "Saved Profile Embedding"
+          ],
+          [
+            "Recognition Phase",
+            "Capture Face ➔ Generate Embedding ➔ Compare against DB",
+            "Matched Identity + Confidence"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Real-Time Applications"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Attendance Systems:** Streamlines check-ins via automated cameras.",
+          "**Security Access Control:** Manages building entry locks and restricted zone checks.",
+          "**Surveillance Systems:** Scans video feeds to detect specific targets.",
+          "**Smartphone Unlock:** Fast and secure biometric authentication.",
+          "**Robotics Identity Tracking:** Authorizes operator controls on unmanned ground vehicles."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. InsightFace in Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "In a robotics platform, the identity loop allows autonomous machines to adapt their behaviors based on operator identity:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Cam[Camera Feed (ESP32-CAM)] --> Face[InsightFace Engine]\n    Face --> ID[Identity Validation]\n    ID --> Decide[Robot Decision Layer]\n    Decide --> Act[Action (Follow, Greet, Ignore)]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example: If \"Thathsara\" is detected with confidence 0.92, the decision layer commands the robot to enable manual controls and track the user."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. Performance Metrics"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**FAR (False Acceptance Rate):** Rate at which the system incorrectly accepts an unauthorized user.",
+          "**FRR (False Rejection Rate):** Rate at which the system incorrectly rejects an authorized user.",
+          "**Accuracy:** Overall recognition performance rate across all tests.",
+          "**ROC Curve:** Graph demonstrating the trade-off between FAR and FRR across different matching thresholds."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Common Failure Modes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Failure Mode",
+          "Root Cause",
+          "Mitigation"
+        ],
+        "rows": [
+          [
+            "Poor Lighting",
+            "Dark environment reducing visual contrast",
+            "Auxiliary LED / Infrared camera"
+          ],
+          [
+            "Occlusion",
+            "Face covered by mask, glasses, or hair",
+            "Train on occluded faces / multi-camera viewpoints"
+          ],
+          [
+            "Pose Variation",
+            "Side profiles or extreme head angles",
+            "Prompt operator for frontal views"
+          ],
+          [
+            "Low Resolution",
+            "Face is too small in the frame",
+            "Telephoto lens or super-resolution preprocessing"
+          ],
+          [
+            "Domain Shift",
+            "Real camera characteristics differ from training data",
+            "Fine-tune model on real-world camera samples"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "13. Security Concerns & Mitigations"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Spoofing Attacks (Photos/Video Replay):** Bypassing system with a printed photo. *Mitigation:* Liveness detection (blinking, IR cameras, depth sensing).",
+          "**Deepfake Impersonation:** Synthesized video inputs. *Mitigation:* High-frequency artifact analysis and physical challenge-response checks.",
+          "**Embedding Theft:** Reconstruction of facial features from stolen templates. *Mitigation:* Use irreversible cryptographic hashing on stored vectors."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Framework Comparison"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Method",
+          "Accuracy",
+          "Speed",
+          "Robustness"
+        ],
+        "rows": [
+          [
+            "Traditional OpenCV Eigenfaces",
+            "Low",
+            "Fast",
+            "Weak"
+          ],
+          [
+            "FaceNet",
+            "High",
+            "Medium",
+            "Good"
+          ],
+          [
+            "InsightFace (ArcFace)",
+            "Very High",
+            "Fast",
+            "Strong"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Engineering Summary"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **InsightFace is:** A deep learning framework for face detection, alignment, and recognition that maps faces into a discriminative embedding space where similarity is measured using angular distance."
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "slug": "mediapipe",
+    "title": "MediaPipe - Real-Time Human Perception & Tracking Framework",
+    "date": "2026-06-23",
+    "author": "Grabber Team",
+    "category": "Software",
+    "readTime": "4 min",
+    "featured": true,
+    "excerpt": "MediaPipe is a real-time, modular, cross-platform machine learning framework. Discover its streaming graph architecture, hands/face/pose estimation solutions, and how it drives robotic control.",
+    "coverImage": "/blog/26-mediapipe/mediapipe.jpeg",
+    "content": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "MediaPipe - Real-Time Human Perception & Tracking Framework"
+      },
+
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Core Idea"
+      },
+      {
+        "type": "image",
+        "url": "/blog/26-mediapipe/mediapipe2.jpeg",
+        "caption": "MediaPipe in Action"
+      },
+      {
+        "type": "list",
+        "items": [
+          "MediaPipe is NOT just a hand tracker.",
+          "MediaPipe is NOT just a pose estimator.",
+          "MediaPipe is NOT a single AI model."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **MediaPipe is:** A real-time cross-platform ML framework that builds modular perception pipelines (graphs) for detecting, tracking, and estimating human body, face, hands, and object landmarks from video streams."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "1. What Problem MediaPipe Solves"
+      },
+      {
+        "type": "paragraph",
+        "text": "Before MediaPipe, computer vision systems followed a simple sequential pipeline (Video Frame → Model → Output). This design suffered from several critical engineering challenges:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Slow Pipelines:** Running heavy, isolated models frame-by-frame introduced high latency.",
+          "**Multiple Separate Models:** Processing hands, face, and pose concurrently required complex, unoptimized coordination code.",
+          "**No Real-Time Consistency:** Detections fluctuated between frames, causing jitter without temporal smoothing.",
+          "**Complex Integration:** Hard to integrate separate outputs into unified applications."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "MediaPipe shifts this paradigm from 'Run AI model per frame' to a 'Continuous streaming graph pipeline'. It leverages a directed graph of processing nodes to stream video directly into real-time landmarks with minimal latency."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "2. MediaPipe Architecture"
+      },
+      {
+        "type": "paragraph",
+        "text": "MediaPipe's core architecture centers around a Graph-Based Pipeline. Instead of monolithic execution, data flows through modular processing blocks: Input Stream ➔ Calculators (Processing Nodes) ➔ Output Stream."
+      },
+      {
+        "type": "image",
+        "url": "/blog/26-mediapipe/mediapipe1.jpeg",
+        "caption": "MediaPipe Architecture"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Input Stream:** Accepts continuous source feeds such as camera video streams, video files, or image sequences.",
+          "**(B) Calculators (Processing Nodes):** Individual, optimized C++ calculators executing specific operations like resizing, detection, tracking, signal filtering, or landmark estimation.",
+          "**(C) Graph:** Declares the data flow connections and resource allocations between calculators.",
+          "**(D) Output:** Delivers clean, formatted outputs including coordinates, normalized 2D/3D landmarks, or classification results."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "3. Main MediaPipe Solutions"
+      },
+      {
+        "type": "paragraph",
+        "text": "MediaPipe provides several highly optimized out-of-the-box perception solutions:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Hands Tracking:** Detects 21 3D hand landmarks, finger joint locations, and palm orientation. Tracks wrist and joint hierarchies for gesture and robot control.",
+          "**(B) Face Mesh:** Estimates 468 facial landmarks in real time. Maps eye, lip, and nose geometries, which is ideal for emotion classification and face analysis.",
+          "**(C) Pose Estimation:** Reconstructs 33 body keypoints (shoulders, elbows, wrists, hips, knees, ankles) to track physical actions, fitness movements, or human-robot interactions.",
+          "**(D) Holistic Model:** Integrates Face, Hands, and Pose estimators into a unified graph pipeline for comprehensive human body analysis."
+        ]
+      },
+
+      {
+        "type": "image",
+        "url": "/blog/26-mediapipe/mediapipe3.jpeg",
+        "caption": "MediaPipe Hand Tracking"
+      },
+      {
+        "type": "image",
+        "url": "/blog/26-mediapipe/mediapipe4.jpeg",
+        "caption": "MediaPipe Face Mesh"
+      },
+      {
+        "type": "image",
+        "url": "/blog/26-mediapipe/mediapipe5.jpeg",
+        "caption": "MediaPipe Pose Estimation"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "4. MediaPipe Processing Flow"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Frame[Camera Frame] --> Detect[Detection Module]\n    Detect --> Track[Tracking Module]\n    Track --> Estimate[Landmark Estimation]\n    Estimate --> Post[Post Processing]\n    Post --> Out[Output Keypoints]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "5. Landmark Representation"
+      },
+      {
+        "type": "paragraph",
+        "text": "MediaPipe outputs structured keypoints (e.g. Wrist, Index tip, Thumb tip) with the following key characteristics:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Normalized Coordinates:** All outputs (x, y, z) scaled between 0.0 and 1.0 relative to image size, allowing distance calculations to function independently of camera resolution.",
+          "**Real-time updates:** Coordinates update dynamically with each incoming frame.",
+          "**Stable tracking:** Tracks points smoothly across frames, minimizing positional jitter."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "6. Why MediaPipe Is Fast"
+      },
+      {
+        "type": "paragraph",
+        "text": "MediaPipe is optimized for mobile devices, edge computing, and low latency processing by leveraging:"
+      },
+
+      {
+        "type": "image",
+        "url": "/blog/26-mediapipe/mediapipe6.jpeg",
+        "caption": "MediaPipe flow"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Pipeline Reuse:** Reuses tracking info across frames instead of executing expensive detection on every frame.",
+          "**Lightweight Models:** Implements highly optimized, compact deep learning architectures.",
+          "**GPU Acceleration:** Utilizes GPU shaders for image preprocessing and model inference tasks.",
+          "**Efficient Graph Execution:** Runs nodes concurrently using multithreaded scheduling."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "7. MediaPipe in Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "In a robotics platform, the identity and posture loop allows autonomous machines to interpret human instructions:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Cam[Camera (ESP32/USB)] --> MP[MediaPipe Engine]\n    MP --> Detect[Gesture / Pose / Face Detection]\n    Detect --> Decide[Robot Decision System]\n    Decide --> Act[Actuation (Servos/Motors)]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example applications include a Gesture Control Robot (Open Palm ➔ Stop; Fist ➔ Move Forward; Two Fingers ➔ Turn) and a Human Tracking Robot (Pose Detection ➔ Follow Person ➔ Adjust wheel speed)."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. MediaPipe vs. Traditional CV"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Feature",
+          "MediaPipe",
+          "OpenCV + Custom Models"
+        ],
+        "rows": [
+          [
+            "Real-time performance",
+            "Very High",
+            "Medium"
+          ],
+          [
+            "Ease of use",
+            "High",
+            "Low"
+          ],
+          [
+            "Modular pipelines",
+            "Yes",
+            "No"
+          ],
+          [
+            "Mobile support",
+            "Excellent",
+            "Limited"
+          ],
+          [
+            "Prebuilt solutions",
+            "Many",
+            "Few"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Common Limitations"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Limitation Mode",
+          "Root Cause",
+          "Mitigation"
+        ],
+        "rows": [
+          [
+            "1. Occlusion Issues",
+            "Hidden hands, overlapping fingers, or face reduce tracking accuracy",
+            "Implement multi-camera views or temporal predictive filters"
+          ],
+          [
+            "2. Lighting Sensitivity",
+            "Low light environments distorting visual landmark features",
+            "Introduce active infrared lighting or auto-gain controllers"
+          ],
+          [
+            "3. Limited Customization",
+            "Prebuilt pipelines make modifying model weights complex",
+            "Build custom Calculators and compile custom graphs from source"
+          ],
+          [
+            "4. Heavy Motion Blur",
+            "Fast movements blurring pixel frames",
+            "Increase camera shutter speed / decrease exposure time"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Engineering Constraints"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Target Scope:** MediaPipe is optimized for real-time inference and edge deployment. It is not ideal for large-scale model training or custom deep-learning network research."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. Key Technical Concepts"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Streaming Graph:** Data streams continuously through interconnected calculator nodes without blocking threads.",
+          "**(B) Tracking vs Detection:** Detection finds the object's presence; tracking continuously follows landmarks from frame to frame cheaply.",
+          "**(C) Landmarks:** Coordinate keypoints mapping body, hand, or face geometry.",
+          "**(D) Normalized Coordinates:** Coordinate outputs scaled between 0.0 and 1.0 relative to image size, allowing distance and aspect ratio calculations to function independently of camera resolution."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Engineering Summary"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Summary:** MediaPipe is a real-time cross-platform ML framework that builds modular perception pipelines (graphs) for detecting, tracking, and estimating human body, face, hands, and object landmarks from video streams."
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "slug": "whisper",
+    "title": "Whisper - Automatic Speech Recognition (ASR) Model by OpenAI",
+    "date": "2026-06-23",
+    "author": "Grabber Team",
+    "category": "Software",
+    "readTime": "5 min",
+    "featured": true,
+    "excerpt": "Whisper is a state-of-the-art automatic speech recognition framework. Explore its encoder-decoder Transformer architecture, multilingual transcription capabilities, and robotic voice command pipelines.",
+    "coverImage": "/blog/27-whisper/whisper.jpeg",
+    "content": [
+      {
+        "type": "heading",
+        "level": 1,
+        "text": "Whisper — Automatic Speech Recognition (ASR) Model by OpenAI"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Core Idea"
+      },
+      {
+        "type": "image",
+        "url": "/blog/27-whisper/whisper2.jpeg",
+        "caption": "Whisper in Action"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Whisper is NOT a voice assistant.",
+          "Whisper is NOT a chatbot.",
+          "Whisper is NOT a text generator."
+        ]
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Whisper is:** A deep learning automatic speech recognition (ASR) system that converts audio signals into text using a large-scale encoder–decoder Transformer trained on multilingual, noisy, real-world speech data."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "1. What Problem Whisper Solves"
+      },
+      {
+        "type": "paragraph",
+        "text": "Before Whisper, speech recognition systems struggled heavily outside clean studio environments. The traditional pipeline (Audio → Clean Speech → Text) was highly fragile due to several constraints:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Noise Sensitivity:** Background sounds and ambient noise easily distorted transcription accuracy.",
+          "**Poor Multilingual Support:** Traditional models were localized to single languages, making language switches difficult.",
+          "**Domain-Specific Tuning:** Required extensive manual fine-tuning for different acoustic environments and accents.",
+          "**Microphone Hardware Dependence:** Transcription quality suffered greatly on lower-grade microphones."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Whisper handles raw audio directly, bypassing clean audio requirements. Its robust transformer backbone accurately outputs text even in noisy conditions, across multiple accents, and across multiple languages."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "2. Whisper Architecture"
+      },
+      {
+        "type": "image",
+        "url": "/blog/27-whisper/whisper1.jpeg",
+        "caption": "Whisper in Action"
+      },
+      {
+        "type": "paragraph",
+        "text": "Whisper leverages a sequence-to-sequence Transformer Encoder-Decoder architecture to process audio features and predict textual tokens:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Audio Input:** The raw audio signal is resampled to 16kHz and transformed into a Log-Mel Spectrogram.",
+          "**(B) Encoder:** A CNN and Transformer encoder processes the spectrogram features to learn phonemes, timing, and acoustic structures, outputting continuous audio embeddings.",
+          "**(C) Decoder:** An autoregressive Transformer decoder predicts the text sequence word-by-word, attending to the encoder's audio embeddings to generate transcriptions."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "3. Whisper Processing Pipeline"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Mic[Microphone / Audio File] --> Resample[Resampling to 16kHz]\n    Resample --> Spectrogram[Mel Spectrogram Extraction]\n    Spectrogram --> Encoder[Transformer Encoder]\n    Encoder --> Decoder[Transformer Decoder]\n    Decoder --> Text[Text Output]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "4. Multilingual Capability"
+      },
+      {
+        "type": "paragraph",
+        "text": "Whisper supports translation and transcription across more than 90 languages natively out-of-the-box:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Cross-Lingual Transcription:** Automatically translates spoken foreign audio into English text.",
+          "**Language Detection:** Instantly identifies the spoken language at the start of the audio stream.",
+          "**Examples:** Sinhala speech ➔ English transcription; Japanese speech ➔ Japanese transcription."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "5. Key Capabilities"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**(A) Speech-to-Text:** Converts raw input speech signals into standard text.",
+          "**(B) Language Detection:** Auto-identifies spoken language from the initial audio segments.",
+          "**(C) Translation Mode:** Transcribes non-English speech directly into English text.",
+          "**(D) Timestamp Alignment:** Computes word-level and segment-level timestamps for subtitle synchronization."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "6. Model Sizes"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Model Size",
+          "Inference Speed",
+          "Accuracy",
+          "Target Use Case"
+        ],
+        "rows": [
+          [
+            "tiny",
+            "Very fast",
+            "Low",
+            "Resource-constrained edge devices"
+          ],
+          [
+            "base",
+            "Fast",
+            "Medium",
+            "Simple applications and quick prototyping"
+          ],
+          [
+            "small",
+            "Balanced",
+            "Good",
+            "Production-light deployments"
+          ],
+          [
+            "medium",
+            "Slower",
+            "High",
+            "Standard production workflows"
+          ],
+          [
+            "large",
+            "Slowest",
+            "Highest",
+            "Research and enterprise-grade servers"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "7. Why Whisper Works Well"
+      },
+      {
+        "type": "paragraph",
+        "text": "Whisper is trained on 680,000 hours of weakly supervised, diverse, and multilingual web audio. By learning from real-world noisy speech instead of clean synthetic datasets, the model does not require studio-grade audio to work reliably."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Whisper in Real Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "Voice commands in robotics are translated by Whisper and fed into downstream control modules:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Voice[User Voice Command] --> Whisper[Whisper ASR]\n    Whisper --> Text[Command Text]\n    Text --> Logic[Robot Control Logic]\n    Logic --> Act[Actuators (Servos/Motors)]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Example: If an operator says \"Pick up the bottle\", Whisper transcribes it, the control logic triggers the YOLO detection of the bottle, and the robot arm executes the pick action."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Input Representation"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!NOTE] **Log-Mel Spectrogram:** Audio waves are not fed directly into transformers. Instead, the raw audio is converted into a 2D Log-Mel Spectrogram representing frequency changes over time, facilitating pattern recognition and computational efficiency."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Limitations"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Limitation",
+          "Core Cause",
+          "Mitigation Strategy"
+        ],
+        "rows": [
+          [
+            "1. Latency",
+            "Heavy model parameter weights (large models)",
+            "Use quantized models (TensorRT/whisper.cpp)"
+          ],
+          [
+            "2. No Native Streaming",
+            "Whisper is designed for chunk-based inference",
+            "Implement overlapping rolling audio buffers"
+          ],
+          [
+            "3. Hallucination Risk",
+            "Model guesses words when audio is extremely unclear",
+            "Apply post-transcription LLM validation layers"
+          ],
+          [
+            "4. Compute Cost",
+            "Large-scale inference requires dedicated GPUs",
+            "Deploy small/base models on CPU-optimized nodes"
+          ],
+          [
+            "5. Background Noise Errors",
+            "Extreme noise overlapping key speech frequencies",
+            "Apply digital noise reduction filters (e.g. RNNoise) pre-ASR"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. Engineering Considerations"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Best Use Cases",
+          "Not Ideal For"
+        ],
+        "rows": [
+          [
+            "Transcription systems",
+            "Ultra-low latency systems without optimization"
+          ],
+          [
+            "Voice assistants",
+            "Embedded microcontrollers (ESP32 class)"
+          ],
+          [
+            "Robotics voice control",
+            "Deterministic command systems without validation layers"
+          ],
+          [
+            "Meeting note generation",
+            "Continuous real-time stream decoding out-of-the-box"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Whisper vs. Traditional ASR"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Feature",
+          "OpenAI Whisper",
+          "Traditional ASR"
+        ],
+        "rows": [
+          [
+            "Noise robustness",
+            "High",
+            "Low"
+          ],
+          [
+            "Multilingual support",
+            "Excellent",
+            "Limited"
+          ],
+          [
+            "Setup complexity",
+            "Low",
+            "High"
+          ],
+          [
+            "Accuracy",
+            "High",
+            "Medium"
+          ],
+          [
+            "Adaptability",
+            "High",
+            "Low"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "Engineering Summary"
+      },
+      {
+        "type": "blockquote",
+        "text": "[!IMPORTANT] **Summary:** Whisper is a large-scale transformer-based automatic speech recognition system that converts raw audio signals into structured text representations using robust acoustic feature extraction and sequence-to-sequence decoding trained on diverse multilingual datasets."
       }
     ]
   },
