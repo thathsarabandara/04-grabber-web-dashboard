@@ -8,11 +8,13 @@ import {
   Trash2, 
   PlayCircle,
   RefreshCw,
-  Sliders
+  Sliders,
+  Square
 } from 'lucide-react';
 import api from '../../../api/axiosInstance';
 
 export function VoiceCommandsTab({
+  robots,
   voiceCommands,
   setVoiceCommands,
   voiceMappings,
@@ -38,6 +40,9 @@ export function VoiceCommandsTab({
   setActiveTab
 }) {
 
+  const recognitionRef = React.useRef(null);
+  const isListeningRef = React.useRef(false);
+
   React.useEffect(() => {
     const fetchVoiceSettings = async () => {
       try {
@@ -50,37 +55,116 @@ export function VoiceCommandsTab({
       }
     };
     fetchVoiceSettings();
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+      }
+    };
   }, []);
 
-  const triggerVoiceListenSim = async () => {
-    if (isListening) return;
-    setIsListening(true);
-    setVoiceTranscript("Simulating voice input stream...");
-    setVoiceIntent("None");
-    setVoiceAction("None");
+  const processLocalTestCommand = async (text) => {
+    const cleaned = text.toLowerCase();
+    const matched = voiceCommands.find(c => cleaned.includes(c.phrase.toLowerCase()));
     
-    try {
-      const res = await api.post('/ai/voice/test');
+    if (matched) {
+      setVoiceIntent("MATCHED_PHRASE");
+      setVoiceAction(matched.action);
       
-      // Step 1: Speak phrase
-      setTimeout(() => {
-        setVoiceTranscript(`"${wakeWord}, ${res.data.phrase.toLowerCase()}"`);
-      }, 1500);
+      const selectedId = localStorage.getItem('selectedRobotId') || (robots && robots[0]?.id) || '';
+      try {
+        await api.post('/ai/voice/execute', {
+          action: matched.action,
+          target: matched.target,
+          robot_id: selectedId
+        });
+      } catch (err) {
+        console.error("Failed to execute voice command", err);
+      }
+    } else {
+      setVoiceIntent("NO_MATCH");
+      setVoiceAction("None");
+    }
+  };
 
-      // Step 2: Extract Intent
-      setTimeout(() => {
-        setVoiceIntent(res.data.intent);
-      }, 3000);
-
-      // Step 3: Trigger Action
-      setTimeout(() => {
-        setVoiceAction(res.data.action);
-        setIsListening(false);
-      }, 4500);
-    } catch (err) {
-      console.error("Failed to trigger voice simulator", err);
+  const toggleLocalSpeechRecognition = () => {
+    if (isListeningRef.current) {
+      isListeningRef.current = false;
       setIsListening(false);
-      setVoiceTranscript("Simulation failed. Make sure voice command mappings are configured.");
+      setVoiceTranscript('Off');
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    } else {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Web Speech API is not supported in this browser. Please use Chrome, Safari or Edge.");
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.lang = 'en-US';
+
+      rec.onstart = () => {
+        isListeningRef.current = true;
+        setIsListening(true);
+        setVoiceTranscript('Listening... Speak a phrase configured below.');
+        setVoiceIntent('None');
+        setVoiceAction('None');
+      };
+
+      rec.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+
+        const currentText = finalTranscript || interimTranscript;
+        setVoiceTranscript(currentText);
+
+        if (finalTranscript) {
+          processLocalTestCommand(finalTranscript);
+        }
+      };
+
+      rec.onerror = (e) => {
+        console.error("Speech recognition error", e);
+        if (e.error === 'no-speech') {
+          return;
+        }
+        isListeningRef.current = false;
+        setIsListening(false);
+        setVoiceTranscript(`Error: ${e.error}`);
+      };
+
+      rec.onend = () => {
+        if (isListeningRef.current) {
+          try {
+            rec.start();
+          } catch (err) {
+            console.error("Failed to restart speech recognition", err);
+          }
+        } else {
+          setIsListening(false);
+          setVoiceTranscript('Off');
+        }
+      };
+
+      recognitionRef.current = rec;
+      try {
+        rec.start();
+      } catch (err) {
+        console.error("Failed to start speech recognition", err);
+      }
     }
   };
 
@@ -218,7 +302,13 @@ export function VoiceCommandsTab({
                   onChange={(e) => setNewVoiceAction(e.target.value)}
                   className="px-3 py-2 border rounded-xl text-xs outline-none focus:ring-1 focus:ring-amber-500 bg-white text-slate-700"
                 >
-                  <option value="UNASSIGNED">SELECT ACTION</option>
+                   <option value="UNASSIGNED">SELECT ACTION</option>
+                  <option value="MOVE_LEFT">MOVE LEFT</option>
+                  <option value="MOVE_RIGHT">MOVE RIGHT</option>
+                  <option value="MOVE_FORWARD">MOVE FORWARD</option>
+                  <option value="MOVE_BACKWARD">MOVE BACKWARD</option>
+                  <option value="MOVE_UP">MOVE UP</option>
+                  <option value="MOVE_DOWN">MOVE DOWN</option>
                   <option value="MOVE_HOME">MOVE HOME</option>
                   <option value="STOP_ALL">EMERGENCY STOP</option>
                   <option value="DANCE">DANCE MACRO</option>
@@ -252,23 +342,17 @@ export function VoiceCommandsTab({
             <p className="text-xs text-slate-400 mb-6">Test the speech recognition engine and intent model parsing logic.</p>
 
             <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-600">Simulate Mic Capture</span>
-                <button 
-                  onClick={triggerVoiceListenSim}
-                  disabled={isListening}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition ${isListening ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-slate-950 text-white hover:bg-slate-800'}`}
-                >
-                  {isListening ? (
-                    <>
-                      <RefreshCw size={12} className="animate-spin" /> Analyzing Audio...
-                    </>
-                  ) : (
-                    <>
-                      <Mic size={12} /> Start Speaking Test
-                    </>
-                  )}
-                </button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
+                <span className="text-xs font-bold text-slate-600">Voice Control Inputs:</span>
+                <div className="flex flex-wrap gap-2">
+                  <button 
+                    onClick={toggleLocalSpeechRecognition}
+                    type="button"
+                    className={`px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition ${isListening ? 'bg-amber-600 text-white animate-pulse' : 'bg-slate-950 text-white hover:bg-slate-800'}`}
+                  >
+                    <Mic size={12} /> {isListening ? 'Stop Listening' : 'Start Voice Test'}
+                  </button>
+                </div>
               </div>
 
               {/* Status parameters */}
