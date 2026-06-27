@@ -21,7 +21,7 @@ import { NoRobotsLock } from '../../components/ui/NoRobotsLock';
 
 // Import modular tab components
 import { ControlCenterTab } from './ai-tabs/ControlCenterTab';
-import { ObjectDetectionTab } from './ai-tabs/ObjectDetectionTab';
+
 import { FaceRecognitionTab } from './ai-tabs/FaceRecognitionTab';
 import { GestureControlTab } from './ai-tabs/GestureControlTab';
 import { VoiceCommandsTab } from './ai-tabs/VoiceCommandsTab';
@@ -52,13 +52,7 @@ export function AITrainingPage() {
   // Resource Monitoring Simulated Stats
   // --- MODULE CONFIGURATION STATES ---
 
-  // 1. Object Recognition State
-  const [enabledClasses, setEnabledClasses] = useState(['Bottle', 'Cup', 'Phone', 'Cube', 'Keyboard']);
-  const [objectPriorities, setObjectPriorities] = useState(['Bottle', 'Cube', 'Cup', 'Phone']);
-  const [confidenceThreshold, setConfidenceThreshold] = useState(70);
-  const [detectionZones, setDetectionZones] = useState({ left: true, center: true, right: false });
-  const [detectOnlyAllowed, setDetectOnlyAllowed] = useState(true);
-  const [objectCounts, setObjectCounts] = useState({ Bottle: 124, Phone: 82, Cup: 71, Cube: 55 });
+
 
   // 2. Face Recognition State
   const [unknownPersonAction, setUnknownPersonAction] = useState('Notify');
@@ -245,24 +239,6 @@ export function AITrainingPage() {
   // Dynamic Routing mapping
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'obj-detect':
-        return (
-          <ObjectDetectionTab
-            enabledClasses={enabledClasses}
-            setEnabledClasses={setEnabledClasses}
-            objectPriorities={objectPriorities}
-            setObjectPriorities={setObjectPriorities}
-            confidenceThreshold={confidenceThreshold}
-            setConfidenceThreshold={setConfidenceThreshold}
-            detectionZones={detectionZones}
-            setDetectionZones={setDetectionZones}
-            detectOnlyAllowed={detectOnlyAllowed}
-            setDetectOnlyAllowed={setDetectOnlyAllowed}
-            objectCounts={objectCounts}
-            objectCanvasRef={objectCanvasRef}
-            setActiveTab={setActiveTab}
-          />
-        );
       case 'face-rec':
         return (
           <FaceRecognitionTab
@@ -295,6 +271,7 @@ export function AITrainingPage() {
       case 'voice':
         return (
           <VoiceCommandsTab
+            robots={robots}
             voiceCommands={voiceCommands}
             setVoiceCommands={setVoiceCommands}
             voiceMappings={voiceMappings}
@@ -398,7 +375,6 @@ export function AITrainingPage() {
       <div className="bg-white/80 border border-slate-200/50 shadow-glass rounded-2xl p-2.5 flex items-center overflow-x-auto gap-1 scrollbar-thin">
         {[
           { id: 'control-center', label: '🔥 Control Center' },
-          { id: 'obj-detect', label: '📦 Object Detection' },
           { id: 'face-rec', label: '👤 Face Recognition' },
           { id: 'gesture', label: '✋ Gesture Control' },
           { id: 'voice', label: '🎤 Voice Commands' },
