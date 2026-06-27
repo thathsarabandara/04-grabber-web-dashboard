@@ -21,13 +21,269 @@ import {
   Trash2,
   Save,
   Clock,
-  Camera
+  Camera,
+  HandMetal,
+  Mic
 } from 'lucide-react';
 import { PopupDialog } from '../../components/ui/PopupDialog';
 import { NoRobotsLock } from '../../components/ui/NoRobotsLock';
 
 export function ControlPanelPage() {
   const [joints, setJoints] = useState({ j1: 90, j2: 100, j3: 60, j4: 90 });
+  
+  const recognitionRef = useRef(null);
+  const isListeningRef = useRef(false);
+  const localStreamRef = useRef(null);
+  const [isLiveListening, setIsLiveListening] = useState(false);
+  const [liveTranscript, setLiveTranscript] = useState('Off');
+  const [lastHeardCommand, setLastHeardCommand] = useState('None');
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+      }
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach(t => t.stop());
+      }
+    };
+  }, []);
+
+  const processLiveVoiceCommand = (text) => {
+    console.log("[Live Voice] Parsing:", text);
+    
+    // Gripper Release
+    if (text.includes("open gripper") || text.includes("release") || text.includes("open claw") || text.includes("open")) {
+      setLastHeardCommand("Open Gripper");
+      setJoints(prev => {
+        sendJointCommand('j4', 100);
+        return { ...prev, j4: 100 };
+      });
+    }
+    // Gripper Close
+    else if (text.includes("close gripper") || text.includes("grab") || text.includes("close claw") || text.includes("close")) {
+      setLastHeardCommand("Close Gripper");
+      setJoints(prev => {
+        sendJointCommand('j4', 70);
+        return { ...prev, j4: 70 };
+      });
+    }
+    // Base Left
+    else if (text.includes("move left") || text.includes("base left") || text.includes("left")) {
+      setLastHeardCommand("Move Left");
+      setJoints(prev => {
+        const val = Math.max(0, prev.j1 - 15);
+        sendJointCommand('j1', val);
+        return { ...prev, j1: val };
+      });
+    }
+    // Base Right
+    else if (text.includes("move right") || text.includes("base right") || text.includes("right")) {
+      setLastHeardCommand("Move Right");
+      setJoints(prev => {
+        const val = Math.min(180, prev.j1 + 15);
+        sendJointCommand('j1', val);
+        return { ...prev, j1: val };
+      });
+    }
+    // Shoulder Up / Move Up
+    else if (text.includes("shoulder up") || text.includes("move up") || text.includes("up")) {
+      setLastHeardCommand("Move Up");
+      setJoints(prev => {
+        const val = Math.min(180, prev.j2 + 15);
+        sendJointCommand('j2', val);
+        return { ...prev, j2: val };
+      });
+    }
+    // Shoulder Down / Move Down
+    else if (text.includes("shoulder down") || text.includes("move down") || text.includes("down")) {
+      setLastHeardCommand("Move Down");
+      setJoints(prev => {
+        const val = Math.max(0, prev.j2 - 15);
+        sendJointCommand('j2', val);
+        return { ...prev, j2: val };
+      });
+    }
+    // Elbow Up / Move Forward
+    else if (text.includes("elbow up") || text.includes("move forward") || text.includes("forward")) {
+      setLastHeardCommand("Move Forward");
+      setJoints(prev => {
+        const val = Math.min(180, prev.j3 + 15);
+        sendJointCommand('j3', val);
+        return { ...prev, j3: val };
+      });
+    }
+    // Elbow Down / Move Backward
+    else if (text.includes("elbow down") || text.includes("move backward") || text.includes("backward") || text.includes("back")) {
+      setLastHeardCommand("Move Backward");
+      setJoints(prev => {
+        const val = Math.max(0, prev.j3 - 15);
+        sendJointCommand('j3', val);
+        return { ...prev, j3: val };
+      });
+    }
+    // Go Home
+    else if (text.includes("home") || text.includes("go home") || text.includes("reset")) {
+      setLastHeardCommand("Home Position");
+      handleResetPose();
+    }
+    // Emergency Stop
+    else if (text.includes("stop") || text.includes("emergency stop") || text.includes("freeze")) {
+      setLastHeardCommand("Emergency Stop");
+      handleEmergencyStop();
+    }
+  };
+
+  const toggleLiveVoice = () => {
+    if (isListeningRef.current) {
+      isListeningRef.current = false;
+      setIsLiveListening(false);
+      setLiveTranscript('Off');
+      
+      if (recognitionRef.current) {
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+      
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach(track => track.stop());
+        localStreamRef.current = null;
+      }
+    } else {
+      isListeningRef.current = true;
+      setIsLiveListening(true);
+      setLiveTranscript('Starting...');
+      setLastHeardCommand('None');
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn("Web Speech API not supported. Falling back to local Whisper chunking.");
+        startLocalWhisperChunking();
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.lang = 'en-US';
+
+      rec.onstart = () => {
+        setLiveTranscript('Listening (Cloud)...');
+      };
+
+      rec.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        const currentText = finalTranscript || interimTranscript;
+        setLiveTranscript(currentText);
+
+        if (finalTranscript) {
+          processLiveVoiceCommand(finalTranscript.toLowerCase());
+        }
+      };
+
+      rec.onerror = (e) => {
+        console.warn("Speech recognition error:", e.error, "- switching to local Whisper chunking.");
+        rec.onend = null;
+        rec.stop();
+        recognitionRef.current = null;
+        
+        if (isListeningRef.current) {
+          startLocalWhisperChunking();
+        }
+      };
+
+      rec.onend = () => {
+        if (isListeningRef.current) {
+          try {
+            rec.start();
+          } catch (err) {
+            console.error("Failed to restart speech recognition", err);
+          }
+        }
+      };
+
+      recognitionRef.current = rec;
+      try {
+        rec.start();
+      } catch (err) {
+        console.error("Failed to start speech recognition", err);
+        startLocalWhisperChunking();
+      }
+    }
+  };
+
+  const startLocalWhisperChunking = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      localStreamRef.current = stream;
+      setLiveTranscript('Listening (Local Offline)...');
+      
+      const recordNextChunk = () => {
+        if (!isListeningRef.current) return;
+        
+        const recorder = new MediaRecorder(stream);
+        const chunks = [];
+        
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+        
+        recorder.onstop = async () => {
+          if (chunks.length === 0) return;
+          const blob = new Blob(chunks, { type: 'audio/wav' });
+          const formData = new FormData();
+          formData.append('audio', new File([blob], 'voice.wav', { type: 'audio/wav' }));
+          
+          const selectedId = localStorage.getItem('selectedRobotId') || '';
+          formData.append('robot_id', selectedId);
+          
+          try {
+            const res = await api.post('/ai/voice/transcribe', formData, {
+              headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            if (res.data && res.data.transcript) {
+              setLiveTranscript(`"${res.data.transcript}"`);
+              if (res.data.action && res.data.action !== 'None') {
+                setLastHeardCommand(`${res.data.phrase} (${res.data.action})`);
+              }
+            }
+          } catch (err) {
+            console.error("[Local Voice] Whisper error:", err);
+          }
+          
+          if (isListeningRef.current) {
+            recordNextChunk();
+          }
+        };
+        
+        recorder.start();
+        
+        setTimeout(() => {
+          if (recorder.state !== 'inactive') {
+            recorder.stop();
+          }
+        }, 2500);
+      };
+      
+      recordNextChunk();
+    } catch (err) {
+      console.error("[Local Voice] Microphone initialization failed:", err);
+      setLiveTranscript("Mic access denied");
+      setIsLiveListening(false);
+      isListeningRef.current = false;
+    }
+  };
+
   const [speed, setSpeed] = useState(50);
   const [dialog, setDialog] = useState({
     isOpen: false,
@@ -56,6 +312,84 @@ export function ControlPanelPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRobotId, setSelectedRobotId] = useState('');
   const [safetyError, setSafetyError] = useState(null);
+  const [useWebcamControl, setUseWebcamControl] = useState(false);
+  const [webcamStream, setWebcamStream] = useState(null);
+  const webcamVideoRef = useRef(null);
+  const [annotatedWebcamFrame, setAnnotatedWebcamFrame] = useState(null);
+  const [detectedWebcamAction, setDetectedWebcamAction] = useState(null);
+  const webcamIntervalRef = useRef(null);
+
+  const startWebcamControl = async () => {
+    try {
+      // Ensure backend publishes MQTT commands when webcam controls are active
+      await api.post('/ai/gesture/settings', { control_enabled: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
+      setWebcamStream(stream);
+      setUseWebcamControl(true);
+    } catch (err) {
+      console.error('Failed to start webcam control:', err);
+      alert('Cannot access webcam or enable gesture control settings');
+    }
+  };
+
+  // Once the video element renders and the stream is available, wire them up
+  useEffect(() => {
+    if (!webcamStream || !useWebcamControl) return;
+
+    // Wait a tick for the <video> to mount
+    const raf = requestAnimationFrame(() => {
+      if (webcamVideoRef.current) {
+        webcamVideoRef.current.srcObject = webcamStream;
+      }
+
+      // Start the capture loop at ~6.7 fps (150ms) to ensure smooth motion tracking
+      if (webcamIntervalRef.current) clearInterval(webcamIntervalRef.current);
+      webcamIntervalRef.current = setInterval(async () => {
+        if (!webcamVideoRef.current || webcamVideoRef.current.readyState < 2) return;
+        const v = webcamVideoRef.current;
+        const c = document.createElement('canvas');
+        c.width = v.videoWidth || 480;
+        c.height = v.videoHeight || 480;
+        c.getContext('2d').drawImage(v, 0, 0);
+        c.toBlob(async (blob) => {
+          if (!blob) return;
+          const form = new FormData();
+          form.append('frame', new File([blob], 'frame.jpg', { type: 'image/jpeg' }));
+          form.append('robot_id', selectedRobotId);
+          try {
+            const res = await api.post('/ai/gesture/recognize', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+            if (res.data.image) setAnnotatedWebcamFrame(res.data.image);
+            setDetectedWebcamAction(res.data.detected_action || null);
+          } catch (err) {
+            console.error('Webcam recognize error', err);
+          }
+        }, 'image/jpeg', 0.8);
+      }, 150);
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, [webcamStream, useWebcamControl]);
+
+  const stopWebcamControl = () => {
+    setUseWebcamControl(false);
+    if (webcamStream) {
+      webcamStream.getTracks().forEach(t => t.stop());
+    }
+    setWebcamStream(null);
+    setAnnotatedWebcamFrame(null);
+    setDetectedWebcamAction(null);
+    if (webcamIntervalRef.current) clearInterval(webcamIntervalRef.current);
+    
+    // Disable control on backend to avoid stray signals
+    api.post('/ai/gesture/settings', { control_enabled: false }).catch(err => {
+      console.error('Failed to disable gesture control settings:', err);
+    });
+  };
+
+  useEffect(() => {
+    return () => stopWebcamControl();
+  }, []);
+
   const [cameraUrl, setCameraUrl] = useState(() => {
     return localStorage.getItem('grabber_camera_url') || 'http://192.168.1.105:81/stream';
   });
@@ -1617,29 +1951,75 @@ export function ControlPanelPage() {
           {/* Camera Feed Container */}
           <div ref={cameraContainerRef} className={`glass-card overflow-hidden group relative shadow-2xl ${isFullScreen ? 'fixed inset-0 z-[100] !rounded-none w-full h-full' : 'h-[500px]'}`}>
             <div className="absolute inset-0 bg-slate-950 flex items-center justify-center">
-              {/* Actual Camera Feed */}
-              {cameraUrl && !streamError && (
-                <img 
-                  ref={imageRef}
-                  src={getStreamUrl(cameraUrl)} 
-                  crossOrigin="anonymous"
-                  alt="ESP32-CAM Stream" 
-                  className="w-full h-full object-cover"
-                  onError={() => setStreamError(true)}
-                />
-              )}
-              {/* Simulated Camera Feed / Fallback */}
-              {(!cameraUrl || streamError) && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-700 gap-6 bg-slate-950 z-0">
-                  <div className="relative">
-                    <Video size={80} className="opacity-20 animate-pulse" />
-                    <div className="absolute inset-0 bg-brand-accent/30 blur-[60px] rounded-full"></div>
+              {/* Split View for Webcam or Normal Feed */}
+              {useWebcamControl ? (
+                <div className="absolute inset-0 grid grid-cols-2 gap-1 bg-black">
+                  {/* Left: ESP Camera */}
+                  <div className="relative border-r border-slate-800">
+                    <span className="absolute top-2 left-2 px-2 py-1 bg-black/50 text-emerald-400 text-[10px] font-bold rounded z-20">ESP Feed</span>
+                    {cameraUrl && !streamError ? (
+                      <img
+                        ref={imageRef}
+                        src={getStreamUrl(cameraUrl)}
+                        onError={() => setStreamError(true)}
+                        className="w-full h-full object-cover"
+                        alt="ESP Telemetry"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-700 bg-slate-950">
+                        <Video size={48} className="opacity-20 animate-pulse mb-2" />
+                        <span className="text-[10px] font-bold text-red-500 uppercase">No ESP Stream</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="space-y-2 text-center">
-                    <p className="font-black tracking-[0.3em] uppercase text-[10px] text-white/40">Feed: {selectedRobot ? (selectedRobot.name || selectedRobot.robot_id) : 'NO_SIGNAL'}</p>
-                    <p className="text-[10px] font-bold text-red-500 uppercase">{streamError ? 'Stream Connection Failed' : 'No Stream URL Provided'}</p>
+                  
+                  {/* Right: Webcam */}
+                  <div className="relative bg-slate-900">
+                    <span className="absolute top-2 left-2 z-20 px-2 py-1 bg-black/50 text-purple-400 text-[10px] font-bold rounded">Webcam Feed</span>
+                    {detectedWebcamAction && (
+                      <span className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 px-6 py-3 bg-purple-600 text-white text-xs font-black uppercase rounded-full shadow-[0_0_20px_rgba(147,51,234,0.5)] border border-purple-400">
+                        {detectedWebcamAction}
+                      </span>
+                    )}
+                    <video ref={webcamVideoRef} autoPlay playsInline muted className="hidden" />
+                    {annotatedWebcamFrame ? (
+                      <img src={annotatedWebcamFrame} className="w-full h-full object-cover" alt="Webcam Annotated" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-700 bg-slate-950">
+                        <Camera size={48} className="animate-pulse mb-2 opacity-50" />
+                        <span className="text-slate-500 text-[10px] uppercase font-bold">Initializing Webcam...</span>
+                      </div>
+                    )}
                   </div>
                 </div>
+              ) : (
+                <>
+                  {/* Actual Camera Feed */}
+                  {cameraUrl && !streamError && (
+                    <img 
+                      ref={imageRef}
+                      src={getStreamUrl(cameraUrl)} 
+                      crossOrigin="anonymous"
+                      alt="ESP32-CAM Stream" 
+                      className="w-full h-full object-cover"
+                      onError={() => setStreamError(true)}
+                    />
+                  )}
+                  {/* Simulated Camera Feed / Fallback */}
+                  {(!cameraUrl || streamError) && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-700 gap-6 bg-slate-950 z-0">
+                      <div className="relative">
+                        <Video size={80} className="opacity-20 animate-pulse" />
+                        <div className="absolute inset-0 bg-brand-accent/30 blur-[60px] rounded-full"></div>
+                      </div>
+                      <div className="space-y-2 text-center">
+                        <p className="font-black tracking-[0.3em] uppercase text-[10px] text-white/40">Feed: {selectedRobot ? (selectedRobot.name || selectedRobot.robot_id) : 'NO_SIGNAL'}</p>
+                        <p className="text-[10px] font-bold text-red-500 uppercase">{streamError ? 'Stream Connection Failed' : 'No Stream URL Provided'}</p>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* HUD Elements */}
@@ -1674,6 +2054,24 @@ export function ControlPanelPage() {
                       }}
                       className="w-48 lg:w-64 bg-black/40 hover:bg-black/60 focus:bg-black/80 backdrop-blur-md rounded-xl text-white text-xs px-4 py-3 border border-white/10 outline-none transition-all placeholder:text-white/30 shadow-lg"
                     />
+                    <button
+                      onClick={useWebcamControl ? stopWebcamControl : startWebcamControl}
+                      className={`p-3 rounded-xl transition-all border ${
+                        useWebcamControl ? 'bg-purple-500/20 text-purple-400 border-purple-500/40 shadow-lg shadow-purple-500/20' : 'bg-white/10 hover:bg-white/20 text-white border-white/10 backdrop-blur-md'
+                      }`}
+                      title={useWebcamControl ? "Stop Webcam Control" : "Start Webcam Control"}
+                    >
+                      <HandMetal size={20} />
+                    </button>
+                    <button
+                      onClick={toggleLiveVoice}
+                      className={`p-3 rounded-xl transition-all border ${
+                        isLiveListening ? 'bg-amber-500/20 text-amber-400 border-amber-500/40 shadow-lg shadow-amber-500/20 animate-pulse' : 'bg-white/10 hover:bg-white/20 text-white border-white/10 backdrop-blur-md'
+                      }`}
+                      title={isLiveListening ? "Mute Voice Control" : "Unmute Voice Control"}
+                    >
+                      <Mic size={20} />
+                    </button>
                     <button
                       onClick={handleToggleFullScreen}
                       className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-white transition-all border border-white/10"
