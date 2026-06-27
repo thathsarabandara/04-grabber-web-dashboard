@@ -2696,7 +2696,7 @@ export const blogPosts =
   {
     "id": 10,
     "slug": "websockets",
-    "title": "WebSockets — Real-Time Bidirectional Communication Protocol",
+    "title": "WebSockets - Real-Time Bidirectional Communication Protocol",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "Engineering",
@@ -3200,14 +3200,14 @@ export const blogPosts =
   {
     "id": 12,
     "slug": "interrupts_isr",
-    "title": "Safety First — Interrupts & ISRs (Embedded Systems / Microcontrollers)",
+    "title": "Safety First - Interrupts & ISRs (Embedded Systems / Microcontrollers)",
     "date": "2026-06-18",
     "author": "Grabber Team",
     "category": "Engineering",
     "readTime": "7 min",
     "featured": true,
     "excerpt": "Hardware-triggered events that immediately pause normal program execution, execute a special function (ISR), then resume the previous state.",
-    "coverImage": "/blog/hardware_hero_1781771816084.png",
+    "coverImage": "/blog/12-safty/isr.jpeg",
     "content": [
       {
         "type": "heading",
@@ -3218,6 +3218,11 @@ export const blogPosts =
         "type": "heading",
         "level": 2,
         "text": "Core Idea"
+      },
+      {
+        "type": "image",
+        "url": "/blog/12-safty/isr2.jpeg",
+        "caption": "Interrupts Concept"
       },
       {
         "type": "list",
@@ -3261,6 +3266,11 @@ export const blogPosts =
       {
         "type": "paragraph",
         "text": "The execution model of an interrupt follows a strict hardware sequence:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/12-safty/isr1.jpeg",
+        "caption": "Interrupts flow"
       },
       {
         "type": "list",
@@ -3391,6 +3401,11 @@ export const blogPosts =
         "text": "The CPU locates handler functions using a vector table mapping hardware interrupt sources to memory addresses:"
       },
       {
+        "type": "image",
+        "url": "/blog/12-safty/isr3.jpeg",
+        "caption": "Interrupt vector table"
+      },
+      {
         "type": "mermaid",
         "code": "graph LR\n    Source[Interrupt Source] --> Vector[Vector Table]\n    Vector --> Addr[ISR Address]\n    Addr --> ISR[Execute ISR]"
       },
@@ -3453,6 +3468,11 @@ export const blogPosts =
       {
         "type": "paragraph",
         "text": "On the ESP32 platform, interrupts have specific features due to its dual-core CPU, FreeRTOS scheduler, and cache architectures:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/12-safty/isr4.jpeg",
+        "caption": "Interrupts in ESP32 Context"
       },
       {
         "type": "list",
@@ -6648,7 +6668,7 @@ export const blogPosts =
   {
     "id": 24,
     "slug": "yolo",
-    "title": "YOLO (You Only Look Once) — Real-Time Object Detection System",
+    "title": "YOLO (You Only Look Once) - Real-Time Object Detection System",
     "date": "2026-06-23",
     "author": "Grabber Team",
     "category": "Software",
@@ -7090,7 +7110,7 @@ export const blogPosts =
   {
     "id": 25,
     "slug": "insightface",
-    "title": "InsightFace — High-Accuracy Face Analysis Framework",
+    "title": "InsightFace - High-Accuracy Face Analysis Framework",
     "date": "2026-06-23",
     "author": "Grabber Team",
     "category": "Software",
