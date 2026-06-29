@@ -1,16 +1,30 @@
 import { useParams, Link } from 'react-router-dom';
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import { 
-  ArrowLeft, 
-  Clock, 
-  Calendar, 
-  User, 
-  Share2, 
+import {
+  ArrowLeft,
+  Clock,
+  Calendar,
+  User,
+  Share2,
   Bookmark,
-  ChevronRight
+  ChevronRight,
+  AlertCircle
 } from 'lucide-react';
 import { blogPosts } from '../../utils/blogData';
+import { Mermaid } from '../../components/Mermaid';
+
+const renderText = (text) => {
+  if (typeof text !== 'string') return text;
+  // Basic inline bold parsing
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="text-slate-900 font-bold">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+};
 
 export function BlogPostPage() {
   const { slug } = useParams();
@@ -44,8 +58,8 @@ export function BlogPostPage() {
     <div className="max-w-4xl mx-auto pb-40">
       {/* Navigation */}
       <div className="flex items-center justify-between mb-16">
-        <Link 
-          to="/blog" 
+        <Link
+          to="/blog"
           className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-accent transition-colors"
         >
           <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center group-hover:border-brand-accent transition-all group-hover:-translate-x-1 shadow-sm">
@@ -55,10 +69,10 @@ export function BlogPostPage() {
         </Link>
         <div className="flex gap-4">
           <button className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-accent hover:border-brand-accent transition-all shadow-sm">
-             <Bookmark size={16} />
+            <Bookmark size={16} />
           </button>
           <button className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-brand-accent hover:border-brand-accent transition-all shadow-sm">
-             <Share2 size={16} />
+            <Share2 size={16} />
           </button>
         </div>
       </div>
@@ -106,10 +120,10 @@ export function BlogPostPage() {
         {/* Cover Image */}
         <div className="relative group">
           <div className="absolute -inset-4 bg-brand-accent/5 blur-3xl rounded-[4rem] group-hover:bg-brand-accent/10 transition-colors duration-1000 -z-10"></div>
-          <img 
-            src={post.coverImage} 
-            alt={post.title} 
-            className="w-full rounded-[3rem] border-8 border-white shadow-2xl"
+          <img
+            src={post.coverImage}
+            alt={post.title}
+            className="w-full max-h-[600px] h-auto object-contain rounded-[3rem] border-8 border-white shadow-2xl bg-white"
           />
         </div>
 
@@ -119,11 +133,43 @@ export function BlogPostPage() {
           <div className="relative z-10">
             {post.content.map((block, idx) => {
               if (block.type === 'paragraph') {
-                return <p key={idx}>{block.text}</p>;
+                return <p key={idx} className="leading-relaxed">{renderText(block.text)}</p>;
               }
               if (block.type === 'heading') {
                 const Tag = `h${block.level}`;
-                return <Tag key={idx}>{block.text}</Tag>;
+                return <Tag key={idx} className="mt-8 mb-4">{renderText(block.text)}</Tag>;
+              }
+              if (block.type === 'blockquote') {
+                const isAlert = block.text.includes('[!IMPORTANT]') || block.text.includes('[!WARNING]') || block.text.includes('[!CAUTION]');
+                const cleanText = block.text.replace(/\[!(IMPORTANT|WARNING|CAUTION|NOTE|TIP)\]/g, '').trim();
+
+                if (isAlert) {
+                  return (
+                    <div key={idx} className="my-8 p-6 bg-amber-50 border-l-4 border-amber-500 rounded-r-2xl">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="text-amber-500 flex-shrink-0 mt-1" size={20} />
+                        <p className="text-amber-900 font-medium leading-relaxed">{renderText(cleanText)}</p>
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <blockquote key={idx} className="my-8 pl-6 py-2 border-l-4 border-brand-accent/30 text-slate-600 italic bg-slate-50/50 rounded-r-2xl">
+                    <p className="leading-relaxed">{renderText(cleanText)}</p>
+                  </blockquote>
+                );
+              }
+              if (block.type === 'list') {
+                return (
+                  <ul key={idx} className="my-6 space-y-4 pl-2">
+                    {block.items.map((item, i) => (
+                      <li key={i} className="flex gap-4 text-slate-700 items-start">
+                        <div className="w-2 h-2 rounded-full bg-brand-accent mt-2 flex-shrink-0 shadow-sm shadow-brand-accent/30" />
+                        <span className="leading-relaxed">{renderText(item)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                );
               }
               if (block.type === 'code') {
                 return (
@@ -137,11 +183,18 @@ export function BlogPostPage() {
                   </div>
                 );
               }
+              if (block.type === 'mermaid') {
+                return <Mermaid key={idx} chart={block.code} />;
+              }
               if (block.type === 'image') {
                 return (
-                  <figure key={idx} className="my-16">
-                    <img src={block.url} alt={block.caption} className="w-full" />
-                    {block.caption && <figcaption className="text-center text-xs font-bold text-slate-400 mt-4 uppercase tracking-widest">{block.caption}</figcaption>}
+                  <figure key={idx} className="my-16 flex flex-col items-center">
+                    <img
+                      src={block.url}
+                      alt={block.caption}
+                      className="w-full h-auto max-h-[800px] object-contain rounded-[2.5rem] border-8 border-white shadow-2xl bg-white"
+                    />
+                    {block.caption && <figcaption className="text-center text-xs font-bold text-slate-400 mt-6 uppercase tracking-widest">{block.caption}</figcaption>}
                   </figure>
                 );
               }
@@ -149,16 +202,40 @@ export function BlogPostPage() {
                 return (
                   <figure key={idx} className="my-16">
                     <div className="aspect-video w-full rounded-[2.5rem] border-8 border-white shadow-2xl overflow-hidden bg-slate-900">
-                      <iframe 
-                        src={block.url} 
-                        className="w-full h-full" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                      <iframe
+                        src={block.url}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                         title={block.caption || 'Blog Video'}
                       ></iframe>
                     </div>
                     {block.caption && <figcaption className="text-center text-xs font-bold text-slate-400 mt-6 uppercase tracking-widest">{block.caption}</figcaption>}
                   </figure>
+                );
+              }
+              if (block.type === 'table') {
+                return (
+                  <div key={idx} className="my-10 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-200">
+                          {block.headers.map((header, i) => (
+                            <th key={i} className="p-4 text-xs font-black uppercase tracking-widest text-slate-500">{header}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200">
+                        {block.rows.map((row, i) => (
+                          <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                            {row.map((cell, j) => (
+                              <td key={j} className="p-4 text-sm text-slate-700">{renderText(cell)}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 );
               }
               return null;
@@ -168,22 +245,22 @@ export function BlogPostPage() {
 
         {/* Post Footer */}
         <footer className="pt-20 border-t border-slate-200 mt-20">
-           <div className="flex flex-col sm:flex-row items-center justify-between gap-10">
-              <div className="space-y-4">
-                <h4 className="text-xl font-black tracking-tight text-slate-900">Stay updated with core changes</h4>
-                <p className="text-slate-500 font-medium max-w-sm">Receive detailed technical briefs and firmware release notes directly in your terminal.</p>
-              </div>
-              <div className="relative w-full max-w-sm">
-                <input 
-                  type="email" 
-                  placeholder="operator@grabber-x.io" 
-                  className="w-full pl-5 pr-14 py-5 bg-white border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-brand-accent/5 focus:border-brand-accent transition-all shadow-sm"
-                />
-                <button className="absolute right-2.5 top-1/2 -translate-y-1/2 w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-brand-accent transition-all shadow-lg">
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-           </div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-10">
+            <div className="space-y-4">
+              <h4 className="text-xl font-black tracking-tight text-slate-900">Stay updated with core changes</h4>
+              <p className="text-slate-500 font-medium max-w-sm">Receive detailed technical briefs and firmware release notes directly in your terminal.</p>
+            </div>
+            <div className="relative w-full max-w-sm">
+              <input
+                type="email"
+                placeholder="operator@grabber-x.io"
+                className="w-full pl-5 pr-14 py-5 bg-white border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-brand-accent/5 focus:border-brand-accent transition-all shadow-sm"
+              />
+              <button className="absolute right-2.5 top-1/2 -translate-y-1/2 w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-brand-accent transition-all shadow-lg">
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
         </footer>
       </article>
     </div>

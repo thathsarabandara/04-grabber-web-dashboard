@@ -29,6 +29,8 @@ import { PathDrawPage } from './pages/dashboard/PathDrawPage';
 import { TaskSchedulerPage } from './pages/dashboard/TaskSchedulerPage';
 import { ProfilePage } from './pages/dashboard/ProfilePage';
 import { DeviceRegistrationPage } from './pages/dashboard/DeviceRegistrationPage';
+import { MediaGalleryPage } from './pages/dashboard/MediaGalleryPage';
+import { AITrainingPage } from './pages/dashboard/AITrainingPage';
 
 import { ScrollToTop } from './components/ScrollToTop';
 
@@ -67,6 +69,8 @@ export default function App() {
           <Route path="tasks" element={<TaskSchedulerPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="registration" element={<DeviceRegistrationPage />} />
+          <Route path="media" element={<MediaGalleryPage />} />
+          <Route path="ai-training" element={<AITrainingPage />} />
         </Route>
 
         {/* Catch-all */}
