@@ -1071,39 +1071,39 @@ export const cicdPosts = [
         "rows": [
           [
             "Build Code Artifacts",
-            "❌ No",
-            "✅ Yes",
-            "✅ Yes"
+            "No",
+            "Yes",
+            "Yes"
           ],
           [
             "Execute Test Suites",
-            "❌ No",
-            "✅ Yes",
-            "✅ Yes"
+            "No",
+            "Yes",
+            "Yes"
           ],
           [
             "Deploy Applications",
-            "✅ Yes",
-            "✅ Yes",
-            "✅ Yes"
+            "Yes",
+            "Yes",
+            "Yes"
           ],
           [
             "GitOps Compliance",
-            "✅ Yes",
-            "❌ No",
-            "❌ No"
+            "Yes",
+            "No",
+            "No"
           ],
           [
             "State Reconciliation",
-            "✅ Yes",
-            "❌ No",
-            "❌ No"
+            "Yes",
+            "No",
+            "No"
           ],
           [
             "Self-Healing Deployments",
-            "✅ Yes",
-            "❌ No",
-            "❌ No"
+            "Yes",
+            "No",
+            "No"
           ],
           [
             "Kubernetes Integration Focus",
@@ -1118,23 +1118,23 @@ export const cicdPosts = [
   {
     "id": 22,
     "slug": "docker",
-    "title": "🐳 Docker — Application Containerization Platform",
+    "title": "Docker - Application Containerization Platform",
     "date": "2026-06-21",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Understand how Docker solves the 'works on my machine' syndrome. Dive into container lifecycles, Dockerfile layering, persistent volumes, networking, and microservices for robotics backends.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/22-docker/docker.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "🐳 Docker — Application Containerization Platform"
+        "text": "Docker - Application Containerization Platform"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/22-docker/docker1.jpeg",
         "caption": "Docker Containerization Architecture"
       },
       {
@@ -1156,6 +1156,16 @@ export const cicdPosts = [
         "text": "Before Docker, developers frequently encountered the \"Works on my machine\" syndrome. An application built locally would crash in production due to different operating systems, missing libraries, or conflicting dependency versions (e.g., Python 3.9 vs. 3.12). Docker eliminates this by bundling the application, libraries, environment variables, and configuration files into a single immutable artifact."
       },
       {
+        "type": "image",
+        "url": "/blog/22-docker/docker8.jpeg",
+        "caption": "Docker Containerization Architecture"
+      },
+      {
+        "type": "image",
+        "url": "/blog/22-docker/docker9.jpeg",
+        "caption": "Virtualization Vs Containerization"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "3. What is a Container?"
@@ -1163,6 +1173,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "A container is essentially an isolated process running directly on the host operating system's kernel. While a host machine runs generic processes like a web browser or a code editor, Docker allows it to concurrently run isolated environments like a React container, a FastAPI backend, and a PostgreSQL database without them interfering with one another."
+      },
+      {
+        "type": "image",
+        "url": "/blog/22-docker/docker3.jpeg",
+        "caption": "Docker Container"
       },
       {
         "type": "heading",
@@ -1179,6 +1194,11 @@ export const cicdPosts = [
         ]
       },
       {
+        "type": "image",
+        "url": "/blog/22-docker/docker7.jpeg",
+        "caption": "Docker Containerization Architecture"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "5. The Dockerfile: The Blueprint of Containerization"
@@ -1188,6 +1208,11 @@ export const cicdPosts = [
         "text": "The Dockerfile is the most critical file in a Docker project. It is a script containing successive instructions on how to assemble an image:"
       },
       {
+        "type": "image",
+        "url": "/blog/22-docker/docker5.jpeg",
+        "caption": "Dockerfile"
+      },
+      {
         "type": "code",
         "language": "dockerfile",
         "code": "FROM python:3.12\nWORKDIR /app\nCOPY . .\nRUN pip install -r requirements.txt\nCMD [\"python\", \"app.py\"]"
@@ -1195,128 +1220,280 @@ export const cicdPosts = [
       {
         "type": "heading",
         "level": 2,
-        "text": "6. Image Build Process and Layering"
+        "text": "6. Image Build Process"
       },
       {
         "type": "paragraph",
-        "text": "Docker builds images incrementally using cached 'Layers'. If you change only your application code, Docker reuses the existing base OS and dependency installation layers, dramatically speeding up the build process and optimizing storage."
+        "text": "Docker images use cached layers to build incrementally. Each instruction in a Dockerfile creates a new layer, stacked sequentially on top of the previous ones."
       },
       {
-        "type": "heading",
-        "level": 2,
-        "text": "7. Port Mapping and Volumes"
+        "type": "mermaid",
+        "code": "graph TD\n    L1[Layer 1: Ubuntu Base OS] --> L2[Layer 2: Python]\n    L2 --> L3[Layer 3: Dependencies]\n    L3 --> L4[Layer 4: Application Code]"
       },
       {
         "type": "paragraph",
-        "text": "By default, containers are entirely isolated from the host machine:"
+        "text": "Using this layering mechanism provides several key advantages:"
       },
       {
         "type": "list",
         "items": [
-          "**Port Mapping:** To allow external traffic, host ports must be mapped to container ports (e.g., `docker run -p 8080:80 nginx` forwards traffic from host port 8080 to container port 80).",
-          "**Volumes:** Because containers are ephemeral, any data written inside them is lost when they are deleted. Docker Volumes (e.g., `docker volume create postgres-data`) persist data outside the container lifecycle, crucial for databases."
+          "**Faster Builds:** Docker reuses cached layers if their source files or instructions have not changed.",
+          "**Image Reuse:** Multiple images can share the same base layers, saving disk space.",
+          "**Efficient Storage:** Layer sharing means that the overall storage footprints are kept to an absolute minimum."
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "8. Docker in IoT & Robotics Platforms"
+        "text": "7. Running Containers"
       },
       {
         "type": "paragraph",
-        "text": "In a modern robotics stack, microservices power the backend infrastructure. For an ESP32 robot, the backend comprises multiple interacting components. Docker Compose allows developers to define and launch all these interdependent services simultaneously:"
+        "text": "Containers are created and executed from images. Running a container starts the image code as an isolated process on the host."
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker run nginx"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Image[Docker Image] -->|docker run| Process[Running Process (Container)]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Port Mapping"
+      },
+      {
+        "type": "paragraph",
+        "text": "By default, a container's ports are isolated from the host. Port mapping forwards traffic from a host port to the container's internal port."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Host[Host Port: 8080] -->|Port Mapping| Container[Container Port: 80]"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker run -p 8080:80 nginx"
+      },
+      {
+        "type": "paragraph",
+        "text": "This maps **Host:8080** to **Container:80**, allowing external access to the containerized service."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Volumes"
+      },
+      {
+        "type": "paragraph",
+        "text": "If a container is deleted, its internal storage is wiped, meaning database files are lost. Docker Volumes solve this by linking container directories to persistent storage on the host."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Container[Container] -->|Writes to| Volume[Docker Volume] -->|Persists on| Storage[Persistent Storage]"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker volume create postgres-data"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Docker Networks"
+      },
+      {
+        "type": "paragraph",
+        "text": "Containers communicate with each other securely using Docker-defined networks, isolating them from the outside world."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    React[React Container] -->|Docker Network| FastAPI[FastAPI Container] -->|Docker Network| Postgres[PostgreSQL Container]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Benefits of custom Docker Networks:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Service Discovery:** Containers resolve each other by container name.",
+          "**Isolation:** Restricts direct external access to databases.",
+          "**Secure Communication:** Only explicitly connected containers can talk to one another."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. Docker in IoT & Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "For a future robotics platform, each system component can run in a separate container, ensuring clean dependency isolation and easy updates on edge devices:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    ESP32[ESP32 Microcontroller] -->|Publishes Telemetry| MQTT[Container 2: MQTT Broker]\n    MQTT --> API[Container 1: Backend API / FastAPI]\n    API --> DB[Container 5: PostgreSQL]\n    API --> Prom[Container 4: Prometheus]\n    Prom --> Grafana[Container 3: Grafana]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Each service can run in separate containers:\n- **Container 1:** FastAPI\n- **Container 2:** MQTT Broker\n- **Container 3:** Grafana\n- **Container 4:** Prometheus\n- **Container 5:** PostgreSQL"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Docker Compose"
+      },
+      {
+        "type": "paragraph",
+        "text": "Managing multiple individual containers via command line is tedious. Docker Compose allows you to define and orchestrate multi-container setups in a single YAML file."
       },
       {
         "type": "code",
         "language": "yaml",
-        "code": "services:\n  backend:\n    image: robot-api\n  database:\n    image: postgres\n  grafana:\n    image: grafana\n  mqtt-broker:\n    image: eclipse-mosquitto"
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "9. Docker in CI/CD Workflows"
+        "code": "version: '3.8'\nservices:\n  backend:\n    image: robot-api\n  database:\n    image: postgres\n  grafana:\n    image: grafana"
       },
       {
         "type": "paragraph",
-        "text": "Docker acts as the standardized packaging format in modern DevOps. A typical GitHub Actions pipeline involves: `Code Push → Build Docker Image → Run Unit Tests in Container → Push Image to Registry → Deploy Container to Kubernetes or cloud VMs`."
+        "text": "You can spin up and connect all defined services with a single command:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker compose up"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "10. Security Considerations & Failure Modes"
+        "text": "13. Docker Workflow"
+      },
+      {
+        "type": "paragraph",
+        "text": "A typical containerized application development lifecycle follows a consistent workflow:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Dev[Developer] -->|Writes| Code[Code] -->|Runs| Build[Docker Build] -->|Creates| Image[Docker Image] -->|Pushes to| Reg[Push Registry] -->|Deploys to| Host[Deploy]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Docker in CI/CD"
+      },
+      {
+        "type": "paragraph",
+        "text": "Integrating Docker into CI/CD pipelines ensures that built images are tested and deployed automatically upon code changes."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Push[GitHub Push] --> Actions[GitHub Actions] --> Build[Build Docker Image] --> Registry[Push Image] --> Deploy[Deploy]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Security Considerations"
+      },
+      {
+        "type": "paragraph",
+        "text": "Securing Docker images is critical for production deployments. Here are common mistakes and best practices:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Running as root:** A bad practice that can lead to host system compromise if the container escapes. Use custom, non-root users inside your Dockerfile.",
+          "**Hardcoded secrets:** Never place API keys, passwords, or credentials inside the image. Inject them dynamically using environment variables or secret managers.",
+          "**Large images:** Heavy base images contain unnecessary packages, increasing the attack surface. Use minimal base images (like Alpine or slim variants)."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Always incorporate automated **image scanning** and robust **secrets management** into your deployment pipeline."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "16. Common Failure Modes"
       },
       {
         "type": "table",
         "headers": [
-          "Failure / Risk",
-          "Common Cause",
-          "Best Practice Mitigation"
+          "Failure Mode",
+          "Cause",
+          "Resolution"
         ],
         "rows": [
           [
-            "Container Crashes immediately",
-            "Application syntax error or missing runtime environment variables",
-            "Check container logs via `docker logs` and validate environment setups"
+            "1. Container Crash",
+            "Application Error",
+            "Examine logs via `docker logs <container_id>` and debug runtime issues."
           ],
           [
-            "Port Conflicts",
-            "Another host service is already bound to the mapped port (e.g., port 8080)",
-            "Map to a different host port or terminate the conflicting process"
+            "2. Port Conflict",
+            "Port already in use",
+            "Change the host port mapping or stop the process running on that port."
           ],
           [
-            "Data loss on restart",
-            "Missing volume mounts for persistent database storage",
-            "Always attach Docker Volumes to stateful services"
+            "3. Missing Volume",
+            "Data lost after restart",
+            "Ensure the persistent volume is correctly mapped and mounted in `docker-compose.yml`."
           ],
           [
-            "Hardcoded Secrets",
-            "Baking API keys or passwords directly into the Dockerfile",
-            "Inject secrets dynamically at runtime using `.env` files"
+            "4. Huge Images",
+            "Poor Dockerfile design",
+            "Remove cache files, use multi-stage builds, and choose lighter base images."
           ],
           [
-            "Massive Image Sizes",
-            "Installing unnecessary dependencies or using heavy base images like full Ubuntu",
-            "Use minimal base images like Alpine or slim variants"
+            "5. Network Issues",
+            "Container communication failures",
+            "Ensure all communicating containers are connected to the same user-defined network."
           ]
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "11. Docker vs. Virtual Machines"
+        "text": "17. Docker vs. Virtual Machines"
       },
       {
         "type": "table",
         "headers": [
           "Feature",
-          "Docker Containers",
-          "Virtual Machines (VMs)"
+          "Docker",
+          "VM"
         ],
         "rows": [
           [
-            "Architecture",
-            "Shares the host OS kernel",
-            "Runs a complete, heavy guest OS"
-          ],
-          [
             "Startup Time",
-            "Milliseconds to Seconds",
+            "Seconds",
             "Minutes"
           ],
           [
             "Resource Usage",
-            "Extremely Low (Lightweight)",
-            "High (Heavy RAM and CPU overhead)"
+            "Low",
+            "High"
+          ],
+          [
+            "OS Included",
+            "No",
+            "Yes"
           ],
           [
             "Portability",
-            "High (Runs identically anywhere)",
-            "Medium (Tied to hypervisor configs)"
+            "High",
+            "Medium"
           ],
           [
-            "Isolation Level",
-            "Process-level isolation",
-            "Hardware-level isolation"
+            "Performance",
+            "Near Native",
+            "Lower"
+          ],
+          [
+            "Isolation",
+            "Process Level",
+            "Hardware Level"
           ]
         ]
       }
