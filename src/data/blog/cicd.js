@@ -1502,23 +1502,23 @@ export const cicdPosts = [
   {
     "id": 23,
     "slug": "kubernetes",
-    "title": "Kubernetes (K8s) — Container Orchestration Platform",
+    "title": "Kubernetes (K8s) - Container Orchestration Platform",
     "date": "2026-06-21",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "6 min",
     "featured": true,
     "excerpt": "Explore Kubernetes container orchestration. Learn about the Control Plane architecture, Pod lifecycles, Deployments, Load Balancing Services, and GitOps deployments for robotics platforms.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/23-k8s/k8s.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "Kubernetes (K8s) — Container Orchestration Platform"
+        "text": "Kubernetes (K8s) - Container Orchestration Platform"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/23-k8s/k8s1.jpeg",
         "caption": "Kubernetes Cluster Architecture"
       },
       {
@@ -1545,6 +1545,11 @@ export const cicdPosts = [
         "text": "3. High-Level Cluster Architecture"
       },
       {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s3.jpeg",
+        "caption": "Kubernetes Cluster Architecture"
+      },
+      {
         "type": "mermaid",
         "code": "graph TD\n    CP[Control Plane] --> W1[Worker Node 1]\n    CP --> W2[Worker Node 2]\n    W1 --> P1[Pod]\n    W1 --> P2[Pod]\n    W2 --> P3[Pod]"
       },
@@ -1556,6 +1561,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "The Control Plane is the brain of the cluster, responsible for scheduling, monitoring, and maintaining the global state. It consists of:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s4.jpeg",
+        "caption": "Control Plane Components"
       },
       {
         "type": "list",
@@ -1573,81 +1583,217 @@ export const cicdPosts = [
       },
       {
         "type": "paragraph",
-        "text": "A Pod is the smallest deployable compute unit in Kubernetes. Unlike Docker where you run a single container, Kubernetes schedules Pods. A Pod usually contains one main container (e.g., a FastAPI server), but can also run alongside auxiliary sidecar containers (e.g., a localized logging agent)."
+        "text": "A Pod is the most important Kubernetes object and the smallest deployable unit in Kubernetes. It represents a single instance of a running process in your cluster."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s5.jpeg",
+        "caption": "Pods"
+      },
+      {
+        "type": "paragraph",
+        "text": "A Pod can contain a single container or multiple tightly-coupled containers that share storage and network resources:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    subgraph Single Container Pod\n    Pod1[Pod] --> FastAPI[FastAPI Container]\n    end\n    subgraph Multi Container Pod\n    Pod2[Pod] --> Main[Main App Container]\n    Pod2 --> Log[Logging Container]\n    end"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "6. Deployments & Scaling"
+        "text": "6. Deployment Object"
       },
       {
         "type": "paragraph",
-        "text": "Pods are ephemeral; if they die, they die. To guarantee availability, you create a **Deployment**. A Deployment manages Pod creation, scaling, updates, and recovery. For example, declaring `replicas: 3` in a Deployment YAML guarantees that Kubernetes will always keep exactly 3 instances of that Pod running."
+        "text": "Because individual Pods are temporary, Kubernetes uses Deployments to manage their lifecycle, scaling, updates, and recovery."
       },
       {
         "type": "code",
         "language": "yaml",
-        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-deployment\nspec:\n  replicas: 3"
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-deployment\nspec:\n  replicas: 3\n  template:\n    # Pod template details go here"
+      },
+      {
+        "type": "paragraph",
+        "text": "Setting `replicas: 3` instructs Kubernetes to run and maintain exactly 3 instances of the Pod across the cluster nodes."
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "7. Services, Load Balancing, and Ingress"
+        "text": "7. Scaling"
       },
       {
         "type": "paragraph",
-        "text": "Because Pods frequently die and restart on different nodes, their IP addresses are constantly changing. A **Service** solves this by providing a stable network endpoint that automatically load balances traffic across all available Pods. To expose these services to the public internet (e.g., `robot.example.com`), Kubernetes uses an **Ingress**, which acts as an advanced reverse proxy and TLS terminator."
+        "text": "Scaling is one of Kubernetes' biggest strengths. You can manually scale up or down the number of running Pods instantly using a single command:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "kubectl scale deployment api --replicas=5"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    3p[3 Pods] -->|kubectl scale| 5p[5 Pods]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Automatic scaling is also possible using Horizontal Pod Autoscaling (HPA) to scale automatically based on system metrics."
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "8. Persistent Volumes & Stateful Data"
+        "text": "8. Service Object"
       },
       {
         "type": "paragraph",
-        "text": "Because containers are temporary, any data written inside a Pod is lost when it crashes. For databases like PostgreSQL or MongoDB, Kubernetes uses **Persistent Volumes (PV)**. A PV mounts external storage directly into the Pod, ensuring data survives Pod restarts."
+        "text": "Pods are ephemeral; when a Pod restarts, it is assigned a new IP address, which breaks direct connection. A Service solves this by providing a stable network endpoint."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Frontend[frontend] -->|Request| Service[Service]\n    Service --> Pods[backend pods]"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "9. Self-Healing & Rolling Updates"
+        "text": "9. Load Balancing"
       },
       {
         "type": "paragraph",
-        "text": "If a Worker Node goes offline, Kubernetes immediately detects the missing Pods and reschedules them onto healthy nodes (Self-Healing). When deploying new code, Kubernetes performs **Rolling Updates**, gradually terminating old Pods and spinning up new ones to ensure zero downtime. If the new deployment has a bug, `kubectl rollout undo` immediately reverts to the previous stable state."
+        "text": "A Service automatically distributes request traffic across all matching healthy pods."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s11.jpeg",
+        "caption": "Load Balancing"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Request[Request] --> Service[Service]\n    Service --> Pod1[Pod 1]\n    Service --> Pod2[Pod 2]\n    Service --> Pod3[Pod 3]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Load balancing provides key benefits:\n- **High Availability:** Spares traffic away from crashed pods.\n- **Traffic Distribution:** Ensures optimal resource consumption."
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "10. Security: RBAC and Secrets"
+        "text": "10. Ingress"
       },
       {
         "type": "paragraph",
-        "text": "Access to the API server is strictly governed by **Role-Based Access Control (RBAC)**, defining exactly who (or what pod) can perform specific actions. Sensitive configurations like API keys and database passwords must never be stored in plain text YAML; they are securely injected into Pods using Kubernetes **Secrets**."
+        "text": "An Ingress controller allows external users to access applications inside the cluster by routing external URLs to internal services. It acts as an advanced reverse proxy."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s10.jpeg",
+        "caption": "Ingress"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Client[robot.example.com] -->|HTTPS| Ingress[Ingress Controller]\n    Ingress -->|Route| Backend[Backend Service]"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "11. Kubernetes in an IoT Robotics Platform"
+        "text": "11. Persistent Volumes"
       },
       {
         "type": "paragraph",
-        "text": "For a distributed robotics project, the edge hardware (ESP32) communicates via MQTT. The backend infrastructure running inside Kubernetes handles everything else:"
+        "text": "Containers are temporary. If a database container restarts, all database files are lost. Persistent Volumes solve this by attaching durable external storage to the Pod lifecycle."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s7.jpeg",
+        "caption": "Persistent Volumes"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Pod[Pod] --> PV[Persistent Volume] --> Storage[Storage]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Commonly used for stateful services like PostgreSQL, MySQL, and MongoDB."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Self-Healing"
+      },
+      {
+        "type": "paragraph",
+        "text": "Self-healing is a major Kubernetes feature that operates automatically without human intervention. If a Pod crashes, Kubernetes detects the state mismatch and starts a replacement pod."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Mismatch{Expected = 3 Pods, Actual = 2 Pods} -->|Create New Pod| Recreate[Expected = Actual (Healthy)]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "13. Rolling Updates"
+      },
+      {
+        "type": "paragraph",
+        "text": "Deploying new application versions is done without downtime by replacing pods incrementally."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    V1[Version 1] -->|Gradual Replacement| V2[Version 2]"
+      },
+      {
+        "type": "paragraph",
+        "text": "This guarantees zero downtime and a safer, progressive deployment flow."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Rollbacks"
+      },
+      {
+        "type": "paragraph",
+        "text": "If a deployment causes issues, Kubernetes allows you to return to the previous version with a rollback command:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "kubectl rollout undo"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Kubernetes Security Concepts"
+      },
+      {
+        "type": "paragraph",
+        "text": "Security inside Kubernetes clusters is managed through key abstractions:"
       },
       {
         "type": "list",
         "items": [
-          "**Pod 1:** MQTT Message Broker (Mosquitto)",
-          "**Pod 2:** Python FastAPI Telemetry Ingestion Service",
-          "**Pod 3:** Stateful PostgreSQL Database (with Persistent Volumes)",
-          "**Pod 4:** Grafana Dashboard (exposed via Ingress)",
-          "**Pod 5:** Prometheus Metrics Scraper"
+          "**RBAC (Role-Based Access Control):** Defines who can do what inside the cluster.",
+          "**Secrets:** Safely stores sensitive passwords, tokens, and API keys. Always avoid putting plaintext credentials like `password: admin123` directly inside YAML files."
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "12. Docker vs. Kubernetes"
+        "text": "16. Kubernetes in an IoT Robotics Platform"
+      },
+      {
+        "type": "paragraph",
+        "text": "In a modern robotics stack, Kubernetes coordinates the backend and edge communication pipeline. Edge devices (like ESP32 controllers) communicate with services running inside the cluster:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    ESP[ESP32 Devices] -->|Publish/Subscribe| Broker[Pod 1: MQTT Broker]\n    Broker --> API[Pod 2: FastAPI Backend]\n    API --> DB[Pod 3: PostgreSQL]\n    API --> Prom[Pod 5: Prometheus]\n    Prom --> Grafana[Pod 4: Grafana Dashboard]"
+      },
+      {
+        "type": "paragraph",
+        "text": "The full microservices stack is split into individual pods:\n- **Pod 1:** MQTT Broker\n- **Pod 2:** FastAPI Backend\n- **Pod 3:** PostgreSQL\n- **Pod 4:** Grafana\n- **Pod 5:** Prometheus"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "17. Docker vs. Kubernetes"
       },
       {
         "type": "table",
@@ -1658,65 +1804,133 @@ export const cicdPosts = [
         ],
         "rows": [
           [
-            "Primary Function",
-            "Creates and packages isolated containers",
-            "Orchestrates and manages clusters of containers"
+            "Runs Containers",
+            "✅",
+            "✅"
           ],
           [
-            "Application Scaling",
-            "❌ Manual execution",
-            "✅ Automated ReplicaSets"
+            "Container Packaging",
+            "✅",
+            "❌"
+          ],
+          [
+            "Scheduling",
+            "❌",
+            "✅"
+          ],
+          [
+            "Scaling",
+            "❌",
+            "✅"
           ],
           [
             "Self-Healing",
-            "❌ Manual restart required",
-            "✅ Automated recreation"
+            "❌",
+            "✅"
+          ],
+          [
+            "Load Balancing",
+            "❌",
+            "✅"
           ],
           [
             "Rolling Updates",
-            "❌ Manual replacement",
-            "✅ Automated zero-downtime updates"
+            "❌",
+            "✅"
+          ],
+          [
+            "Cluster Management",
+            "❌",
+            "✅"
           ]
         ]
       },
       {
+        "type": "paragraph",
+        "text": "The relationship can be summarized simply:\n- **Docker:** Creates and packages containers.\n- **Kubernetes:** Manages and orchestrates containers."
+      },
+      {
         "type": "heading",
         "level": 2,
-        "text": "13. Common Failure Modes"
+        "text": "18. Common Failure Modes"
       },
       {
         "type": "table",
         "headers": [
-          "Error State",
-          "Likely Cause"
+          "Failure Mode",
+          "Cause",
+          "Impact"
         ],
         "rows": [
           [
-            "CrashLoopBackOff",
-            "Application inside the Pod keeps crashing due to fatal errors or misconfigurations"
+            "1. CrashLoopBackOff",
+            "Application keeps crashing",
+            "Pod fails to boot and loops repeatedly."
           ],
           [
-            "ImagePullBackOff",
-            "Kubernetes cannot pull the specified image due to typos or private registry auth failures"
+            "2. ImagePullBackOff",
+            "Wrong image tag or Registry credentials issue",
+            "Kubernetes cannot fetch the required image."
           ],
           [
-            "Insufficient Resources",
-            "The cluster lacks the required CPU or Memory to schedule the Pod"
+            "3. Insufficient Resources",
+            "Not enough CPU or RAM inside the cluster",
+            "Pods cannot be scheduled and remain Pending."
           ],
           [
-            "ETCD Failure",
-            "Control Plane database corruption; can bring down the entire cluster"
+            "4. Network Issues",
+            "Service Misconfiguration or Ingress Routing Errors",
+            "Services are unreachable."
+          ],
+          [
+            "5. ETCD Failure",
+            "Control Plane Issues",
+            "Can affect the state of the entire cluster."
           ]
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "14. The Modern Deployment Pipeline"
+        "text": "19. Kubernetes Ecosystem"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Tool",
+          "Purpose"
+        ],
+        "rows": [
+          [
+            "Docker",
+            "Container Creation"
+          ],
+          [
+            "Helm",
+            "Application Packaging"
+          ],
+          [
+            "Argo CD",
+            "GitOps Deployment"
+          ],
+          [
+            "Prometheus",
+            "Metrics"
+          ],
+          [
+            "Grafana",
+            "Visualization"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "20. Typical Modern Deployment Pipeline"
       },
       {
         "type": "mermaid",
-        "code": "graph LR\n    Dev[Developer] --> Git[GitHub PR]\n    Git --> CI[GitHub Actions CI]\n    CI -->|Build Image| Hub[Docker Registry]\n    CI -->|Update YAML| Repo[GitOps Repo]\n    Repo -->|Reconcile| Argo[Argo CD]\n    Argo -->|Deploy| K8s[Kubernetes Cluster]"
+        "code": "graph LR\n    Developer --> GitHub --> Actions[GitHub Actions] --> Image[Docker Image] --> Registry[Container Registry] --> Argo[Argo CD] --> K8s[Kubernetes Cluster] --> Production[Production]"
       }
     ]
   }
