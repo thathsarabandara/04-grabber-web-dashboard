@@ -281,23 +281,23 @@ export const cicdPosts = [
   {
     "id": 19,
     "slug": "gitops",
-    "title": "🚀 GitOps — Git-Centered Infrastructure & Deployment Model",
+    "title": "GitOps - Git-Centered Infrastructure & Deployment Model",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Explore GitOps continuous deployment and infrastructure-as-code state reconciliation. Compare pull-based CD models, drift detection loop mechanics, and secrets management in Git.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/19-gitops/gitops.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "🚀 GitOps — Git-Centered Infrastructure & Deployment Model"
+        "text": "GitOps - Git-Centered Infrastructure & Deployment Model"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/19-gitops/gitops1.jpeg",
         "caption": "GitOps Infrastructure Reconciliation Cycle"
       },
       {
@@ -315,6 +315,11 @@ export const cicdPosts = [
         "text": "2. What Problem GitOps Solves"
       },
       {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops2.jpeg",
+        "caption": "GitOps Solve Manual Errors"
+      },
+      {
         "type": "paragraph",
         "text": "In traditional deployments, operators or CI pipelines manually execute push commands to change system state. This creates configuration drift, untraced server modifications, manual errors, and environment inconsistencies. GitOps inverts this flow: developers define the desired state declaratively in Git. An agent running inside the cluster pulls this configuration and automatically adjusts the system, eliminating manual intervention."
       },
@@ -326,6 +331,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "GitOps structures systems around four primary components:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops3.jpeg",
+        "caption": "GitOps Architecture"
       },
       {
         "type": "list",
@@ -357,6 +367,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "By storing configurations in declarative YAML files, infrastructure is version-controlled just like source code:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops6.jpeg",
+        "caption": "GitOps Declarative Infrastructure"
       },
       {
         "type": "code",
@@ -414,6 +429,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "Unlike traditional CD engines that require administrative credentials to push payloads, GitOps controllers pull configurations from Git. This approach requires no open inbound ports on target clusters, reducing attack surfaces and improving overall security."
+      },
+      {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops9.jpeg",
+        "caption": "GitOps Security & Governance"
       },
       {
         "type": "heading",
@@ -550,23 +570,23 @@ export const cicdPosts = [
   {
     "id": 20,
     "slug": "github_actions",
-    "title": "🔄 GitHub Actions & Workflows — CI/CD Automation Inside GitHub",
+    "title": "GitHub Actions & Workflows - CI/CD Automation Inside GitHub",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Learn how GitHub Actions drives CI/CD inside your repository. Explore event-driven workflows, reusable actions, secrets management, and robotics firmware pipelines.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/20-github workflow/github1.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "🔄 GitHub Actions & Workflows — CI/CD Automation Inside GitHub"
+        "text": "GitHub Actions & Workflows — CI/CD Automation Inside GitHub"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/20-github workflow/github2.jpeg",
         "caption": "GitHub Actions Workflow Architecture"
       },
       {
@@ -584,6 +604,11 @@ export const cicdPosts = [
         "text": "2. What Problem GitHub Workflows Solve"
       },
       {
+        "type": "image",
+        "url": "/blog/20-github workflow/github3.jpeg",
+        "caption": "Without automation, the software lifecycle is entirely manual"
+      },
+      {
         "type": "paragraph",
         "text": "Without automation, the software lifecycle is entirely manual: Developer writes code → manually builds it locally → manually runs tests → manually deploys to the server. This introduces human errors, inconsistent build artifacts, forgotten tests, and slow release cycles. GitHub Actions transforms this into an automated pipeline: `Git Push → Workflow Trigger → Auto Build → Auto Test → Auto Deploy`."
       },
@@ -596,6 +621,11 @@ export const cicdPosts = [
         "type": "paragraph",
         "text": "A GitHub Action workflow is constructed using specific hierarchical components:"
       },
+      {
+        "type": "image",
+        "url": "/blog/20-github workflow/github10.jpeg",
+        "caption": "GitHub Actions Workflow Architecture"
+      }, 
       {
         "type": "list",
         "items": [
@@ -612,6 +642,11 @@ export const cicdPosts = [
         "text": "4. Workflow Execution Model"
       },
       {
+        "type": "image",
+        "url": "/blog/20-github workflow/github4.jpeg",
+        "caption": "GitHub Actions Workflow Architecture"
+      },
+      {
         "type": "mermaid",
         "code": "graph LR\n    Event[Git Push] -->|Triggers| Workflow[Workflow File]\n    Workflow --> Job1[Run Tests Job]\n    Job1 --> Job2[Build App Job]\n    Job2 --> Job3[Deploy Server Job]\n    Job3 --> Result[Success/Failure Feedback]"
       },
@@ -625,6 +660,11 @@ export const cicdPosts = [
         "text": "Workflows are defined in YAML and placed inside the `.github/workflows/` directory. Below is a standard Node.js CI pipeline:"
       },
       {
+        "type": "image",
+        "url": "/blog/20-github workflow/github7.jpeg",
+        "caption": "Sample"
+      },
+      {
         "type": "code",
         "language": "yaml",
         "code": "name: CI Pipeline\n\non:\n  push:\n    branches:\n      - main\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout Repository\n        uses: actions/checkout@v4\n\n      - name: Install Dependencies\n        run: npm install\n\n      - name: Run Tests\n        run: npm test\n\n      - name: Build Project\n        run: npm run build"
@@ -633,6 +673,11 @@ export const cicdPosts = [
         "type": "heading",
         "level": 2,
         "text": "6. Important Workflow Triggers"
+      },
+      {
+        "type": "image",
+        "url": "/blog/20-github workflow/github9.jpeg",
+        "caption": "Triggers"
       },
       {
         "type": "table",
