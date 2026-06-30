@@ -1194,14 +1194,14 @@ export const softwarePosts = [
   {
     "id": 17,
     "slug": "riverpod",
-    "title": "Riverpod — Modern Global State Management for Flutter",
+    "title": "Riverpod - Modern Global State Management for Flutter",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "Software",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "A deep dive into Riverpod, Flutter's modern compile-safe state management framework. Compare Riverpod vs Redux vs Provider, analyze StreamProvider telemetry integrations, and troubleshoot memory leaks.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/17-riverpod/riverpod3.jpeg",
     "content": [
       {
         "type": "heading",
@@ -1210,7 +1210,7 @@ export const softwarePosts = [
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/17-riverpod/riverpod.jpeg",
         "caption": "Riverpod State Architecture"
       },
       {
@@ -1257,6 +1257,11 @@ export const softwarePosts = [
       {
         "type": "paragraph",
         "text": "State flow in Riverpod follows a unidirectional, reactive path:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/17-riverpod/riverpod2.jpeg",
+        "caption": "Riverpod State flow"
       },
       {
         "type": "mermaid",
