@@ -858,23 +858,23 @@ export const cicdPosts = [
   {
     "id": 21,
     "slug": "argo_cd",
-    "title": "Argo CD — GitOps Continuous Delivery for Kubernetes",
+    "title": "Argo CD - GitOps Continuous Delivery for Kubernetes",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Dive deep into Argo CD, a Kubernetes-native continuous delivery tool. Explore state reconciliation loops, self-healing deployments, and differences between CI pipelines and CD GitOps.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/21-argocd/argocd.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "Argo CD — GitOps Continuous Delivery for Kubernetes"
+        "text": "Argo CD - GitOps Continuous Delivery for Kubernetes"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/21-argocd/argocd2.jpeg",
         "caption": "Argo CD GitOps Architecture"
       },
       {
@@ -890,6 +890,11 @@ export const cicdPosts = [
         "type": "heading",
         "level": 2,
         "text": "2. What Problem Argo CD Solves"
+      },
+      {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd3.jpeg",
+        "caption": "Argo CD GitOps Architecture"
       },
       {
         "type": "paragraph",
@@ -939,6 +944,11 @@ export const cicdPosts = [
         ]
       },
       {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd4.jpeg",
+        "caption": "Argo CD GitOps Architecture"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "5. Desired State vs. Actual State (The Crucial Concept)"
@@ -962,6 +972,11 @@ export const cicdPosts = [
         "text": "7. Deployment Workflow"
       },
       {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd8.jpeg",
+        "caption": "Argo CD GitOps Architecture"
+      },
+      {
         "type": "paragraph",
         "text": "Deploying code no longer involves `kubectl apply`. The automated flow is: `Developer → Git Push → GitHub Repo Updated → Argo CD Detects Change → Sync Executed → Cluster Updated`. Syncing can be configured as **Manual Sync** (requires a user click in the UI) or **Automatic Sync** (default for robust GitOps systems)."
       },
@@ -978,6 +993,11 @@ export const cicdPosts = [
         "type": "heading",
         "level": 2,
         "text": "9. Security & Self-Healing Capabilities"
+      },
+      {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd8.jpeg",
+        "caption": "Argo CD GitOps Architecture"
       },
       {
         "type": "paragraph",
