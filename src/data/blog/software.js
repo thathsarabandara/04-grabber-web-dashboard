@@ -932,14 +932,14 @@ export const softwarePosts = [
   {
     "id": 16,
     "slug": "redux_toolkit",
-    "title": "Redux Toolkit — Global State Management for Scalable Frontend Systems",
+    "title": "Redux Toolkit  Global State Management for Scalable Frontend Systems",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "Software",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Learn how Redux Toolkit centralizes state and enforces unidirectional data flow in React. Explore stores, slices, async thunks, local vs global state comparisons, and failure modes.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/16-redux/redux1.jpeg",
     "content": [
       {
         "type": "heading",
@@ -948,7 +948,7 @@ export const softwarePosts = [
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/16-redux/redux2.jpeg",
         "caption": "Redux Global State Architecture"
       },
       {
@@ -977,6 +977,11 @@ export const softwarePosts = [
       {
         "type": "paragraph",
         "text": "The Redux state cycle is driven by six core architectural components:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/16-redux/redux4.jpeg",
+        "caption": "Redux Global State Architecture"
       },
       {
         "type": "list",
@@ -1016,6 +1021,11 @@ export const softwarePosts = [
         "text": "Redux Toolkit simplifies Redux boilerplate using `createSlice`. Redux Toolkit also automatically integrates the Immer library under the hood, allowing you to write intuitive 'mutating' code syntax that is safely translated into immutable updates:"
       },
       {
+        "type": "image",
+        "url": "/blog/16-redux/redux5.jpeg",
+        "caption": "Redux Global State"
+      },
+      {
         "type": "code",
         "language": "javascript",
         "code": "import { createSlice } from '@reduxjs/toolkit';\n\nconst robotSlice = createSlice({\n  name: 'robot',\n  initialState: {\n    battery: 100,\n    angle: 0\n  },\n  reducers: {\n    setBattery: (state, action) => {\n      state.battery = action.payload;\n    },\n    setAngle: (state, action) => {\n      state.angle = action.payload;\n    }\n  }\n});\n\nexport const { setBattery, setAngle } = robotSlice.actions;\nexport default robotSlice.reducer;"
@@ -1037,6 +1047,11 @@ export const softwarePosts = [
       {
         "type": "paragraph",
         "text": "Since state updates often depend on API calls, Redux Toolkit provides `createAsyncThunk` to handle asynchronous operations. A thunk generates a lifecycle wrapper around requests, allowing you to track loading states:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/16-redux/redux7.jpeg",
+        "caption": "Asynchronous Thunk Lifecycle"
       },
       {
         "type": "code",
