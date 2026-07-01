@@ -409,14 +409,14 @@ export const engineeringPosts = [
   {
     "id": 14,
     "slug": "power_management",
-    "title": "🔋 Power Management & Electronics for Robotics Systems",
+    "title": "Power Management & Electronics for Robotics Systems",
     "date": "2026-06-23",
     "author": "Grabber Team",
     "category": "Engineering",
     "readTime": "7 min",
     "featured": true,
     "excerpt": "The design and control of energy flow in a robotic system to ensure stable voltage rails, safe current delivery, efficient conversion, and reliable operation.",
-    "coverImage": "/blog/hardware_hero_1781771816084.png",
+    "coverImage": "/blog/28-power/28-power.jpeg",
     "content": [
       {
         "type": "heading",
@@ -468,6 +468,11 @@ export const engineeringPosts = [
         "text": "2. Power Architecture in Robotics"
       },
       {
+        "type": "image",
+        "url": "/blog/28-power/28-power1.jpeg",
+        "caption": "Power Architecture in Robotics"
+      },
+      {
         "type": "paragraph",
         "text": "A typical robotic power distribution topology runs from the source battery down to individual voltage rails:"
       },
@@ -500,6 +505,11 @@ export const engineeringPosts = [
       {
         "type": "paragraph",
         "text": "A Battery Management System (BMS) is essential to monitor and protect lithium-based battery packs against critical failure conditions:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/28-power/28-power2.jpeg",
+        "caption": "Battery Management"
       },
       {
         "type": "list",
@@ -538,6 +548,11 @@ export const engineeringPosts = [
       {
         "type": "paragraph",
         "text": "Use a Star Power ground distribution topology where all ground return paths meet at a single central point. This prevents ground loops, reduces common-impedance noise coupling, and stabilizes sensor readings."
+      },
+      {
+        "type": "image",
+        "url": "/blog/28-power/28-power3.jpeg",
+        "caption": "Power Distribution"
       },
       {
         "type": "heading",

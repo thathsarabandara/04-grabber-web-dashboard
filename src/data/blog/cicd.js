@@ -281,23 +281,23 @@ export const cicdPosts = [
   {
     "id": 19,
     "slug": "gitops",
-    "title": "🚀 GitOps — Git-Centered Infrastructure & Deployment Model",
+    "title": "GitOps - Git-Centered Infrastructure & Deployment Model",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Explore GitOps continuous deployment and infrastructure-as-code state reconciliation. Compare pull-based CD models, drift detection loop mechanics, and secrets management in Git.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/19-gitops/gitops.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "🚀 GitOps — Git-Centered Infrastructure & Deployment Model"
+        "text": "GitOps - Git-Centered Infrastructure & Deployment Model"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/19-gitops/gitops1.jpeg",
         "caption": "GitOps Infrastructure Reconciliation Cycle"
       },
       {
@@ -315,6 +315,11 @@ export const cicdPosts = [
         "text": "2. What Problem GitOps Solves"
       },
       {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops2.jpeg",
+        "caption": "GitOps Solve Manual Errors"
+      },
+      {
         "type": "paragraph",
         "text": "In traditional deployments, operators or CI pipelines manually execute push commands to change system state. This creates configuration drift, untraced server modifications, manual errors, and environment inconsistencies. GitOps inverts this flow: developers define the desired state declaratively in Git. An agent running inside the cluster pulls this configuration and automatically adjusts the system, eliminating manual intervention."
       },
@@ -326,6 +331,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "GitOps structures systems around four primary components:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops3.jpeg",
+        "caption": "GitOps Architecture"
       },
       {
         "type": "list",
@@ -357,6 +367,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "By storing configurations in declarative YAML files, infrastructure is version-controlled just like source code:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops6.jpeg",
+        "caption": "GitOps Declarative Infrastructure"
       },
       {
         "type": "code",
@@ -414,6 +429,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "Unlike traditional CD engines that require administrative credentials to push payloads, GitOps controllers pull configurations from Git. This approach requires no open inbound ports on target clusters, reducing attack surfaces and improving overall security."
+      },
+      {
+        "type": "image",
+        "url": "/blog/19-gitops/gitops9.jpeg",
+        "caption": "GitOps Security & Governance"
       },
       {
         "type": "heading",
@@ -550,23 +570,23 @@ export const cicdPosts = [
   {
     "id": 20,
     "slug": "github_actions",
-    "title": "🔄 GitHub Actions & Workflows — CI/CD Automation Inside GitHub",
+    "title": "GitHub Actions & Workflows - CI/CD Automation Inside GitHub",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Learn how GitHub Actions drives CI/CD inside your repository. Explore event-driven workflows, reusable actions, secrets management, and robotics firmware pipelines.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/20-github workflow/github1.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "🔄 GitHub Actions & Workflows — CI/CD Automation Inside GitHub"
+        "text": "GitHub Actions & Workflows — CI/CD Automation Inside GitHub"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/20-github workflow/github2.jpeg",
         "caption": "GitHub Actions Workflow Architecture"
       },
       {
@@ -584,6 +604,11 @@ export const cicdPosts = [
         "text": "2. What Problem GitHub Workflows Solve"
       },
       {
+        "type": "image",
+        "url": "/blog/20-github workflow/github3.jpeg",
+        "caption": "Without automation, the software lifecycle is entirely manual"
+      },
+      {
         "type": "paragraph",
         "text": "Without automation, the software lifecycle is entirely manual: Developer writes code → manually builds it locally → manually runs tests → manually deploys to the server. This introduces human errors, inconsistent build artifacts, forgotten tests, and slow release cycles. GitHub Actions transforms this into an automated pipeline: `Git Push → Workflow Trigger → Auto Build → Auto Test → Auto Deploy`."
       },
@@ -596,6 +621,11 @@ export const cicdPosts = [
         "type": "paragraph",
         "text": "A GitHub Action workflow is constructed using specific hierarchical components:"
       },
+      {
+        "type": "image",
+        "url": "/blog/20-github workflow/github10.jpeg",
+        "caption": "GitHub Actions Workflow Architecture"
+      }, 
       {
         "type": "list",
         "items": [
@@ -612,6 +642,11 @@ export const cicdPosts = [
         "text": "4. Workflow Execution Model"
       },
       {
+        "type": "image",
+        "url": "/blog/20-github workflow/github4.jpeg",
+        "caption": "GitHub Actions Workflow Architecture"
+      },
+      {
         "type": "mermaid",
         "code": "graph LR\n    Event[Git Push] -->|Triggers| Workflow[Workflow File]\n    Workflow --> Job1[Run Tests Job]\n    Job1 --> Job2[Build App Job]\n    Job2 --> Job3[Deploy Server Job]\n    Job3 --> Result[Success/Failure Feedback]"
       },
@@ -625,6 +660,11 @@ export const cicdPosts = [
         "text": "Workflows are defined in YAML and placed inside the `.github/workflows/` directory. Below is a standard Node.js CI pipeline:"
       },
       {
+        "type": "image",
+        "url": "/blog/20-github workflow/github7.jpeg",
+        "caption": "Sample"
+      },
+      {
         "type": "code",
         "language": "yaml",
         "code": "name: CI Pipeline\n\non:\n  push:\n    branches:\n      - main\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout Repository\n        uses: actions/checkout@v4\n\n      - name: Install Dependencies\n        run: npm install\n\n      - name: Run Tests\n        run: npm test\n\n      - name: Build Project\n        run: npm run build"
@@ -633,6 +673,11 @@ export const cicdPosts = [
         "type": "heading",
         "level": 2,
         "text": "6. Important Workflow Triggers"
+      },
+      {
+        "type": "image",
+        "url": "/blog/20-github workflow/github9.jpeg",
+        "caption": "Triggers"
       },
       {
         "type": "table",
@@ -813,23 +858,23 @@ export const cicdPosts = [
   {
     "id": 21,
     "slug": "argo_cd",
-    "title": "Argo CD — GitOps Continuous Delivery for Kubernetes",
+    "title": "Argo CD - GitOps Continuous Delivery for Kubernetes",
     "date": "2026-06-20",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Dive deep into Argo CD, a Kubernetes-native continuous delivery tool. Explore state reconciliation loops, self-healing deployments, and differences between CI pipelines and CD GitOps.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/21-argocd/argocd.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "Argo CD — GitOps Continuous Delivery for Kubernetes"
+        "text": "Argo CD - GitOps Continuous Delivery for Kubernetes"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/21-argocd/argocd2.jpeg",
         "caption": "Argo CD GitOps Architecture"
       },
       {
@@ -845,6 +890,11 @@ export const cicdPosts = [
         "type": "heading",
         "level": 2,
         "text": "2. What Problem Argo CD Solves"
+      },
+      {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd3.jpeg",
+        "caption": "Argo CD GitOps Architecture"
       },
       {
         "type": "paragraph",
@@ -894,6 +944,11 @@ export const cicdPosts = [
         ]
       },
       {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd4.jpeg",
+        "caption": "Argo CD GitOps Architecture"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "5. Desired State vs. Actual State (The Crucial Concept)"
@@ -917,6 +972,11 @@ export const cicdPosts = [
         "text": "7. Deployment Workflow"
       },
       {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd8.jpeg",
+        "caption": "Argo CD GitOps Architecture"
+      },
+      {
         "type": "paragraph",
         "text": "Deploying code no longer involves `kubectl apply`. The automated flow is: `Developer → Git Push → GitHub Repo Updated → Argo CD Detects Change → Sync Executed → Cluster Updated`. Syncing can be configured as **Manual Sync** (requires a user click in the UI) or **Automatic Sync** (default for robust GitOps systems)."
       },
@@ -933,6 +993,11 @@ export const cicdPosts = [
         "type": "heading",
         "level": 2,
         "text": "9. Security & Self-Healing Capabilities"
+      },
+      {
+        "type": "image",
+        "url": "/blog/21-argocd/argocd8.jpeg",
+        "caption": "Argo CD GitOps Architecture"
       },
       {
         "type": "paragraph",
@@ -1006,39 +1071,39 @@ export const cicdPosts = [
         "rows": [
           [
             "Build Code Artifacts",
-            "❌ No",
-            "✅ Yes",
-            "✅ Yes"
+            "No",
+            "Yes",
+            "Yes"
           ],
           [
             "Execute Test Suites",
-            "❌ No",
-            "✅ Yes",
-            "✅ Yes"
+            "No",
+            "Yes",
+            "Yes"
           ],
           [
             "Deploy Applications",
-            "✅ Yes",
-            "✅ Yes",
-            "✅ Yes"
+            "Yes",
+            "Yes",
+            "Yes"
           ],
           [
             "GitOps Compliance",
-            "✅ Yes",
-            "❌ No",
-            "❌ No"
+            "Yes",
+            "No",
+            "No"
           ],
           [
             "State Reconciliation",
-            "✅ Yes",
-            "❌ No",
-            "❌ No"
+            "Yes",
+            "No",
+            "No"
           ],
           [
             "Self-Healing Deployments",
-            "✅ Yes",
-            "❌ No",
-            "❌ No"
+            "Yes",
+            "No",
+            "No"
           ],
           [
             "Kubernetes Integration Focus",
@@ -1053,23 +1118,23 @@ export const cicdPosts = [
   {
     "id": 22,
     "slug": "docker",
-    "title": "🐳 Docker — Application Containerization Platform",
+    "title": "Docker - Application Containerization Platform",
     "date": "2026-06-21",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "5 min",
     "featured": true,
     "excerpt": "Understand how Docker solves the 'works on my machine' syndrome. Dive into container lifecycles, Dockerfile layering, persistent volumes, networking, and microservices for robotics backends.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/22-docker/docker.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "🐳 Docker — Application Containerization Platform"
+        "text": "Docker - Application Containerization Platform"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/22-docker/docker1.jpeg",
         "caption": "Docker Containerization Architecture"
       },
       {
@@ -1091,6 +1156,16 @@ export const cicdPosts = [
         "text": "Before Docker, developers frequently encountered the \"Works on my machine\" syndrome. An application built locally would crash in production due to different operating systems, missing libraries, or conflicting dependency versions (e.g., Python 3.9 vs. 3.12). Docker eliminates this by bundling the application, libraries, environment variables, and configuration files into a single immutable artifact."
       },
       {
+        "type": "image",
+        "url": "/blog/22-docker/docker8.jpeg",
+        "caption": "Docker Containerization Architecture"
+      },
+      {
+        "type": "image",
+        "url": "/blog/22-docker/docker9.jpeg",
+        "caption": "Virtualization Vs Containerization"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "3. What is a Container?"
@@ -1098,6 +1173,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "A container is essentially an isolated process running directly on the host operating system's kernel. While a host machine runs generic processes like a web browser or a code editor, Docker allows it to concurrently run isolated environments like a React container, a FastAPI backend, and a PostgreSQL database without them interfering with one another."
+      },
+      {
+        "type": "image",
+        "url": "/blog/22-docker/docker3.jpeg",
+        "caption": "Docker Container"
       },
       {
         "type": "heading",
@@ -1114,6 +1194,11 @@ export const cicdPosts = [
         ]
       },
       {
+        "type": "image",
+        "url": "/blog/22-docker/docker7.jpeg",
+        "caption": "Docker Containerization Architecture"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "5. The Dockerfile: The Blueprint of Containerization"
@@ -1123,6 +1208,11 @@ export const cicdPosts = [
         "text": "The Dockerfile is the most critical file in a Docker project. It is a script containing successive instructions on how to assemble an image:"
       },
       {
+        "type": "image",
+        "url": "/blog/22-docker/docker5.jpeg",
+        "caption": "Dockerfile"
+      },
+      {
         "type": "code",
         "language": "dockerfile",
         "code": "FROM python:3.12\nWORKDIR /app\nCOPY . .\nRUN pip install -r requirements.txt\nCMD [\"python\", \"app.py\"]"
@@ -1130,128 +1220,280 @@ export const cicdPosts = [
       {
         "type": "heading",
         "level": 2,
-        "text": "6. Image Build Process and Layering"
+        "text": "6. Image Build Process"
       },
       {
         "type": "paragraph",
-        "text": "Docker builds images incrementally using cached 'Layers'. If you change only your application code, Docker reuses the existing base OS and dependency installation layers, dramatically speeding up the build process and optimizing storage."
+        "text": "Docker images use cached layers to build incrementally. Each instruction in a Dockerfile creates a new layer, stacked sequentially on top of the previous ones."
       },
       {
-        "type": "heading",
-        "level": 2,
-        "text": "7. Port Mapping and Volumes"
+        "type": "mermaid",
+        "code": "graph TD\n    L1[Layer 1: Ubuntu Base OS] --> L2[Layer 2: Python]\n    L2 --> L3[Layer 3: Dependencies]\n    L3 --> L4[Layer 4: Application Code]"
       },
       {
         "type": "paragraph",
-        "text": "By default, containers are entirely isolated from the host machine:"
+        "text": "Using this layering mechanism provides several key advantages:"
       },
       {
         "type": "list",
         "items": [
-          "**Port Mapping:** To allow external traffic, host ports must be mapped to container ports (e.g., `docker run -p 8080:80 nginx` forwards traffic from host port 8080 to container port 80).",
-          "**Volumes:** Because containers are ephemeral, any data written inside them is lost when they are deleted. Docker Volumes (e.g., `docker volume create postgres-data`) persist data outside the container lifecycle, crucial for databases."
+          "**Faster Builds:** Docker reuses cached layers if their source files or instructions have not changed.",
+          "**Image Reuse:** Multiple images can share the same base layers, saving disk space.",
+          "**Efficient Storage:** Layer sharing means that the overall storage footprints are kept to an absolute minimum."
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "8. Docker in IoT & Robotics Platforms"
+        "text": "7. Running Containers"
       },
       {
         "type": "paragraph",
-        "text": "In a modern robotics stack, microservices power the backend infrastructure. For an ESP32 robot, the backend comprises multiple interacting components. Docker Compose allows developers to define and launch all these interdependent services simultaneously:"
+        "text": "Containers are created and executed from images. Running a container starts the image code as an isolated process on the host."
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker run nginx"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Image[Docker Image] -->|docker run| Process[Running Process (Container)]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "8. Port Mapping"
+      },
+      {
+        "type": "paragraph",
+        "text": "By default, a container's ports are isolated from the host. Port mapping forwards traffic from a host port to the container's internal port."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Host[Host Port: 8080] -->|Port Mapping| Container[Container Port: 80]"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker run -p 8080:80 nginx"
+      },
+      {
+        "type": "paragraph",
+        "text": "This maps **Host:8080** to **Container:80**, allowing external access to the containerized service."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "9. Volumes"
+      },
+      {
+        "type": "paragraph",
+        "text": "If a container is deleted, its internal storage is wiped, meaning database files are lost. Docker Volumes solve this by linking container directories to persistent storage on the host."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Container[Container] -->|Writes to| Volume[Docker Volume] -->|Persists on| Storage[Persistent Storage]"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker volume create postgres-data"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "10. Docker Networks"
+      },
+      {
+        "type": "paragraph",
+        "text": "Containers communicate with each other securely using Docker-defined networks, isolating them from the outside world."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    React[React Container] -->|Docker Network| FastAPI[FastAPI Container] -->|Docker Network| Postgres[PostgreSQL Container]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Benefits of custom Docker Networks:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Service Discovery:** Containers resolve each other by container name.",
+          "**Isolation:** Restricts direct external access to databases.",
+          "**Secure Communication:** Only explicitly connected containers can talk to one another."
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "11. Docker in IoT & Robotics Systems"
+      },
+      {
+        "type": "paragraph",
+        "text": "For a future robotics platform, each system component can run in a separate container, ensuring clean dependency isolation and easy updates on edge devices:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    ESP32[ESP32 Microcontroller] -->|Publishes Telemetry| MQTT[Container 2: MQTT Broker]\n    MQTT --> API[Container 1: Backend API / FastAPI]\n    API --> DB[Container 5: PostgreSQL]\n    API --> Prom[Container 4: Prometheus]\n    Prom --> Grafana[Container 3: Grafana]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Each service can run in separate containers:\n- **Container 1:** FastAPI\n- **Container 2:** MQTT Broker\n- **Container 3:** Grafana\n- **Container 4:** Prometheus\n- **Container 5:** PostgreSQL"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Docker Compose"
+      },
+      {
+        "type": "paragraph",
+        "text": "Managing multiple individual containers via command line is tedious. Docker Compose allows you to define and orchestrate multi-container setups in a single YAML file."
       },
       {
         "type": "code",
         "language": "yaml",
-        "code": "services:\n  backend:\n    image: robot-api\n  database:\n    image: postgres\n  grafana:\n    image: grafana\n  mqtt-broker:\n    image: eclipse-mosquitto"
-      },
-      {
-        "type": "heading",
-        "level": 2,
-        "text": "9. Docker in CI/CD Workflows"
+        "code": "version: '3.8'\nservices:\n  backend:\n    image: robot-api\n  database:\n    image: postgres\n  grafana:\n    image: grafana"
       },
       {
         "type": "paragraph",
-        "text": "Docker acts as the standardized packaging format in modern DevOps. A typical GitHub Actions pipeline involves: `Code Push → Build Docker Image → Run Unit Tests in Container → Push Image to Registry → Deploy Container to Kubernetes or cloud VMs`."
+        "text": "You can spin up and connect all defined services with a single command:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "docker compose up"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "10. Security Considerations & Failure Modes"
+        "text": "13. Docker Workflow"
+      },
+      {
+        "type": "paragraph",
+        "text": "A typical containerized application development lifecycle follows a consistent workflow:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Dev[Developer] -->|Writes| Code[Code] -->|Runs| Build[Docker Build] -->|Creates| Image[Docker Image] -->|Pushes to| Reg[Push Registry] -->|Deploys to| Host[Deploy]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Docker in CI/CD"
+      },
+      {
+        "type": "paragraph",
+        "text": "Integrating Docker into CI/CD pipelines ensures that built images are tested and deployed automatically upon code changes."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Push[GitHub Push] --> Actions[GitHub Actions] --> Build[Build Docker Image] --> Registry[Push Image] --> Deploy[Deploy]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Security Considerations"
+      },
+      {
+        "type": "paragraph",
+        "text": "Securing Docker images is critical for production deployments. Here are common mistakes and best practices:"
+      },
+      {
+        "type": "list",
+        "items": [
+          "**Running as root:** A bad practice that can lead to host system compromise if the container escapes. Use custom, non-root users inside your Dockerfile.",
+          "**Hardcoded secrets:** Never place API keys, passwords, or credentials inside the image. Inject them dynamically using environment variables or secret managers.",
+          "**Large images:** Heavy base images contain unnecessary packages, increasing the attack surface. Use minimal base images (like Alpine or slim variants)."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Always incorporate automated **image scanning** and robust **secrets management** into your deployment pipeline."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "16. Common Failure Modes"
       },
       {
         "type": "table",
         "headers": [
-          "Failure / Risk",
-          "Common Cause",
-          "Best Practice Mitigation"
+          "Failure Mode",
+          "Cause",
+          "Resolution"
         ],
         "rows": [
           [
-            "Container Crashes immediately",
-            "Application syntax error or missing runtime environment variables",
-            "Check container logs via `docker logs` and validate environment setups"
+            "1. Container Crash",
+            "Application Error",
+            "Examine logs via `docker logs <container_id>` and debug runtime issues."
           ],
           [
-            "Port Conflicts",
-            "Another host service is already bound to the mapped port (e.g., port 8080)",
-            "Map to a different host port or terminate the conflicting process"
+            "2. Port Conflict",
+            "Port already in use",
+            "Change the host port mapping or stop the process running on that port."
           ],
           [
-            "Data loss on restart",
-            "Missing volume mounts for persistent database storage",
-            "Always attach Docker Volumes to stateful services"
+            "3. Missing Volume",
+            "Data lost after restart",
+            "Ensure the persistent volume is correctly mapped and mounted in `docker-compose.yml`."
           ],
           [
-            "Hardcoded Secrets",
-            "Baking API keys or passwords directly into the Dockerfile",
-            "Inject secrets dynamically at runtime using `.env` files"
+            "4. Huge Images",
+            "Poor Dockerfile design",
+            "Remove cache files, use multi-stage builds, and choose lighter base images."
           ],
           [
-            "Massive Image Sizes",
-            "Installing unnecessary dependencies or using heavy base images like full Ubuntu",
-            "Use minimal base images like Alpine or slim variants"
+            "5. Network Issues",
+            "Container communication failures",
+            "Ensure all communicating containers are connected to the same user-defined network."
           ]
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "11. Docker vs. Virtual Machines"
+        "text": "17. Docker vs. Virtual Machines"
       },
       {
         "type": "table",
         "headers": [
           "Feature",
-          "Docker Containers",
-          "Virtual Machines (VMs)"
+          "Docker",
+          "VM"
         ],
         "rows": [
           [
-            "Architecture",
-            "Shares the host OS kernel",
-            "Runs a complete, heavy guest OS"
-          ],
-          [
             "Startup Time",
-            "Milliseconds to Seconds",
+            "Seconds",
             "Minutes"
           ],
           [
             "Resource Usage",
-            "Extremely Low (Lightweight)",
-            "High (Heavy RAM and CPU overhead)"
+            "Low",
+            "High"
+          ],
+          [
+            "OS Included",
+            "No",
+            "Yes"
           ],
           [
             "Portability",
-            "High (Runs identically anywhere)",
-            "Medium (Tied to hypervisor configs)"
+            "High",
+            "Medium"
           ],
           [
-            "Isolation Level",
-            "Process-level isolation",
-            "Hardware-level isolation"
+            "Performance",
+            "Near Native",
+            "Lower"
+          ],
+          [
+            "Isolation",
+            "Process Level",
+            "Hardware Level"
           ]
         ]
       }
@@ -1260,23 +1502,23 @@ export const cicdPosts = [
   {
     "id": 23,
     "slug": "kubernetes",
-    "title": "Kubernetes (K8s) — Container Orchestration Platform",
+    "title": "Kubernetes (K8s) - Container Orchestration Platform",
     "date": "2026-06-21",
     "author": "Grabber Team",
     "category": "CI/CD",
     "readTime": "6 min",
     "featured": true,
     "excerpt": "Explore Kubernetes container orchestration. Learn about the Control Plane architecture, Pod lifecycles, Deployments, Load Balancing Services, and GitOps deployments for robotics platforms.",
-    "coverImage": "/blog/software_hero_1781771833467.png",
+    "coverImage": "/blog/23-k8s/k8s.jpeg",
     "content": [
       {
         "type": "heading",
         "level": 1,
-        "text": "Kubernetes (K8s) — Container Orchestration Platform"
+        "text": "Kubernetes (K8s) - Container Orchestration Platform"
       },
       {
         "type": "image",
-        "url": "/blog/software_hero_1781771833467.png",
+        "url": "/blog/23-k8s/k8s1.jpeg",
         "caption": "Kubernetes Cluster Architecture"
       },
       {
@@ -1303,6 +1545,11 @@ export const cicdPosts = [
         "text": "3. High-Level Cluster Architecture"
       },
       {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s3.jpeg",
+        "caption": "Kubernetes Cluster Architecture"
+      },
+      {
         "type": "mermaid",
         "code": "graph TD\n    CP[Control Plane] --> W1[Worker Node 1]\n    CP --> W2[Worker Node 2]\n    W1 --> P1[Pod]\n    W1 --> P2[Pod]\n    W2 --> P3[Pod]"
       },
@@ -1314,6 +1561,11 @@ export const cicdPosts = [
       {
         "type": "paragraph",
         "text": "The Control Plane is the brain of the cluster, responsible for scheduling, monitoring, and maintaining the global state. It consists of:"
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s4.jpeg",
+        "caption": "Control Plane Components"
       },
       {
         "type": "list",
@@ -1331,81 +1583,217 @@ export const cicdPosts = [
       },
       {
         "type": "paragraph",
-        "text": "A Pod is the smallest deployable compute unit in Kubernetes. Unlike Docker where you run a single container, Kubernetes schedules Pods. A Pod usually contains one main container (e.g., a FastAPI server), but can also run alongside auxiliary sidecar containers (e.g., a localized logging agent)."
+        "text": "A Pod is the most important Kubernetes object and the smallest deployable unit in Kubernetes. It represents a single instance of a running process in your cluster."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s5.jpeg",
+        "caption": "Pods"
+      },
+      {
+        "type": "paragraph",
+        "text": "A Pod can contain a single container or multiple tightly-coupled containers that share storage and network resources:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    subgraph Single Container Pod\n    Pod1[Pod] --> FastAPI[FastAPI Container]\n    end\n    subgraph Multi Container Pod\n    Pod2[Pod] --> Main[Main App Container]\n    Pod2 --> Log[Logging Container]\n    end"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "6. Deployments & Scaling"
+        "text": "6. Deployment Object"
       },
       {
         "type": "paragraph",
-        "text": "Pods are ephemeral; if they die, they die. To guarantee availability, you create a **Deployment**. A Deployment manages Pod creation, scaling, updates, and recovery. For example, declaring `replicas: 3` in a Deployment YAML guarantees that Kubernetes will always keep exactly 3 instances of that Pod running."
+        "text": "Because individual Pods are temporary, Kubernetes uses Deployments to manage their lifecycle, scaling, updates, and recovery."
       },
       {
         "type": "code",
         "language": "yaml",
-        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-deployment\nspec:\n  replicas: 3"
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-deployment\nspec:\n  replicas: 3\n  template:\n    # Pod template details go here"
+      },
+      {
+        "type": "paragraph",
+        "text": "Setting `replicas: 3` instructs Kubernetes to run and maintain exactly 3 instances of the Pod across the cluster nodes."
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "7. Services, Load Balancing, and Ingress"
+        "text": "7. Scaling"
       },
       {
         "type": "paragraph",
-        "text": "Because Pods frequently die and restart on different nodes, their IP addresses are constantly changing. A **Service** solves this by providing a stable network endpoint that automatically load balances traffic across all available Pods. To expose these services to the public internet (e.g., `robot.example.com`), Kubernetes uses an **Ingress**, which acts as an advanced reverse proxy and TLS terminator."
+        "text": "Scaling is one of Kubernetes' biggest strengths. You can manually scale up or down the number of running Pods instantly using a single command:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "kubectl scale deployment api --replicas=5"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    3p[3 Pods] -->|kubectl scale| 5p[5 Pods]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Automatic scaling is also possible using Horizontal Pod Autoscaling (HPA) to scale automatically based on system metrics."
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "8. Persistent Volumes & Stateful Data"
+        "text": "8. Service Object"
       },
       {
         "type": "paragraph",
-        "text": "Because containers are temporary, any data written inside a Pod is lost when it crashes. For databases like PostgreSQL or MongoDB, Kubernetes uses **Persistent Volumes (PV)**. A PV mounts external storage directly into the Pod, ensuring data survives Pod restarts."
+        "text": "Pods are ephemeral; when a Pod restarts, it is assigned a new IP address, which breaks direct connection. A Service solves this by providing a stable network endpoint."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Frontend[frontend] -->|Request| Service[Service]\n    Service --> Pods[backend pods]"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "9. Self-Healing & Rolling Updates"
+        "text": "9. Load Balancing"
       },
       {
         "type": "paragraph",
-        "text": "If a Worker Node goes offline, Kubernetes immediately detects the missing Pods and reschedules them onto healthy nodes (Self-Healing). When deploying new code, Kubernetes performs **Rolling Updates**, gradually terminating old Pods and spinning up new ones to ensure zero downtime. If the new deployment has a bug, `kubectl rollout undo` immediately reverts to the previous stable state."
+        "text": "A Service automatically distributes request traffic across all matching healthy pods."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s11.jpeg",
+        "caption": "Load Balancing"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Request[Request] --> Service[Service]\n    Service --> Pod1[Pod 1]\n    Service --> Pod2[Pod 2]\n    Service --> Pod3[Pod 3]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Load balancing provides key benefits:\n- **High Availability:** Spares traffic away from crashed pods.\n- **Traffic Distribution:** Ensures optimal resource consumption."
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "10. Security: RBAC and Secrets"
+        "text": "10. Ingress"
       },
       {
         "type": "paragraph",
-        "text": "Access to the API server is strictly governed by **Role-Based Access Control (RBAC)**, defining exactly who (or what pod) can perform specific actions. Sensitive configurations like API keys and database passwords must never be stored in plain text YAML; they are securely injected into Pods using Kubernetes **Secrets**."
+        "text": "An Ingress controller allows external users to access applications inside the cluster by routing external URLs to internal services. It acts as an advanced reverse proxy."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s10.jpeg",
+        "caption": "Ingress"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Client[robot.example.com] -->|HTTPS| Ingress[Ingress Controller]\n    Ingress -->|Route| Backend[Backend Service]"
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "11. Kubernetes in an IoT Robotics Platform"
+        "text": "11. Persistent Volumes"
       },
       {
         "type": "paragraph",
-        "text": "For a distributed robotics project, the edge hardware (ESP32) communicates via MQTT. The backend infrastructure running inside Kubernetes handles everything else:"
+        "text": "Containers are temporary. If a database container restarts, all database files are lost. Persistent Volumes solve this by attaching durable external storage to the Pod lifecycle."
+      },
+      {
+        "type": "image",
+        "url": "/blog/23-k8s/k8s7.jpeg",
+        "caption": "Persistent Volumes"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph LR\n    Pod[Pod] --> PV[Persistent Volume] --> Storage[Storage]"
+      },
+      {
+        "type": "paragraph",
+        "text": "Commonly used for stateful services like PostgreSQL, MySQL, and MongoDB."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "12. Self-Healing"
+      },
+      {
+        "type": "paragraph",
+        "text": "Self-healing is a major Kubernetes feature that operates automatically without human intervention. If a Pod crashes, Kubernetes detects the state mismatch and starts a replacement pod."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    Mismatch{Expected = 3 Pods, Actual = 2 Pods} -->|Create New Pod| Recreate[Expected = Actual (Healthy)]"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "13. Rolling Updates"
+      },
+      {
+        "type": "paragraph",
+        "text": "Deploying new application versions is done without downtime by replacing pods incrementally."
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    V1[Version 1] -->|Gradual Replacement| V2[Version 2]"
+      },
+      {
+        "type": "paragraph",
+        "text": "This guarantees zero downtime and a safer, progressive deployment flow."
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "14. Rollbacks"
+      },
+      {
+        "type": "paragraph",
+        "text": "If a deployment causes issues, Kubernetes allows you to return to the previous version with a rollback command:"
+      },
+      {
+        "type": "code",
+        "language": "bash",
+        "code": "kubectl rollout undo"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "15. Kubernetes Security Concepts"
+      },
+      {
+        "type": "paragraph",
+        "text": "Security inside Kubernetes clusters is managed through key abstractions:"
       },
       {
         "type": "list",
         "items": [
-          "**Pod 1:** MQTT Message Broker (Mosquitto)",
-          "**Pod 2:** Python FastAPI Telemetry Ingestion Service",
-          "**Pod 3:** Stateful PostgreSQL Database (with Persistent Volumes)",
-          "**Pod 4:** Grafana Dashboard (exposed via Ingress)",
-          "**Pod 5:** Prometheus Metrics Scraper"
+          "**RBAC (Role-Based Access Control):** Defines who can do what inside the cluster.",
+          "**Secrets:** Safely stores sensitive passwords, tokens, and API keys. Always avoid putting plaintext credentials like `password: admin123` directly inside YAML files."
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "12. Docker vs. Kubernetes"
+        "text": "16. Kubernetes in an IoT Robotics Platform"
+      },
+      {
+        "type": "paragraph",
+        "text": "In a modern robotics stack, Kubernetes coordinates the backend and edge communication pipeline. Edge devices (like ESP32 controllers) communicate with services running inside the cluster:"
+      },
+      {
+        "type": "mermaid",
+        "code": "graph TD\n    ESP[ESP32 Devices] -->|Publish/Subscribe| Broker[Pod 1: MQTT Broker]\n    Broker --> API[Pod 2: FastAPI Backend]\n    API --> DB[Pod 3: PostgreSQL]\n    API --> Prom[Pod 5: Prometheus]\n    Prom --> Grafana[Pod 4: Grafana Dashboard]"
+      },
+      {
+        "type": "paragraph",
+        "text": "The full microservices stack is split into individual pods:\n- **Pod 1:** MQTT Broker\n- **Pod 2:** FastAPI Backend\n- **Pod 3:** PostgreSQL\n- **Pod 4:** Grafana\n- **Pod 5:** Prometheus"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "17. Docker vs. Kubernetes"
       },
       {
         "type": "table",
@@ -1416,65 +1804,133 @@ export const cicdPosts = [
         ],
         "rows": [
           [
-            "Primary Function",
-            "Creates and packages isolated containers",
-            "Orchestrates and manages clusters of containers"
+            "Runs Containers",
+            "✅",
+            "✅"
           ],
           [
-            "Application Scaling",
-            "❌ Manual execution",
-            "✅ Automated ReplicaSets"
+            "Container Packaging",
+            "✅",
+            "❌"
+          ],
+          [
+            "Scheduling",
+            "❌",
+            "✅"
+          ],
+          [
+            "Scaling",
+            "❌",
+            "✅"
           ],
           [
             "Self-Healing",
-            "❌ Manual restart required",
-            "✅ Automated recreation"
+            "❌",
+            "✅"
+          ],
+          [
+            "Load Balancing",
+            "❌",
+            "✅"
           ],
           [
             "Rolling Updates",
-            "❌ Manual replacement",
-            "✅ Automated zero-downtime updates"
+            "❌",
+            "✅"
+          ],
+          [
+            "Cluster Management",
+            "❌",
+            "✅"
           ]
         ]
       },
       {
+        "type": "paragraph",
+        "text": "The relationship can be summarized simply:\n- **Docker:** Creates and packages containers.\n- **Kubernetes:** Manages and orchestrates containers."
+      },
+      {
         "type": "heading",
         "level": 2,
-        "text": "13. Common Failure Modes"
+        "text": "18. Common Failure Modes"
       },
       {
         "type": "table",
         "headers": [
-          "Error State",
-          "Likely Cause"
+          "Failure Mode",
+          "Cause",
+          "Impact"
         ],
         "rows": [
           [
-            "CrashLoopBackOff",
-            "Application inside the Pod keeps crashing due to fatal errors or misconfigurations"
+            "1. CrashLoopBackOff",
+            "Application keeps crashing",
+            "Pod fails to boot and loops repeatedly."
           ],
           [
-            "ImagePullBackOff",
-            "Kubernetes cannot pull the specified image due to typos or private registry auth failures"
+            "2. ImagePullBackOff",
+            "Wrong image tag or Registry credentials issue",
+            "Kubernetes cannot fetch the required image."
           ],
           [
-            "Insufficient Resources",
-            "The cluster lacks the required CPU or Memory to schedule the Pod"
+            "3. Insufficient Resources",
+            "Not enough CPU or RAM inside the cluster",
+            "Pods cannot be scheduled and remain Pending."
           ],
           [
-            "ETCD Failure",
-            "Control Plane database corruption; can bring down the entire cluster"
+            "4. Network Issues",
+            "Service Misconfiguration or Ingress Routing Errors",
+            "Services are unreachable."
+          ],
+          [
+            "5. ETCD Failure",
+            "Control Plane Issues",
+            "Can affect the state of the entire cluster."
           ]
         ]
       },
       {
         "type": "heading",
         "level": 2,
-        "text": "14. The Modern Deployment Pipeline"
+        "text": "19. Kubernetes Ecosystem"
+      },
+      {
+        "type": "table",
+        "headers": [
+          "Tool",
+          "Purpose"
+        ],
+        "rows": [
+          [
+            "Docker",
+            "Container Creation"
+          ],
+          [
+            "Helm",
+            "Application Packaging"
+          ],
+          [
+            "Argo CD",
+            "GitOps Deployment"
+          ],
+          [
+            "Prometheus",
+            "Metrics"
+          ],
+          [
+            "Grafana",
+            "Visualization"
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "20. Typical Modern Deployment Pipeline"
       },
       {
         "type": "mermaid",
-        "code": "graph LR\n    Dev[Developer] --> Git[GitHub PR]\n    Git --> CI[GitHub Actions CI]\n    CI -->|Build Image| Hub[Docker Registry]\n    CI -->|Update YAML| Repo[GitOps Repo]\n    Repo -->|Reconcile| Argo[Argo CD]\n    Argo -->|Deploy| K8s[Kubernetes Cluster]"
+        "code": "graph LR\n    Developer --> GitHub --> Actions[GitHub Actions] --> Image[Docker Image] --> Registry[Container Registry] --> Argo[Argo CD] --> K8s[Kubernetes Cluster] --> Production[Production]"
       }
     ]
   }
