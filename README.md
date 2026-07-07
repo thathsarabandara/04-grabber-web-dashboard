@@ -269,14 +269,14 @@ The application runs on React 19 and utilizes several specialized libraries:
 
 | Repository | Purpose |
 |---|---|
-| [`01-grabber-architecture`](../01-grabber-architecture) | System designs, specifications, and central schemas |
-| [`02-grabber-firmware`](../02-grabber-firmware) | ESP32 kinematics controls and camera stream servers |
-| [`03-grabber-mobile-app`](../03-grabber-mobile-app) | Flutter mobile application featuring local BLE teleoperation |
-| [`05-grabber-api-gateway`](../05-grabber-api-gateway) | Inbound router proxying REST & WebSocket connections |
-| [`06-grabber-auth-service`](../06-grabber-auth-service) | Service managing user profiles, avatars, and JWT security |
-| [`07-grabber-robot-service`](../07-grabber-robot-service) | Service scheduling joint movement commands and homing routines |
-| [`08-grabber-telemetry-service`](../08-grabber-telemetry-service) | Service publishing real-time diagnostics and vision captures |
-| [`09-grabber-ai-service`](../09-grabber-ai-service) | Core service managing voice transcripts and gesture controls |
+| [`01-grabber-architecture`](https://github.com/thathsarabandara/01-grabber-architecture) | System designs, specifications, and central schemas |
+| [`02-grabber-firmware`](https://github.com/thathsarabandara/02-grabber-firmware) | ESP32 kinematics controls and camera stream servers |
+| [`03-grabber-mobile-app`](https://github.com/thathsarabandara/03-grabber-mobile-app) | Flutter mobile application featuring local BLE teleoperation |
+| [`05-grabber-api-gateway`](https://github.com/thathsarabandara/05-grabber-api-gateway) | Inbound router proxying REST & WebSocket connections |
+| [`06-grabber-auth-service`](https://github.com/thathsarabandara/06-grabber-auth-service) | Service managing user profiles, avatars, and JWT security |
+| [`07-grabber-robot-service`](https://github.com/thathsarabandara/07-grabber-robot-service) | Service scheduling joint movement commands and homing routines |
+| [`08-grabber-telemetry-service`](https://github.com/thathsarabandara/08-grabber-telemetry-service) | Service publishing real-time diagnostics and vision captures |
+| [`09-grabber-ai-service`](https://github.com/thathsarabandara/09-grabber-ai-service) | Core service managing voice transcripts and gesture controls |
 
 ---
 
