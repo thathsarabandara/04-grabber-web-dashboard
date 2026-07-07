@@ -119,6 +119,12 @@
   100% { transform: translateX(100%); }
 }
 
+@keyframes scan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(298px); }
+  100% { transform: translateY(0); }
+}
+
 .animate-float {
   animation: float 10s ease-in-out infinite;
 }
@@ -129,6 +135,10 @@
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
+}
+
+.animate-scan {
+  animation: scan 4s ease-in-out infinite;
 }
 
 /* GSAP Page Transitions */

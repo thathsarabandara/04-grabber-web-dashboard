@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Zap, 
@@ -7,19 +7,89 @@ import {
   ShieldCheck, 
   ArrowRight,
   ChevronRight,
-  Activity,
-  Layers,
-  Box,
-  Monitor,
   Globe,
-  Lock,
-  Cpu as CpuIcon
+  Cpu as CpuIcon,
+  ChevronLeft,
+  Play,
+  Terminal,
+  Activity
 } from 'lucide-react';
 import gsap from 'gsap';
+import { projectTimeline } from '../../data/timelineData';
 
 export function HomePage() {
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
+  const [activeVideoIdx, setActiveVideoIdx] = useState(0);
+  const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
+
+  const [pingRate, setPingRate] = useState(4.2);
+  const [bandwidth, setBandwidth] = useState(32.4);
+  const [jointAngles, setJointAngles] = useState([45, -15, 90, 10]);
+  const [mqttLogs, setMqttLogs] = useState([
+    'PUB: telemetry/joint_1 -> 45.0',
+    'PUB: telemetry/joint_2 -> -15.0',
+    'SUB: commands/gripper -> 1'
+  ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPingRate(prev => {
+        const change = (Math.random() - 0.5) * 0.4;
+        return parseFloat(Math.max(2.8, Math.min(6.5, prev + change)).toFixed(1));
+      });
+      setBandwidth(prev => {
+        const change = (Math.random() - 0.5) * 3.5;
+        return parseFloat(Math.max(15.0, Math.min(50.0, prev + change)).toFixed(1));
+      });
+      setJointAngles(() => {
+        const t = Date.now() / 2000;
+        return [
+          Math.round(45 + Math.sin(t) * 20),
+          Math.round(-15 + Math.cos(t * 1.5) * 15),
+          Math.round(90 + Math.sin(t * 0.8) * 25),
+          Math.round(15 + Math.cos(t * 2) * 10)
+        ];
+      });
+      setMqttLogs(prev => {
+        const topics = ['telemetry/joint_1', 'telemetry/joint_2', 'telemetry/joint_3', 'telemetry/gripper', 'status/temp', 'status/battery'];
+        const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+        const randomVal = (Math.random() * 100 - 50).toFixed(1);
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return [
+          `[${timestamp}] PUB: ${randomTopic} -> ${randomVal}`,
+          ...prev.slice(0, 2)
+        ];
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (isAutoplayPaused) return;
+    const interval = setInterval(() => {
+      setActiveVideoIdx(prev => (prev + 1) % projectTimeline.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isAutoplayPaused]);
+
+  const handlePrev = () => {
+    setIsAutoplayPaused(true);
+    setActiveVideoIdx(prev => (prev - 1 + projectTimeline.length) % projectTimeline.length);
+  };
+
+  const handleNext = () => {
+    setIsAutoplayPaused(true);
+    setActiveVideoIdx(prev => (prev + 1) % projectTimeline.length);
+  };
+
+  const getYouTubeId = (url) => {
+    if (!url) return '';
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : '';
+  };
 
   useEffect(() => {
     const heroElements = heroRef.current?.querySelectorAll('[data-hero-animate]');
@@ -219,49 +289,354 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Feature Showcase 1 */}
-      <section className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
-        <div data-animate className="space-y-10">
-          <div className="p-4 bg-emerald-50 text-emerald-600 rounded-[20px] w-fit shadow-inner">
-            <Activity size={32} />
-          </div>
-          <h2 className="text-5xl font-black tracking-tight leading-[1.1] text-slate-900">High-Fidelity <br /> Digital Twin Integration</h2>
-          <p className="text-xl text-slate-500 font-medium leading-relaxed">
-            Monitor every joint angle, torque value, and thermal signature through our advanced visualization engine. Prevent mechanical fatigue through predictive diagnostics.
-          </p>
-          <div className="space-y-6">
-            {[
-              { icon: Layers, text: 'Multi-layer diagnostic stacks' },
-              { icon: Box, text: 'Real-time workspace mapping' },
-              { icon: Lock, text: 'Secure command verification' }
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-5 p-5 bg-white/60 backdrop-blur-sm border border-slate-100 rounded-2xl group transition-all hover:border-emerald-200 hover:bg-white shadow-sm">
-                <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all">
-                   <item.icon size={20} />
-                </div>
-                <span className="font-black text-sm text-slate-800 uppercase tracking-widest">{item.text}</span>
+      {/* System Operations Command Hub */}
+      <section className="max-w-7xl mx-auto px-6 space-y-12">
+        <div className="text-left space-y-4">
+           <div className="flex items-center gap-3">
+              <div className="p-3 bg-brand-secondary/10 text-brand-secondary rounded-xl w-fit shadow-inner">
+                 <Activity size={20} className="animate-pulse" />
               </div>
-            ))}
-          </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Live Infrastructure</span>
+           </div>
+           <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">System Operations Hub</h2>
+           <p className="text-lg text-slate-500 font-medium max-w-xl">
+              Real-time monitoring nodes reporting service telemetry and inverse kinematic state variables across the Grabber cluster.
+           </p>
         </div>
-        <div data-animate className="glass-card-vibrant aspect-square rounded-[4rem] bg-slate-950 overflow-hidden relative flex items-center justify-center group shadow-2xl">
-           {/* Digital Twin Placeholder */}
-           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.15),transparent)] group-hover:scale-125 transition-transform duration-1000"></div>
-           <div className="absolute inset-0 pattern-grid opacity-[0.05]"></div>
-          <Activity size={160} className="text-emerald-500/20 animate-pulse z-10" />
-          
-          {/* HUD elements */}
-          <div className="absolute top-10 left-10 p-4 border-l border-t border-white/20">
-             <p className="text-[8px] font-mono text-white/40 uppercase tracking-widest">Diagnostic_Overlay_ON</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+           {/* Card 1: MQTT Broker */}
+           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
+              <div className="flex justify-between items-center">
+                 <div className="flex items-center gap-2">
+                    <Terminal size={14} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">MQTT Server Broker</span>
+                 </div>
+                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Online</span>
+              </div>
+              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[9px] text-white/70 h-[96px] overflow-hidden flex flex-col justify-end gap-1.5 text-left">
+                 {mqttLogs.map((log, i) => (
+                    <p key={i} className="truncate tracking-wide text-emerald-400/90">{log}</p>
+                 ))}
+              </div>
+              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
+                 <span>Active Topics: 14</span>
+                 <span>Clients: 2</span>
+              </div>
+           </div>
+
+           {/* Card 2: AI Pipeline */}
+           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
+              <div className="flex justify-between items-center">
+                 <div className="flex items-center gap-2">
+                    <Cpu size={14} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">AI Vision Engine</span>
+                 </div>
+                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Running</span>
+              </div>
+              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[9px] text-white/70 h-[96px] flex flex-col justify-center gap-2 text-left">
+                 <div className="flex justify-between">
+                    <span className="text-white/40">YOLO:</span>
+                    <span className="text-brand-accent font-black">STEEL_NUT [98%]</span>
+                 </div>
+                 <div className="flex justify-between">
+                    <span className="text-white/40">Gesture:</span>
+                    <span className="text-brand-secondary font-black">PALM_FLAT</span>
+                 </div>
+                 <div className="flex justify-between">
+                    <span className="text-white/40">FPS // Latency:</span>
+                    <span className="text-emerald-400 font-black">60.0 // 4.8ms</span>
+                 </div>
+              </div>
+              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
+                 <span>Model: YOLOv8n</span>
+                 <span>Processor: Edge AI</span>
+              </div>
+           </div>
+
+           {/* Card 3: Robot Kinematics */}
+           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
+              <div className="flex justify-between items-center">
+                 <div className="flex items-center gap-2">
+                    <Zap size={14} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Robot Actuators</span>
+                 </div>
+                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Nominal</span>
+              </div>
+              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 flex flex-col justify-between h-[96px] font-mono text-[8px] text-white/50 text-left bg-gradient-to-b from-slate-950 to-slate-900">
+                 <div className="space-y-1">
+                    <div className="flex justify-between text-[7px]">
+                       <span>BASE (J1)</span>
+                       <span className="text-white font-bold">{jointAngles[0]}°</span>
+                    </div>
+                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                       <div className="h-full bg-brand-accent transition-all duration-300" style={{ width: `${(jointAngles[0]+90)/1.8}%` }}></div>
+                    </div>
+                 </div>
+                 <div className="space-y-1">
+                    <div className="flex justify-between text-[7px]">
+                       <span>SHOULDER (J2)</span>
+                       <span className="text-white font-bold">{jointAngles[1]}°</span>
+                    </div>
+                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                       <div className="h-full bg-brand-secondary transition-all duration-300" style={{ width: `${(jointAngles[1]+90)/1.8}%` }}></div>
+                    </div>
+                 </div>
+                 <div className="space-y-1">
+                    <div className="flex justify-between text-[7px]">
+                       <span>ELBOW (J3)</span>
+                       <span className="text-white font-bold">{jointAngles[2]}°</span>
+                    </div>
+                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                       <div className="h-full bg-emerald-400 transition-all duration-300" style={{ width: `${(jointAngles[2]+90)/1.8}%` }}></div>
+                    </div>
+                 </div>
+              </div>
+              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
+                 <span>4-DOF Inverse Kin</span>
+                 <span>Calibrated: Yes</span>
+              </div>
+           </div>
+
+           {/* Card 4: Telemetry Socket */}
+           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
+              <div className="flex justify-between items-center">
+                 <div className="flex items-center gap-2">
+                    <Wifi size={14} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Telemetry Streamer</span>
+                 </div>
+                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Streaming</span>
+              </div>
+              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[9px] text-white/70 h-[96px] flex flex-col justify-center gap-2 text-left">
+                 <div className="flex justify-between">
+                    <span className="text-white/40">RTT Ping:</span>
+                    <span className="text-emerald-400 font-black">{pingRate} ms</span>
+                 </div>
+                 <div className="flex justify-between">
+                    <span className="text-white/40">Throughput:</span>
+                    <span className="text-brand-accent font-black">{bandwidth} KB/s</span>
+                 </div>
+                 <div className="flex justify-between">
+                    <span className="text-white/40">Packet Loss:</span>
+                    <span className="text-emerald-400 font-black">0.00%</span>
+                 </div>
+              </div>
+              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
+                 <span>Socket: gRPC</span>
+                 <span>Buffer Size: 2KB</span>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* Project Evolution Vlog Carousel */}
+      <section className="max-w-7xl mx-auto px-6 space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 text-left">
+          <div className="space-y-4">
+             <div className="flex items-center gap-3">
+                <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl w-fit shadow-inner">
+                   <Play size={20} className="fill-brand-accent animate-pulse" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Ecosystem History</span>
+             </div>
+             <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">Project Evolution Vlog</h2>
+             <p className="text-lg text-slate-500 font-medium max-w-xl">
+                Watch our 16-day development milestones. The active card autoplays. Click any slide to focus.
+             </p>
           </div>
 
-          <div className="absolute bottom-10 left-10 p-6 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 z-20">
-             <div className="flex items-center gap-3 mb-2">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                <span className="text-[10px] font-black text-white uppercase tracking-widest">Active Stream</span>
+          {/* Controls */}
+          <div className="flex items-center gap-4 shrink-0">
+             <button 
+               onClick={() => setIsAutoplayPaused(!isAutoplayPaused)}
+               className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest bg-white hover:bg-slate-50 transition-all shadow-sm"
+             >
+                <span className={`w-2 h-2 rounded-full ${isAutoplayPaused ? 'bg-amber-500' : 'bg-emerald-500 animate-ping'}`} />
+                {isAutoplayPaused ? 'Autoplay Paused' : 'Autoplay Active'}
+             </button>
+             
+             <div className="flex gap-2">
+                <button 
+                  onClick={handlePrev}
+                  className="p-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl shadow-sm hover:scale-105 active:scale-95 transition-all"
+                  aria-label="Previous day"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button 
+                  onClick={handleNext}
+                  className="p-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl shadow-sm hover:scale-105 active:scale-95 transition-all"
+                  aria-label="Next day"
+                >
+                  <ChevronRight size={16} />
+                </button>
              </div>
-             <p className="font-mono text-[10px] text-white/40">GRABBER_X1_THETA: 142.5°</p>
           </div>
+        </div>
+
+        {/* 3-Card Auto-Carousel 3D Stage */}
+        <div className="relative h-[320px] sm:h-[400px] w-full max-w-6xl mx-auto flex items-center justify-center overflow-visible">
+           {projectTimeline.map((item, idx) => {
+              // Calculate difference from activeVideoIdx with wrapping
+              let diff = idx - activeVideoIdx;
+              const total = projectTimeline.length;
+              
+              if (diff > total / 2) {
+                 diff -= total;
+              } else if (diff < -total / 2) {
+                 diff += total;
+              }
+
+              const isCenter = diff === 0;
+              const isLeft = diff === -1;
+              const isRight = diff === 1;
+              const isFarLeft = diff === -2;
+              const isFarRight = diff === 2;
+              const isVisible = isCenter || isLeft || isRight || isFarLeft || isFarRight;
+
+              let transformStyle;
+              let zIndex;
+              let opacity;
+              let pointerEvents;
+
+              if (isCenter) {
+                 transformStyle = 'translate3d(0, 0, 0) rotateY(0deg) scale(1.05)';
+                 zIndex = 30;
+                 opacity = 1;
+                 pointerEvents = 'auto';
+              } else if (isLeft) {
+                 transformStyle = 'translate3d(-28%, 0, -100px) rotateY(18deg) scale(0.9)';
+                 zIndex = 20;
+                 opacity = 0.65;
+                 pointerEvents = 'auto';
+              } else if (isRight) {
+                 transformStyle = 'translate3d(28%, 0, -100px) rotateY(-18deg) scale(0.9)';
+                 zIndex = 20;
+                 opacity = 0.65;
+                 pointerEvents = 'auto';
+              } else if (isFarLeft) {
+                 transformStyle = 'translate3d(-52%, 0, -200px) rotateY(32deg) scale(0.75)';
+                 zIndex = 10;
+                 opacity = 0.3;
+                 pointerEvents = 'auto';
+              } else if (isFarRight) {
+                 transformStyle = 'translate3d(52%, 0, -200px) rotateY(-32deg) scale(0.75)';
+                 zIndex = 10;
+                 opacity = 0.3;
+                 pointerEvents = 'auto';
+              } else {
+                 transformStyle = diff < 0 
+                    ? 'translate3d(-70%, 0, -300px) rotateY(40deg) scale(0.6)' 
+                    : 'translate3d(70%, 0, -300px) rotateY(-40deg) scale(0.6)';
+                 zIndex = 5;
+                 opacity = 0;
+                 pointerEvents = 'none';
+              }
+
+              const itemYtId = getYouTubeId(item.video);
+
+              return (
+                 <div 
+                   key={item.id}
+                   onClick={() => {
+                      if (!isCenter && isVisible) {
+                         setIsAutoplayPaused(true);
+                         setActiveVideoIdx(idx);
+                      }
+                   }}
+                   className="absolute w-[75%] sm:w-[45%] md:w-[35%] lg:w-[30%] h-full transition-all duration-700 ease-out select-none"
+                   style={{
+                      transform: transformStyle,
+                      zIndex: zIndex,
+                      opacity: opacity,
+                      pointerEvents: pointerEvents,
+                      transformStyle: 'preserve-3d',
+                      perspective: '1000px'
+                   }}
+                 >
+                    <div className={`w-full h-full glass-card-vibrant rounded-[2.5rem] bg-slate-950 overflow-hidden relative flex flex-col group border shadow-2xl transition-all duration-500 ${
+                       isCenter 
+                         ? 'border-brand-accent/50 shadow-brand-accent/15' 
+                         : 'border-white/10 opacity-75 hover:opacity-100 cursor-pointer hover:border-white/20'
+                    }`}>
+                       {/* Top Header of Card */}
+                       <div className="p-4 sm:p-5 border-b border-white/5 flex items-center justify-between z-20 bg-slate-950/80 backdrop-blur-md">
+                          <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider ${
+                             isCenter ? 'bg-brand-accent text-white animate-pulse' : 'bg-white/10 text-white/60'
+                          }`}>
+                             Day {String(item.day).padStart(2, '0')}
+                          </span>
+                          <span className="text-[8px] font-mono text-white/40 tracking-wider">
+                             NODE_0{item.day}
+                          </span>
+                       </div>
+
+                       {/* Media viewport */}
+                       <div className="flex-1 relative w-full overflow-hidden bg-slate-900 flex items-center justify-center min-h-0">
+                          {isCenter && itemYtId ? (
+                             <iframe
+                                className="w-full h-full absolute inset-0 z-10 border-0 pointer-events-auto"
+                                src={`https://www.youtube.com/embed/${itemYtId}?autoplay=1&mute=1&loop=1&playlist=${itemYtId}&controls=1&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1`}
+                                title={item.title}
+                                allow="autoplay; encrypted-media; picture-in-picture"
+                                allowFullScreen
+                             />
+                          ) : (
+                             <>
+                                {itemYtId ? (
+                                   <img 
+                                     src={`https://img.youtube.com/vi/${itemYtId}/hqdefault.jpg`} 
+                                     alt={item.title}
+                                     className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+                                   />
+                                ) : (
+                                   <div className="text-white/20 text-xs font-mono">STREAM_OFFLINE</div>
+                                )}
+                                <div className="absolute inset-0 bg-slate-950/40 flex items-center justify-center group-hover:bg-slate-950/20 transition-all">
+                                   <div className="p-3.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white shadow-xl group-hover:scale-110 transition-transform">
+                                      <Play size={16} className="fill-white" />
+                                   </div>
+                                </div>
+                             </>
+                          )}
+                       </div>
+
+                       {/* Bottom Title of Card */}
+                       <div className="p-4 sm:p-5 bg-slate-950/80 backdrop-blur-md border-t border-white/5 flex flex-col gap-2">
+                          <h3 className="text-sm sm:text-base font-black text-white text-left truncate group-hover:text-brand-accent transition-colors leading-tight">
+                             {item.title}
+                          </h3>
+                          <div className="flex gap-2 flex-wrap">
+                             {item.tags.slice(0, 2).map((tag, idx_tag) => (
+                                <span key={idx_tag} className="text-[7px] font-mono text-white/40 tracking-wide uppercase">
+                                   {tag}
+                                </span>
+                             ))}
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              );
+           })}
+        </div>
+
+        {/* Dots Indicators */}
+        <div className="flex justify-center gap-2 pt-4">
+           {projectTimeline.map((item, idx) => (
+              <button 
+                key={item.id}
+                onClick={() => {
+                   setIsAutoplayPaused(true);
+                   setActiveVideoIdx(idx);
+                }}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                   idx === activeVideoIdx 
+                     ? 'bg-brand-accent w-6' 
+                     : 'bg-slate-200 hover:bg-slate-300'
+                }`}
+                aria-label={`Go to day ${item.day}`}
+              />
+           ))}
         </div>
       </section>
 
