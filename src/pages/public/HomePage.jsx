@@ -10,9 +10,7 @@ import {
   Globe,
   Cpu as CpuIcon,
   ChevronLeft,
-  Play,
-  Terminal,
-  Activity
+  Play
 } from 'lucide-react';
 import gsap from 'gsap';
 import { projectTimeline } from '../../data/timelineData';
@@ -20,50 +18,10 @@ import { projectTimeline } from '../../data/timelineData';
 export function HomePage() {
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
+  const pageRef = useRef(null);
+
   const [activeVideoIdx, setActiveVideoIdx] = useState(0);
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
-
-  const [pingRate, setPingRate] = useState(4.2);
-  const [bandwidth, setBandwidth] = useState(32.4);
-  const [jointAngles, setJointAngles] = useState([45, -15, 90, 10]);
-  const [mqttLogs, setMqttLogs] = useState([
-    'PUB: telemetry/joint_1 -> 45.0',
-    'PUB: telemetry/joint_2 -> -15.0',
-    'SUB: commands/gripper -> 1'
-  ]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPingRate(prev => {
-        const change = (Math.random() - 0.5) * 0.4;
-        return parseFloat(Math.max(2.8, Math.min(6.5, prev + change)).toFixed(1));
-      });
-      setBandwidth(prev => {
-        const change = (Math.random() - 0.5) * 3.5;
-        return parseFloat(Math.max(15.0, Math.min(50.0, prev + change)).toFixed(1));
-      });
-      setJointAngles(() => {
-        const t = Date.now() / 2000;
-        return [
-          Math.round(45 + Math.sin(t) * 20),
-          Math.round(-15 + Math.cos(t * 1.5) * 15),
-          Math.round(90 + Math.sin(t * 0.8) * 25),
-          Math.round(15 + Math.cos(t * 2) * 10)
-        ];
-      });
-      setMqttLogs(prev => {
-        const topics = ['telemetry/joint_1', 'telemetry/joint_2', 'telemetry/joint_3', 'telemetry/gripper', 'status/temp', 'status/battery'];
-        const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-        const randomVal = (Math.random() * 100 - 50).toFixed(1);
-        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        return [
-          `[${timestamp}] PUB: ${randomTopic} -> ${randomVal}`,
-          ...prev.slice(0, 2)
-        ];
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     if (isAutoplayPaused) return;
@@ -104,31 +62,36 @@ export function HomePage() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const elements = entry.target.querySelectorAll('[data-animate]');
           gsap.fromTo(
-            elements,
+            entry.target,
             { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out' }
+            { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }
           );
           observer.unobserve(entry.target);
         }
       });
     }, { threshold: 0.1 });
 
-    if (featuresRef.current) observer.observe(featuresRef.current);
+    const elements = pageRef.current?.querySelectorAll('[data-animate]');
+    elements?.forEach(el => observer.observe(el));
+
+    if (featuresRef.current) {
+        const featureElements = featuresRef.current.querySelectorAll('[data-animate-feature]');
+        featureElements.forEach(el => observer.observe(el));
+    }
 
     return () => observer.disconnect();
   }, []);
 
   return (
-    <div className="space-y-40 pb-40 overflow-hidden font-sans selection:bg-brand-accent/30 relative">
-      {/* Global Background Patterns */}
-      <div className="absolute inset-0 pattern-grid opacity-[0.25] pointer-events-none"></div>
+    <div ref={pageRef} className="space-y-32 pb-40 overflow-hidden font-sans selection:bg-brand-accent/30 relative text-slate-900 bg-slate-50">
+      {/* Global Background Pattern restored */}
+      <div className="absolute inset-0 pattern-grid opacity-[0.25] pointer-events-none -z-10"></div>
       
       {/* Hero Section */}
       <section 
         ref={heroRef}
-        className="relative pt-20 sm:pt-0 flex flex-col items-center text-center px-6"
+        className="relative pt-20 sm:pt-28 flex flex-col items-center text-center px-6"
       >
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-gradient-to-b from-brand-accent/10 via-brand-secondary/10 to-transparent blur-[120px] rounded-full -z-10" />
@@ -147,7 +110,7 @@ export function HomePage() {
           <p className="text-[8px] font-black uppercase tracking-[0.4em] mt-2">Lat: 0.02ms</p>
         </div>
 
-        <div data-hero-animate className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white border border-slate-100 shadow-xl shadow-slate-100/50 mb-10 transition-all hover:scale-105 cursor-default relative overflow-hidden group">
+        <div data-hero-animate className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white border border-slate-200 shadow-xl shadow-slate-200/50 mb-10 transition-all hover:scale-105 cursor-default relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-accent/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
           <span className="w-2.5 h-2.5 bg-brand-accent rounded-full animate-ping" />
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-800">Protocol v2.4 Live</span>
@@ -173,13 +136,13 @@ export function HomePage() {
           </Link>
           <Link
             to="/features"
-            className="px-12 py-5 bg-white border border-slate-200 text-slate-900 font-black uppercase tracking-widest text-xs rounded-2xl shadow-sm hover:bg-slate-50 hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center gap-4"
+            className="px-12 py-5 bg-white border border-slate-200 text-slate-900 font-black uppercase tracking-widest text-xs rounded-2xl shadow-sm hover:bg-slate-100 hover:translate-y-[-2px] active:translate-y-[1px] transition-all flex items-center gap-4"
           >
             Capabilities
           </Link>
         </div>
 
-        {/* Hero Visual Placeholder */}
+        {/* Hero Visual */}
         <div data-hero-animate className="mt-28 w-full max-w-6xl relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-brand-accent to-brand-secondary rounded-[3rem] blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
           <div className="glass-card aspect-video w-full rounded-[3rem] border-8 border-white overflow-hidden relative shadow-2xl bg-slate-950 flex items-center justify-center">
@@ -201,8 +164,7 @@ export function HomePage() {
       </section>
 
       {/* Trust Bar */}
-      <div className="max-w-7xl mx-auto px-6 relative">
-        <div className="absolute inset-0 pattern-grid opacity-[0.1] -z-10"></div>
+      <div className="max-w-7xl mx-auto px-6 relative mt-12 mb-20">
         <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-12">Integrated with Industry Standards</p>
         <div className="flex flex-wrap justify-center items-center gap-x-20 gap-y-10 opacity-40 hover:opacity-100 transition-all duration-700">
           <div className="flex items-center gap-3 grayscale hover:grayscale-0 transition-all cursor-default">
@@ -224,20 +186,20 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Features Grid */}
-      <section ref={featuresRef} className="max-w-7xl mx-auto px-6 space-y-24 relative">
+      {/* Features Grid (Restored Original Content) */}
+      <section ref={featuresRef} className="max-w-7xl mx-auto px-6 space-y-20 relative">
         <div className="text-center space-y-6">
-           <div className="inline-block px-4 py-1.5 bg-slate-100 rounded-full text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 relative overflow-hidden group">
+           <div className="inline-block px-4 py-1.5 bg-white border border-slate-200 rounded-full text-[9px] font-black uppercase tracking-[0.3em] text-slate-500 relative overflow-hidden group">
               <div className="absolute inset-0 bg-brand-accent/5 -translate-x-full group-hover:translate-x-0 transition-transform"></div>
               <span className="relative">Core Infrastructure</span>
            </div>
-          <h2 data-animate className="text-5xl sm:text-6xl font-black tracking-tight text-slate-900">Engineered for Reliability</h2>
-          <p data-animate className="text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
+          <h2 data-animate-feature className="text-5xl sm:text-6xl font-black tracking-tight text-slate-900">Engineered for Reliability</h2>
+          <p data-animate-feature className="text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
             Every component of Grabber is built to handle mission-critical industrial workloads with zero compromise.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             {
               icon: Zap,
@@ -247,7 +209,7 @@ export function HomePage() {
               bg: 'bg-amber-50'
             },
             {
-              icon: Cpu,
+              icon: CpuIcon,
               title: 'Neural Vision',
               description: 'Advanced computer vision integration for autonomous object identification and classification.',
               color: '#3b82f6',
@@ -270,16 +232,15 @@ export function HomePage() {
           ].map((feature, idx) => (
             <div
               key={idx}
-              data-animate
-              className="glass-card-vibrant group p-10 hover:translate-y-[-8px] transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200"
+              data-animate-feature
+              className="glass-card-vibrant group p-8 hover:translate-y-[-8px] transition-all duration-500 hover:shadow-2xl hover:shadow-slate-200/50"
             >
               <div className={`p-4 rounded-2xl ${feature.bg} w-fit mb-8 group-hover:scale-110 transition-transform duration-500 shadow-sm`} style={{ color: feature.color }}>
-                <feature.icon size={32} />
+                <feature.icon size={28} />
               </div>
-              <h3 className="font-black text-2xl mb-4 tracking-tight text-slate-900">{feature.title}</h3>
+              <h3 className="font-bold text-2xl mb-4 tracking-tight text-slate-900">{feature.title}</h3>
               <p className="text-slate-500 font-medium leading-relaxed">{feature.description}</p>
               
-              {/* Technical Decorative Lines */}
               <div className="absolute bottom-4 right-4 flex gap-1 opacity-10 group-hover:opacity-30 transition-opacity">
                 <div className="w-1 h-4 bg-slate-900"></div>
                 <div className="w-1 h-2 bg-slate-900 mt-auto"></div>
@@ -289,155 +250,64 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* System Operations Command Hub */}
-      <section className="max-w-7xl mx-auto px-6 space-y-12">
-        <div className="text-left space-y-4">
-           <div className="flex items-center gap-3">
-              <div className="p-3 bg-brand-secondary/10 text-brand-secondary rounded-xl w-fit shadow-inner">
-                 <Activity size={20} className="animate-pulse" />
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Live Infrastructure</span>
-           </div>
-           <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">System Operations Hub</h2>
-           <p className="text-lg text-slate-500 font-medium max-w-xl">
-              Real-time monitoring nodes reporting service telemetry and inverse kinematic state variables across the Grabber cluster.
-           </p>
-        </div>
+      {/* Relevant Long-Form Content Blocks with Image Placeholders */}
+      <section className="max-w-7xl mx-auto px-6 space-y-32 relative pt-10">
+            {/* Block 1: Kinematics Engine */}
+            <div data-animate className="flex flex-col lg:flex-row items-center gap-16">
+               <div className="flex-1 space-y-6">
+                  <div className="inline-block px-4 py-1.5 bg-white border border-slate-200 rounded-full text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                     Inverse Kinematics
+                  </div>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                     Flawless Motion<br/>Control Algorithms
+                  </h2>
+                  <p className="text-lg text-slate-500 leading-relaxed font-medium">
+                     Our proprietary kinematics engine abstracts the complex mathematics of robotic arm movement, allowing operators to dictate end-effector positions seamlessly. We process spatial transformations in real-time, ensuring that every command translates into smooth, collision-free physical motion across all joints.
+                  </p>
+                  <Link to="/features" className="inline-flex items-center gap-2 text-brand-accent font-bold pt-4">
+                     Explore kinematics <ArrowRight size={20} />
+                  </Link>
+               </div>
+               <div className="flex-1 w-full">
+                  <div className="w-full aspect-square sm:aspect-[4/3] bg-white rounded-3xl flex flex-col items-center justify-center text-slate-400 relative overflow-hidden shadow-2xl shadow-slate-200/50 border border-slate-100 group">
+                     <img src="https://via.placeholder.com/600x450?text=Kinematics+Visualization" alt="Kinematics" className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  </div>
+               </div>
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-           {/* Card 1: MQTT Broker */}
-           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
-              <div className="flex justify-between items-center">
-                 <div className="flex items-center gap-2">
-                    <Terminal size={14} className="text-slate-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">MQTT Server Broker</span>
-                 </div>
-                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Online</span>
-              </div>
-              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[9px] text-white/70 h-[96px] overflow-hidden flex flex-col justify-end gap-1.5 text-left">
-                 {mqttLogs.map((log, i) => (
-                    <p key={i} className="truncate tracking-wide text-emerald-400/90">{log}</p>
-                 ))}
-              </div>
-              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
-                 <span>Active Topics: 14</span>
-                 <span>Clients: 2</span>
-              </div>
-           </div>
-
-           {/* Card 2: AI Pipeline */}
-           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
-              <div className="flex justify-between items-center">
-                 <div className="flex items-center gap-2">
-                    <Cpu size={14} className="text-slate-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">AI Vision Engine</span>
-                 </div>
-                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Running</span>
-              </div>
-              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[9px] text-white/70 h-[96px] flex flex-col justify-center gap-2 text-left">
-                 <div className="flex justify-between">
-                    <span className="text-white/40">YOLO:</span>
-                    <span className="text-brand-accent font-black">STEEL_NUT [98%]</span>
-                 </div>
-                 <div className="flex justify-between">
-                    <span className="text-white/40">Gesture:</span>
-                    <span className="text-brand-secondary font-black">PALM_FLAT</span>
-                 </div>
-                 <div className="flex justify-between">
-                    <span className="text-white/40">FPS // Latency:</span>
-                    <span className="text-emerald-400 font-black">60.0 // 4.8ms</span>
-                 </div>
-              </div>
-              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
-                 <span>Model: YOLOv8n</span>
-                 <span>Processor: Edge AI</span>
-              </div>
-           </div>
-
-           {/* Card 3: Robot Kinematics */}
-           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
-              <div className="flex justify-between items-center">
-                 <div className="flex items-center gap-2">
-                    <Zap size={14} className="text-slate-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Robot Actuators</span>
-                 </div>
-                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Nominal</span>
-              </div>
-              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 flex flex-col justify-between h-[96px] font-mono text-[8px] text-white/50 text-left bg-gradient-to-b from-slate-950 to-slate-900">
-                 <div className="space-y-1">
-                    <div className="flex justify-between text-[7px]">
-                       <span>BASE (J1)</span>
-                       <span className="text-white font-bold">{jointAngles[0]}°</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                       <div className="h-full bg-brand-accent transition-all duration-300" style={{ width: `${(jointAngles[0]+90)/1.8}%` }}></div>
-                    </div>
-                 </div>
-                 <div className="space-y-1">
-                    <div className="flex justify-between text-[7px]">
-                       <span>SHOULDER (J2)</span>
-                       <span className="text-white font-bold">{jointAngles[1]}°</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                       <div className="h-full bg-brand-secondary transition-all duration-300" style={{ width: `${(jointAngles[1]+90)/1.8}%` }}></div>
-                    </div>
-                 </div>
-                 <div className="space-y-1">
-                    <div className="flex justify-between text-[7px]">
-                       <span>ELBOW (J3)</span>
-                       <span className="text-white font-bold">{jointAngles[2]}°</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                       <div className="h-full bg-emerald-400 transition-all duration-300" style={{ width: `${(jointAngles[2]+90)/1.8}%` }}></div>
-                    </div>
-                 </div>
-              </div>
-              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
-                 <span>4-DOF Inverse Kin</span>
-                 <span>Calibrated: Yes</span>
-              </div>
-           </div>
-
-           {/* Card 4: Telemetry Socket */}
-           <div className="glass-card-vibrant p-6 flex flex-col gap-4 border border-slate-100 hover:border-brand-accent/20 transition-all shadow-md">
-              <div className="flex justify-between items-center">
-                 <div className="flex items-center gap-2">
-                    <Wifi size={14} className="text-slate-400" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Telemetry Streamer</span>
-                 </div>
-                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono text-[8px] font-black uppercase tracking-wider animate-pulse">Streaming</span>
-              </div>
-              <div className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[9px] text-white/70 h-[96px] flex flex-col justify-center gap-2 text-left">
-                 <div className="flex justify-between">
-                    <span className="text-white/40">RTT Ping:</span>
-                    <span className="text-emerald-400 font-black">{pingRate} ms</span>
-                 </div>
-                 <div className="flex justify-between">
-                    <span className="text-white/40">Throughput:</span>
-                    <span className="text-brand-accent font-black">{bandwidth} KB/s</span>
-                 </div>
-                 <div className="flex justify-between">
-                    <span className="text-white/40">Packet Loss:</span>
-                    <span className="text-emerald-400 font-black">0.00%</span>
-                 </div>
-              </div>
-              <div className="flex justify-between text-[8px] font-mono text-slate-400 uppercase tracking-widest pt-2 border-t border-slate-100">
-                 <span>Socket: gRPC</span>
-                 <span>Buffer Size: 2KB</span>
-              </div>
-           </div>
-        </div>
+            {/* Block 2: AI Pipeline */}
+            <div data-animate className="flex flex-col lg:flex-row-reverse items-center gap-16">
+               <div className="flex-1 space-y-6">
+                  <div className="inline-block px-4 py-1.5 bg-white border border-slate-200 rounded-full text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">
+                     Neural Vision
+                  </div>
+                  <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                     Autonomous Visual<br/>Identification
+                  </h2>
+                  <p className="text-lg text-slate-500 leading-relaxed font-medium">
+                     Integrated directly into the control stream, the Grabber AI pipeline processes video feeds at 60 FPS to identify components, hazards, and alignment markers. Operators receive augmented overlays on their terminals, reducing cognitive load and dramatically improving operational safety in high-stress environments.
+                  </p>
+                  <Link to="/features" className="inline-flex items-center gap-2 text-brand-accent font-bold pt-4">
+                     View AI models <ArrowRight size={20} />
+                  </Link>
+               </div>
+               <div className="flex-1 w-full">
+                  <div className="w-full aspect-square sm:aspect-[4/3] bg-white rounded-3xl flex flex-col items-center justify-center text-slate-400 relative overflow-hidden shadow-2xl shadow-slate-200/50 border border-slate-100 group">
+                     <img src="https://via.placeholder.com/600x450?text=AI+Vision+Pipeline" alt="AI Pipeline" className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  </div>
+               </div>
+            </div>
       </section>
 
-      {/* Project Evolution Vlog Carousel */}
-      <section className="max-w-7xl mx-auto px-6 space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 text-left">
+      {/* Project Evolution Vlog Carousel (Restored Original Content) */}
+      <section className="max-w-7xl mx-auto px-6 space-y-12 relative pt-10">
+        <div data-animate className="flex flex-col md:flex-row md:items-end justify-between gap-6 text-left">
           <div className="space-y-4">
              <div className="flex items-center gap-3">
                 <div className="p-3 bg-brand-accent/10 text-brand-accent rounded-xl w-fit shadow-inner">
                    <Play size={20} className="fill-brand-accent animate-pulse" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Ecosystem History</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Ecosystem History</span>
              </div>
              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">Project Evolution Vlog</h2>
              <p className="text-lg text-slate-500 font-medium max-w-xl">
@@ -445,7 +315,6 @@ export function HomePage() {
              </p>
           </div>
 
-          {/* Controls */}
           <div className="flex items-center gap-4 shrink-0">
              <button 
                onClick={() => setIsAutoplayPaused(!isAutoplayPaused)}
@@ -459,14 +328,12 @@ export function HomePage() {
                 <button 
                   onClick={handlePrev}
                   className="p-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl shadow-sm hover:scale-105 active:scale-95 transition-all"
-                  aria-label="Previous day"
                 >
                   <ChevronLeft size={16} />
                 </button>
                 <button 
                   onClick={handleNext}
                   className="p-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl shadow-sm hover:scale-105 active:scale-95 transition-all"
-                  aria-label="Next day"
                 >
                   <ChevronRight size={16} />
                 </button>
@@ -475,17 +342,12 @@ export function HomePage() {
         </div>
 
         {/* 3-Card Auto-Carousel 3D Stage */}
-        <div className="relative h-[320px] sm:h-[400px] w-full max-w-6xl mx-auto flex items-center justify-center overflow-visible">
+        <div data-animate className="relative h-[320px] sm:h-[400px] w-full max-w-6xl mx-auto flex items-center justify-center overflow-visible">
            {projectTimeline.map((item, idx) => {
-              // Calculate difference from activeVideoIdx with wrapping
               let diff = idx - activeVideoIdx;
               const total = projectTimeline.length;
-              
-              if (diff > total / 2) {
-                 diff -= total;
-              } else if (diff < -total / 2) {
-                 diff += total;
-              }
+              if (diff > total / 2) diff -= total;
+              else if (diff < -total / 2) diff += total;
 
               const isCenter = diff === 0;
               const isLeft = diff === -1;
@@ -547,31 +409,29 @@ export function HomePage() {
                    className="absolute w-[75%] sm:w-[45%] md:w-[35%] lg:w-[30%] h-full transition-all duration-700 ease-out select-none"
                    style={{
                       transform: transformStyle,
-                      zIndex: zIndex,
-                      opacity: opacity,
-                      pointerEvents: pointerEvents,
+                      zIndex,
+                      opacity,
+                      pointerEvents,
                       transformStyle: 'preserve-3d',
                       perspective: '1000px'
                    }}
                  >
-                    <div className={`w-full h-full glass-card-vibrant rounded-[2.5rem] bg-slate-950 overflow-hidden relative flex flex-col group border shadow-2xl transition-all duration-500 ${
+                    <div className={`w-full h-full glass-card-vibrant rounded-[2.5rem] bg-white overflow-hidden relative flex flex-col group border shadow-2xl transition-all duration-500 ${
                        isCenter 
                          ? 'border-brand-accent/50 shadow-brand-accent/15' 
-                         : 'border-white/10 opacity-75 hover:opacity-100 cursor-pointer hover:border-white/20'
+                         : 'border-slate-200 opacity-90 hover:opacity-100 cursor-pointer hover:border-slate-300'
                     }`}>
-                       {/* Top Header of Card */}
-                       <div className="p-4 sm:p-5 border-b border-white/5 flex items-center justify-between z-20 bg-slate-950/80 backdrop-blur-md">
+                       <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between z-20 bg-white/80 backdrop-blur-md">
                           <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-wider ${
-                             isCenter ? 'bg-brand-accent text-white animate-pulse' : 'bg-white/10 text-white/60'
+                             isCenter ? 'bg-brand-accent text-white animate-pulse' : 'bg-slate-100 text-slate-500'
                           }`}>
                              Day {String(item.day).padStart(2, '0')}
                           </span>
-                          <span className="text-[8px] font-mono text-white/40 tracking-wider">
+                          <span className="text-[8px] font-mono text-slate-400 tracking-wider">
                              NODE_0{item.day}
                           </span>
                        </div>
 
-                       {/* Media viewport */}
                        <div className="flex-1 relative w-full overflow-hidden bg-slate-900 flex items-center justify-center min-h-0">
                           {isCenter && itemYtId ? (
                              <iframe
@@ -601,14 +461,13 @@ export function HomePage() {
                           )}
                        </div>
 
-                       {/* Bottom Title of Card */}
-                       <div className="p-4 sm:p-5 bg-slate-950/80 backdrop-blur-md border-t border-white/5 flex flex-col gap-2">
-                          <h3 className="text-sm sm:text-base font-black text-white text-left truncate group-hover:text-brand-accent transition-colors leading-tight">
+                       <div className="p-4 sm:p-5 bg-white/90 backdrop-blur-md border-t border-slate-100 flex flex-col gap-2">
+                          <h3 className="text-sm sm:text-base font-bold text-slate-900 text-left truncate group-hover:text-brand-accent transition-colors leading-tight">
                              {item.title}
                           </h3>
                           <div className="flex gap-2 flex-wrap">
                              {item.tags.slice(0, 2).map((tag, idx_tag) => (
-                                <span key={idx_tag} className="text-[7px] font-mono text-white/40 tracking-wide uppercase">
+                                <span key={idx_tag} className="text-[7px] font-mono text-slate-400 tracking-wide uppercase">
                                    {tag}
                                 </span>
                              ))}
@@ -620,7 +479,6 @@ export function HomePage() {
            })}
         </div>
 
-        {/* Dots Indicators */}
         <div className="flex justify-center gap-2 pt-4">
            {projectTimeline.map((item, idx) => (
               <button 
@@ -632,7 +490,7 @@ export function HomePage() {
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                    idx === activeVideoIdx 
                      ? 'bg-brand-accent w-6' 
-                     : 'bg-slate-200 hover:bg-slate-300'
+                     : 'bg-slate-300 hover:bg-slate-400'
                 }`}
                 aria-label={`Go to day ${item.day}`}
               />
@@ -640,38 +498,21 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-6">
-        <div data-animate className="relative rounded-[4rem] bg-slate-900 p-16 sm:p-32 overflow-hidden shadow-2xl shadow-slate-900/40">
-          {/* Abstract background */}
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-brand-accent/30 to-transparent pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-brand-secondary/20 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 pattern-dots opacity-[0.1]"></div>
-          
-          <div className="relative z-10 max-w-3xl">
-            <h2 className="text-5xl sm:text-7xl font-black text-white tracking-tight leading-[1.05] mb-10">
-              Initialize Your <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-brand-secondary">Robotic Fleet</span>
+      {/* Modern Minimalist CTA */}
+      <section className="px-6 max-w-5xl mx-auto pt-20 relative">
+         <div data-animate className="bg-white rounded-[3rem] p-16 sm:p-24 text-center relative overflow-hidden flex flex-col items-center justify-center shadow-2xl shadow-slate-200/50 border border-slate-100">
+            <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-slate-900 mb-8 leading-tight">
+               Deploy Your Fleet <br/>In Minutes.
             </h2>
-            <p className="text-slate-400 text-xl font-medium mb-14 leading-relaxed max-w-2xl">
-              Join the future of industrial automation. Deploy, monitor, and scale your operations through a single unified protocol.
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 font-medium">
+               Join top industrial automation teams that rely on Grabber's high-fidelity telemetry and intuitive platform.
             </p>
-            <div className="flex flex-wrap gap-6">
-              <Link
-                to="/auth/login"
-                className="px-14 py-6 bg-white text-slate-900 font-black uppercase tracking-widest text-xs rounded-2xl shadow-2xl shadow-brand-accent/20 hover:scale-105 active:scale-95 transition-all"
-              >
-                Access Core
-              </Link>
-              <Link
-                to="/contact"
-                className="px-14 py-6 bg-slate-800 text-white font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-700 transition-all border border-slate-700"
-              >
-                Inquiry
-              </Link>
-            </div>
-          </div>
-        </div>
+            <Link to="/auth/register" className="inline-flex items-center gap-2 px-12 py-5 bg-slate-900 text-white font-bold text-lg rounded-full hover:bg-slate-800 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-slate-900/10">
+               Access Platform Terminal
+            </Link>
+         </div>
       </section>
+
     </div>
   );
 }
