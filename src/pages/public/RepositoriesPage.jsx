@@ -179,9 +179,14 @@ export function RepositoriesPage() {
         </p>
         
         <div className="flex items-center justify-center gap-6 pt-4">
-          <button className="flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-slate-900/20">
+          <a 
+            href="https://github.com/thathsarabandara"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-slate-900/20"
+          >
             <FaGithub size={18} /> View Organization
-          </button>
+          </a>
         </div>
       </div>
 
@@ -217,9 +222,19 @@ export function RepositoriesPage() {
                     </div>
                   </div>
 
-                  <h3 className="text-2xl font-black tracking-tight mb-4 group-hover:text-brand-accent transition-colors">
+                  <h3 className="text-2xl font-black tracking-tight mb-2 group-hover:text-brand-accent transition-colors">
                     {repo.name}
                   </h3>
+                  
+                  <a 
+                    href={`https://github.com/thathsarabandara/${repo.name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-brand-accent mb-4 transition-colors font-medium"
+                  >
+                    <FaGithub size={12} />
+                    github.com/thathsarabandara/{repo.name}
+                  </a>
                   
                   <p className="text-slate-500 font-medium leading-relaxed mb-8 text-sm lg:text-base">
                     {repo.description}
@@ -244,9 +259,14 @@ export function RepositoriesPage() {
                         <span className="text-xs font-black text-slate-500">Fork</span>
                       </div>
                     </div>
-                    <button className="p-3 bg-slate-900 text-white hover:bg-brand-accent rounded-xl transition-all shadow-lg shadow-slate-900/10">
+                    <a 
+                      href={`https://github.com/thathsarabandara/${repo.name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-900 text-white hover:bg-brand-accent rounded-xl transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center"
+                    >
                       <ExternalLink size={18} />
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -274,9 +294,14 @@ export function RepositoriesPage() {
             <p className="text-slate-400 font-medium max-w-xl mx-auto">
               We maintain a high engineering standard across all repositories. Review our protocol before opening a Pull Request.
             </p>
-            <button className="px-10 py-4 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
+            <a 
+              href="https://github.com/thathsarabandara/01-grabber-architecture"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-10 py-4 bg-white text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+            >
               Developer Documentation
-            </button>
+            </a>
           </div>
         </div>
       </div>
